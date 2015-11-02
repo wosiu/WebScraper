@@ -1,5 +1,6 @@
-package pl.edu.mimuw.students.wosiu.scraper.selectors;
+package pl.edu.mimuw.students.wosiu.scraper;
 
+import org.apache.log4j.Logger;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -10,9 +11,11 @@ import java.net.*;
 
 public class Executor {
 
+	private static final Logger logger = Logger.getLogger(Executor.class);
 
 
 	public static void main(String [] args) throws IOException, URISyntaxException {
+
 		///Jsoup.connect(uri).userAgent(userAgent).get()
 		//Jsoup.connect(uri).get()
 
@@ -42,5 +45,32 @@ public class Executor {
 		uc.disconnect();
 		System.out.println(doc);
 
+	}
+
+
+	public static void run(String [] args) {
+
+		if (args.length != 1) {
+			logger.error("Argument missing - add config file path.");
+			return;
+		}
+
+		Config conf;
+		try {
+			conf = new Config(args[0]);
+		} catch (ConfigException e) {
+			logger.error(e.getMessage());
+			return;
+		}
+
+		for ( String userAgent: conf.getUserAgents() ) {
+			for ( Selector selector : conf.getSelectors()) {
+
+				for (String product : conf.getProducts()) {
+
+
+				}
+			}
+		}
 	}
 }
