@@ -27,8 +27,11 @@ public class GermanPreisvergleich extends Selector {
 	@Override
 	public List<Object> getProducts(Document document) {
 		List<Object> asd = new LinkedList<>();
-		ProductResult productResult = new ProductResult();
-		asd.add(productResult);
+		asd.add("lorem");
+		asd.add("ipsum");
+		asd.add("dolor");
+		asd.add("sit");
+
 		return asd;
 	}
 
