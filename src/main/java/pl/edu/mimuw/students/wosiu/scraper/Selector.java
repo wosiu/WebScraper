@@ -13,9 +13,12 @@ import java.util.List;
 
 public abstract class Selector {
 
+	private static int CONNECTION_TIMEOUT_MS = 4000;
+	private static int READ_TIMEOUT_MS = 7000;
+
 	private String country = null;
 	private URL sourceURL = null;
-	private List<Proxy>proxies = null;
+	private List<Proxy> proxies = null;
 	private Proxy lastUsedProxy = null;
 
 	protected Logger logger;
@@ -58,28 +61,34 @@ public abstract class Selector {
 
 	public abstract URL getNextPage(Document document);
 
+	public HttpURLConnection connectByProxy(String userAgent, URL targetURL, Proxy proxy) throws IOException {
+		long start = System.currentTimeMillis();
+		HttpURLConnection uc = (HttpURLConnection) targetURL.openConnection(proxy);
+		uc.setRequestProperty("User-Agent", userAgent);
+		uc.setConnectTimeout(CONNECTION_TIMEOUT_MS);
+		uc.setReadTimeout(READ_TIMEOUT_MS);
+		uc.connect();
+		long elapsed = (System.currentTimeMillis() - start) / 1000;
+		logger.debug("Connected in: " + elapsed + "ms using proxy: " + proxy);
+		return uc;
+	}
 
 	public HttpURLConnection connect(String userAgent, URL targetURL) throws ConnectionException {
 		HttpURLConnection uc = null;
 
 		if (lastUsedProxy != null) {
 			try {
-				uc = (HttpURLConnection) targetURL.openConnection(lastUsedProxy);
-				uc.setRequestProperty("User-Agent", userAgent);
-				uc.connect();
-				return uc;
+				return connectByProxy(userAgent, targetURL, lastUsedProxy);
 			} catch (IOException e) {
 				logger.warn("Cannot use last used proxy: " + lastUsedProxy);
 				logger.debug(e.toString());
 			}
 		}
 
-		for (Proxy proxy: proxies) {
+		for (Proxy proxy : proxies) {
 			// Try to connect via proxy. If failed try next one.
 			try {
-				uc = (HttpURLConnection) targetURL.openConnection(proxy);
-				uc.setRequestProperty("User-Agent", userAgent);
-				uc.connect();
+				uc = connectByProxy(userAgent, targetURL, proxy);
 				lastUsedProxy = proxy;
 				return uc;
 			} catch (IOException e) {
@@ -128,6 +137,7 @@ public abstract class Selector {
 			content = download(connection);
 		} catch (IOException e) {
 			logger.debug(e.toString());
+			disconnect(connection);
 			throw new ConnectionException("Cannot read content from connection: " + targetURL + ", userAgent:  "
 					+ userAgent);
 		}

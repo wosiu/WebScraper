@@ -1,6 +1,7 @@
 package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
 import org.jsoup.nodes.Document;
+import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 
@@ -10,13 +11,14 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-public class GermanPreisvergleich extends Selector {
+public class GermanyPreisvergleich extends Selector {
 
-	public GermanPreisvergleich() throws MalformedURLException, URISyntaxException {
+	public GermanyPreisvergleich() throws MalformedURLException, URISyntaxException {
 		super();
 		setCountry("Germany");
 		setSource("http://preisvergleich.de/");
-		addProxy("62.163.129.14", 80);
+		addProxy("46.101.167.103", 8118);
+		addProxy("37.187.253.39", 8115);
 	}
 
 	//todo
@@ -28,10 +30,7 @@ public class GermanPreisvergleich extends Selector {
 	@Override
 	public List<Object> getProducts(Document document) {
 		List<Object> asd = new LinkedList<>();
-		asd.add("lorem");
-		asd.add("ipsum");
-		asd.add("dolor");
-		asd.add("sit");
+		asd.add(document.toString().substring(0,30));
 
 		return asd;
 	}
@@ -41,4 +40,8 @@ public class GermanPreisvergleich extends Selector {
 		return null;
 	}
 
+	@Override
+	public Document getDoc(String userAgent, URL targetURL) throws ConnectionException {
+		return super.getDoc(userAgent, targetURL);
+	}
 }
