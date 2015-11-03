@@ -81,10 +81,11 @@ public class Config {
 			String str = (String) o;
 			Class<?> clazz = null;
 			try {
-				clazz = Class.forName(str);
+				clazz = Class.forName("pl.edu.mimuw.students.wosiu.scraper.selectors." + str);
 				Selector sel = (Selector) clazz.newInstance();
 				this.selectors.add(sel);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
+				logger.debug(e.toString());
 				throw new ConfigException("Cannot create selector: " + str + ". Check typo in config.");
 			}
 		}

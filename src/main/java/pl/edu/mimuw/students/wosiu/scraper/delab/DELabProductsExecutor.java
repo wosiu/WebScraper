@@ -17,9 +17,11 @@ public class DELabProductsExecutor extends Executor {
 		Executor exe = new Executor();
 		if (args.length != 1) {
 			logger.error("Argument missing - add config file path.");
-			return;
+			//return; //TODO
 		}
-		exe.run(args[0]);
+		//String configPath = args[0];
+		String configPath = "/home/m/scraper/config.json";
+		exe.run(configPath);
 
 		// TODO create CSV
 	}
@@ -27,6 +29,7 @@ public class DELabProductsExecutor extends Executor {
 	@Override
 	public void buildResult(List<Object> results, String productName, Selector selector, String userAgent, URL url) {
 		for (Object o : results) {
+			System.out.println(o);
 			/*
 			todo build csv
 			ProductResult record = (ProductResult) o;

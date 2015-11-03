@@ -1,8 +1,8 @@
-package pl.edu.mimuw.students.wosiu.scraper.delab.selectors;
+package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
 import org.jsoup.nodes.Document;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
-import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
+import pl.edu.mimuw.students.wosiu.scraper.Utils;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
@@ -15,13 +15,14 @@ public class GermanPreisvergleich extends Selector {
 	public GermanPreisvergleich() throws MalformedURLException, URISyntaxException {
 		super();
 		setCountry("Germany");
-		setSource("preisvergleich.de");
-		addProxy("46.101.167.103", 8110);
+		setSource("http://preisvergleich.de/");
+		addProxy("62.163.129.14", 80);
 	}
 
 	//todo
-	public URL prepareTargetUrl(String product) {
-		return null;
+	public URL prepareTargetUrl(String product) throws MalformedURLException, URISyntaxException {
+		URL url = Utils.stringToURL("http://www.preisvergleich.de/search/result/query/laptop/");
+		return url;
 	}
 
 	@Override
