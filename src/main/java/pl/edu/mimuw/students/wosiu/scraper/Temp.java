@@ -98,43 +98,7 @@ public class Temp {
 		document.setBaseUri(base);
 
 		//		System.out.println(doc);
-		Element table = document.select("tbody").first();
-		Elements rows = table.select("script");
-		String IPADDRESS_PATTERN =
-				"((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))";
 
-		String patternString =
-				"(.+)" +
-						"(PROXY_COUNTRY\":\")" +
-						"([a-zA-Z ]+)" +
-						"(\",\"PROXY_IP\":\")" +
-						IPADDRESS_PATTERN +
-						"(\",\"PROXY_LAST_UPDATE\":\")" +
-						"(.+)" +
-						"(PROXY_PORT\":\")" +
-						"([0-9a-fA-F]+)" +
-						"(\",\"PROXY_REFS\":)" +
-						"(.+)";
-		
-		Pattern pattern = Pattern.compile(patternString);
-
-
-		ListIterator it = rows.listIterator();
-		while (it.hasNext()) {
-			Element e = (Element) it.next();
-			String inner = e.data().trim();
-			Matcher matcher = pattern.matcher(inner);
-
-			if (matcher.find()) {
-				String country = matcher.group(3);
-				String ip = matcher.group(5);
-				String portHex = matcher.group(9);
-				int portDec = Integer.parseInt(portHex, 16);
-				System.out.println(country + " " + ip + ":" + portDec);
-			} else {
-				System.out.println("dupa");
-			}
-		}
 
 
 		try {

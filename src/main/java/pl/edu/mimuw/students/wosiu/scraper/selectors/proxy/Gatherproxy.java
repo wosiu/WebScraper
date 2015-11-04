@@ -1,10 +1,10 @@
 package pl.edu.mimuw.students.wosiu.scraper.selectors.proxy;
 
-import org.apache.commons.lang3.math.NumberUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
+import pl.edu.mimuw.students.wosiu.scraper.ProxyWrapper;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 
@@ -15,12 +15,40 @@ import java.util.regex.Pattern;
 
 public class Gatherproxy extends Selector {
 
-	public Gatherproxy() {
+	private static final String IPADDRESS_PATTERN =
+			"((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))";
+
+	private static final String PATTERN_STR =
+			"(.+)" +
+					"(PROXY_COUNTRY\":\")" +
+					"([a-zA-Z ]+)" +
+					"(\",\"PROXY_IP\":\")" +
+					IPADDRESS_PATTERN +
+					"(\",\"PROXY_LAST_UPDATE\":\")" +
+					"(.+)" +
+					"(PROXY_PORT\":\")" +
+					"([0-9a-fA-F]+)" +
+					"(\",\"PROXY_REFS\":)" +
+					"(.+)";
+
+	private static final Pattern pattern = Pattern.compile(PATTERN_STR);
+
+
+	public Gatherproxy(String country) {
+		super();
+
+		// TODO this is temporary
 		try {
+			setSource("http://www.gatherproxy.com/proxylist/country/?c=" + country);
+		} catch (ConnectionException e) {
+			e.printStackTrace();
+		}
+
+		/*try {
 			setSource("http://www.gatherproxy.com/");
 		} catch (ConnectionException e) {
 			logger.error(e.toString());
-		}
+		}*/
 	}
 
 	@Override
@@ -31,12 +59,33 @@ public class Gatherproxy extends Selector {
 
 	@Override
 	public List<Object> getProducts(Document document) {
+
 		Element table = document.select("tbody").first();
-		Elements rows = table.select("tr");
-		Element row = rows.first();
-		Element col = row.select("td").get(1).children().first();
-		Elements elements = col.children();
-		return null;
+		Elements rows = table.select("script");
+		List<Object> res = new ArrayList<>(rows.size());
+
+		ListIterator it = rows.listIterator();
+		while (it.hasNext()) {
+			Element e = (Element) it.next();
+			String inner = e.data().trim();
+			Matcher matcher = pattern.matcher(inner);
+
+			if (matcher.find()) {
+				String country = matcher.group(3);
+				String ip = matcher.group(5);
+				String portHex = matcher.group(9);
+				int portDec = Integer.parseInt(portHex, 16);
+				ProxyWrapper pw = new ProxyWrapper();
+				pw.setHTTPProxy(ip, portDec);
+				pw.setCountry(country);
+				res.add(pw);
+			} else {
+				logger.warn("Cannot match proxy from: " + inner);
+				continue;
+			}
+		}
+
+		return res;
 	}
 
 
