@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -25,6 +26,7 @@ public abstract class Selector {
 
 	public Selector() {
 		logger = Logger.getLogger(this.getClass());
+		proxies = new LinkedList<>();
 	}
 
 	public void setCountry(String country) {
@@ -48,11 +50,12 @@ public abstract class Selector {
 	}
 
 	public void addProxy(String ip, int port) {
-		if (proxies == null) {
-			proxies = new LinkedList<>();
-		}
 		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(ip, port));
 		proxies.add(proxy);
+	}
+
+	public void addAllProxies(Collection<Proxy> collection) {
+		proxies.addAll(collection);
 	}
 
 	public void addProxy(Proxy proxy) {

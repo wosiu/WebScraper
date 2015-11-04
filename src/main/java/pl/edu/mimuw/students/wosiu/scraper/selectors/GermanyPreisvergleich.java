@@ -2,12 +2,14 @@ package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
 import org.jsoup.nodes.Document;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
+import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -17,8 +19,14 @@ public class GermanyPreisvergleich extends Selector {
 		super();
 		setCountry("Germany");
 		setSource("http://preisvergleich.de/");
-		addProxy("46.101.167.103", 8118);
-		addProxy("37.187.253.39", 8115);
+		//addProxy("46.101.167.103", 8118);
+		//addProxy("37.187.253.39", 8115);
+		Collection proxies = ProxyFinder.getProxies("Germany");
+		if (proxies == null || proxies.isEmpty() ) {
+			logger.debug("No proxy in ProxyFinder");
+		} else {
+			addAllProxies(proxies);
+		}
 	}
 
 	//todo

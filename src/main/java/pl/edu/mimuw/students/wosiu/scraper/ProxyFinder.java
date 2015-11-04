@@ -19,11 +19,12 @@ public class ProxyFinder {
 
 
 	private static Selector[] proxySelecctors = {
-			new Gatherproxy("Belgium"),
+			/*new Gatherproxy("Belgium"),
 			new Gatherproxy("Denmark"),
 			new Gatherproxy("Hungary"),
 			new Gatherproxy("Italy"),
-			new Gatherproxy("United%20Kingdom"),
+			new Gatherproxy("United%20Kingdom"),*/
+			new Gatherproxy("Germany"),
 	};
 
 
