@@ -13,7 +13,7 @@ import java.util.List;
 
 public class GermanyPreisvergleich extends Selector {
 
-	public GermanyPreisvergleich() throws MalformedURLException, URISyntaxException {
+	public GermanyPreisvergleich() throws ConnectionException {
 		super();
 		setCountry("Germany");
 		setSource("http://preisvergleich.de/");
@@ -22,7 +22,7 @@ public class GermanyPreisvergleich extends Selector {
 	}
 
 	//todo
-	public URL prepareTargetUrl(String product) throws MalformedURLException, URISyntaxException {
+	public URL prepareTargetUrl(String product) throws ConnectionException {
 		URL url = Utils.stringToURL("http://www.preisvergleich.de/search/result/query/laptop/");
 		return url;
 	}

@@ -31,7 +31,7 @@ public abstract class Selector {
 		this.country = country;
 	}
 
-	public void setSource(String sourceURL) throws URISyntaxException, MalformedURLException {
+	public void setSource(String sourceURL) throws ConnectionException {
 		this.sourceURL = Utils.stringToURL(sourceURL);
 	}
 
@@ -55,7 +55,11 @@ public abstract class Selector {
 		proxies.add(proxy);
 	}
 
-	public abstract URL prepareTargetUrl(String product) throws MalformedURLException, URISyntaxException;
+	public void addProxy(Proxy proxy) {
+		proxies.add(proxy);
+	}
+
+	public abstract URL prepareTargetUrl(String product) throws ConnectionException;
 
 	public abstract List<Object> getProducts(Document document);
 
@@ -85,17 +89,20 @@ public abstract class Selector {
 			}
 		}
 
-		for (Proxy proxy : proxies) {
-			// Try to connect via proxy. If failed try next one.
-			try {
-				uc = connectByProxy(userAgent, targetURL, proxy);
-				lastUsedProxy = proxy;
-				return uc;
-			} catch (IOException e) {
-				logger.warn("Cannot connect to: " + targetURL + ", using proxy server: " + proxy + ". Trying next " +
-						"proxy server..");
-				logger.debug(e.toString());
-				continue;
+
+		if (proxies != null) {
+			for (Proxy proxy : proxies) {
+				// Try to connect via proxy. If failed try next one.
+				try {
+					uc = connectByProxy(userAgent, targetURL, proxy);
+					lastUsedProxy = proxy;
+					return uc;
+				} catch (IOException e) {
+					logger.warn("Cannot connect to: " + targetURL + ", using proxy server: " + proxy + ". Trying next " +
+							"proxy server..");
+					logger.debug(e.toString());
+					continue;
+				}
 			}
 		}
 
@@ -145,4 +152,27 @@ public abstract class Selector {
 		disconnect(connection);
 		return doc;
 	}
+
+
+	/**
+	 * Go thorough pagination list using `getNextPage`, get content of site using `getDoc`
+	 * and collect products using `getProducts`.
+	 *
+	 * @param userAgent
+	 * @param startUrl
+	 * @return
+	 */
+	public List<Object> traverseAndCollectProducts(String userAgent, URL startUrl) throws ConnectionException {
+		List<Object> results = new LinkedList<>();
+		for (URL targetURL = startUrl; targetURL != null; ) {
+			Document doc = getDoc(userAgent, targetURL);
+			List prods = getProducts(doc);
+			if (prods != null) {
+				results.addAll(prods);
+			}
+			targetURL = getNextPage(doc);
+		}
+		return results;
+	}
+
 }

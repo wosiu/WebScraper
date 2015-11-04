@@ -1,7 +1,6 @@
 package pl.edu.mimuw.students.wosiu.scraper;
 
 import org.apache.log4j.*;
-import org.jsoup.nodes.Document;
 
 import java.net.*;
 import java.util.List;
@@ -57,30 +56,28 @@ public class Executor {
 					URL startUrl = null;
 					try {
 						startUrl = selector.prepareTargetUrl(product);
-					} catch (MalformedURLException | URISyntaxException e) {
-						logger.error("Cannot process product - url malformed: " + product + " with userAgent: " +
-								userAgent + ", selector: " + selector.getClass().getSimpleName());
+					} catch (ConnectionException e) {
+						logger.error("Cannot process product - url malformed: " + product + ", selector: " + selector
+								.getClass().getSimpleName());
 						logger.debug(e.toString());
 					}
 					// traverse through pagination
-					for (URL targetURL = startUrl; targetURL != null; ) {
-						Document doc = null;
-						try {
-							doc = selector.getDoc(userAgent, targetURL);
-						} catch (ConnectionException e) {
-							logger.error("Cannot process product: " + product + " with userAgent: " + userAgent +
-									", selector: " + selector.getClass().getSimpleName() + ", target url: " + targetURL);
-							logger.debug(e.toString());
-							break;
-						}
-						List<Object> results = selector.getProducts(doc);
-						buildResult(results, product, selector, userAgent, targetURL);
-						targetURL = selector.getNextPage(doc);
+					List<Object> results = null;
+					try {
+						results = selector.traverseAndCollectProducts(userAgent, startUrl);
+					} catch (ConnectionException e) {
+						logger.error("Cannot process product: " + product + " with selector: " +
+								getClass().getSimpleName() + ", start url: " + startUrl);
+						logger.debug(e.toString());
+						break;
 					}
+
+					buildResult(results, product, selector, userAgent, startUrl);
 				}
 			}
 		}
 	}
+
 
 	public void buildResult(List<Object> results, String productName, Selector selector, String userAgent, URL url) {
 		for (Object o : results) {
