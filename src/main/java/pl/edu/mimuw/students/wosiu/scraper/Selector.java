@@ -128,6 +128,7 @@ public abstract class Selector {
 	}
 
 	public Document read(HttpURLConnection connection) throws IOException {
+		long start = System.currentTimeMillis();
 		String line;
 		StringBuffer contentBuilder = new StringBuffer();
 		InputStreamReader isr = new InputStreamReader(connection.getInputStream());
@@ -139,6 +140,10 @@ public abstract class Selector {
 
 		String content = contentBuilder.toString();
 		Document doc = Jsoup.parse(content);
+
+		long elapsed = (System.currentTimeMillis() - start) / 1000;
+		logger.debug("Read in: " + elapsed + "ms ");
+
 		return doc;
 	}
 
