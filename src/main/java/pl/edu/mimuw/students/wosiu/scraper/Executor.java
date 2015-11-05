@@ -63,12 +63,10 @@ public class Executor {
 					}
 					// traverse through pagination
 					List<Object> results = null;
-					try {
-						results = selector.traverseAndCollectProducts(userAgent, startUrl);
-					} catch (ConnectionException e) {
+					results = selector.traverseAndCollectProducts(userAgent, startUrl);
+					if (results.isEmpty()) {
 						logger.error("Cannot process product: " + product + " with selector: " +
 								getClass().getSimpleName() + ", start url: " + startUrl);
-						logger.debug(e.toString());
 						break;
 					}
 

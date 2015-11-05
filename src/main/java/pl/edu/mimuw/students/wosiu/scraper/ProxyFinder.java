@@ -33,12 +33,8 @@ public class ProxyFinder {
 		for (Selector selector : proxySelecctors) {
 			URL source = selector.getSourceURL();
 			List<Object> res;
-			try {
-				res = selector.traverseAndCollectProducts(USER_AGENT, source);
-			} catch (ConnectionException e) {
-				logger.error("Cannot download proxy list from: " + source);
-				continue;
-			}
+			res = selector.traverseAndCollectProducts(USER_AGENT, source);
+
 			if (res != null && !res.isEmpty()) {
 				for (Object o : res) {
 					ProxyWrapper proxyW = (ProxyWrapper) o;
@@ -51,6 +47,8 @@ public class ProxyFinder {
 					set.add(proxyW.getProxy());
 				}
 				logger.debug("Added " + res.size() + " proxies.");
+			} else {
+				logger.error("Cannot download proxy list from: " + source);
 			}
 		}
 	}

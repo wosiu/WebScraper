@@ -8,9 +8,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.*;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public abstract class Selector {
 
@@ -66,7 +64,7 @@ public abstract class Selector {
 
 	public abstract List<Object> getProducts(Document document);
 
-	public abstract URL getNextPage(Document document);
+	public abstract List<URL> getNextPages(Document document);
 
 	public HttpURLConnection connectByProxy(String userAgent, URL targetURL, Proxy proxy) throws IOException {
 		long start = System.currentTimeMillis();
@@ -148,35 +146,49 @@ public abstract class Selector {
 	}
 
 	/**
-	 * Go thorough pagination list using `getNextPage`, get content of site using `getDoc`
+	 * Go thorough pagination list using `getNextPages`, get content of site using `getDoc`
 	 * and collect products using `getProducts`.
 	 *
 	 * @param userAgent
 	 * @param startUrl
 	 * @return
 	 */
-	public List<Object> traverseAndCollectProducts(String userAgent, URL startUrl) throws ConnectionException {
+	public List<Object> traverseAndCollectProducts(String userAgent, URL startUrl) {
 		List<Object> results = new LinkedList<>();
-		for (URL targetURL = startUrl; targetURL != null; ) {
+		LinkedList<URL> urlToVisit = new LinkedList<>();
+		Set<URL> urlVisited = new HashSet<>();
+		urlToVisit.add(startUrl);
+
+		while (!urlToVisit.isEmpty()) {
+			URL targetURL = urlToVisit.removeFirst();
+			if (!urlVisited.add(targetURL)) {
+				continue;
+			}
 			logger.debug("Collecting from: " + targetURL);
 			Document doc;
 			try {
 				doc = download(userAgent, targetURL);
 			} catch (ConnectionException e) {
+				logger.warn("Cannot read: " + targetURL);
+				logger.debug(e);
+				continue;
 				// if cannot process some page, return results collected by now if any and forget about next pages
-				if ( results.isEmpty() ) {
+				/*if ( results.isEmpty() ) {
 					throw e;
 				} else {
 					logger.info("Return partly result, as cannot read: " + targetURL);
 					return results;
-				}
+				}*/
 			}
 			List prods = getProducts(doc);
 			logger.debug(prods);
 			if (prods != null) {
 				results.addAll(prods);
 			}
-			targetURL = getNextPage(doc);
+			List<URL> nexts = getNextPages(doc);
+			if (nexts != null) {
+				urlToVisit.addAll(nexts);
+			}
 		}
 		return results;
 	}

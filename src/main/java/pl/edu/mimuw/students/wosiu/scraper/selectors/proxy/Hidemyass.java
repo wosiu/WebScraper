@@ -8,6 +8,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -113,7 +114,7 @@ public class Hidemyass extends Selector {
 	}
 
 	@Override
-	public URL getNextPage(Document document) {
+	public List<URL> getNextPages(Document document) {
 		String base = getSourceURL().toString();
 		document.setBaseUri(base);
 		String nextStrUrl = null;
@@ -134,6 +135,6 @@ public class Hidemyass extends Selector {
 			return null;
 		}
 
-		return res;
+		return Arrays.asList(res);
 	}
 }

@@ -105,7 +105,7 @@ public class Gatherproxy extends Selector {
 
 
 	@Override
-	public URL getNextPage(Document document) {
+	public List<URL> getNextPages(Document document) {
 		return null;
 	}
 }

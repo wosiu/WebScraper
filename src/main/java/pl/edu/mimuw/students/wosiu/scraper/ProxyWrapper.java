@@ -50,5 +50,12 @@ public class ProxyWrapper {
 		this.speed = speed;
 	}
 
+	@Override
+	public String toString() {
+		if (proxy != null) {
+			return proxy.toString();
+		}
+		return null;
+	}
 
 }

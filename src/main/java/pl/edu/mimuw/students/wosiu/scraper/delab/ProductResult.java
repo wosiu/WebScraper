@@ -17,5 +17,5 @@ public class ProductResult {
 	public void setShopURL(Object o) { fields.put("shop-url", o);}
 	public void setTime(Object o) { fields.put("time", o);}
 	public void setUserAgent(Object o) { fields.put("user-agent", o);}
-	
+
 }

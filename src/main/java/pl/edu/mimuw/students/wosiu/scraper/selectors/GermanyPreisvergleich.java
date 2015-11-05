@@ -11,9 +11,7 @@ import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class GermanyPreisvergleich extends Selector {
 
@@ -53,12 +51,13 @@ public class GermanyPreisvergleich extends Selector {
 	}
 
 	/**
-	 * Find url in pagination list for the next page. If does not exist return null.
+	 * Find next urls, e.g. get one next page from pagination list. If any does not exist return null.
+	 *
 	 * @param document
 	 * @return
 	 */
 	@Override
-	public URL getNextPage(Document document) {
+	public List<URL> getNextPages(Document document) {
 		document.setBaseUri("http://www.preisvergleich.de/");
 
 		String nextStrUrl = null;
@@ -78,7 +77,7 @@ public class GermanyPreisvergleich extends Selector {
 			logger.debug(e.toString());
 			return null;
 		}
-		return res;
+		return Arrays.asList(res);
 	}
 
 
