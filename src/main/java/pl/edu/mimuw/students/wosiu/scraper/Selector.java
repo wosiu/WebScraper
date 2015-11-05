@@ -62,7 +62,7 @@ public abstract class Selector {
 
 	public abstract URL prepareTargetUrl(String product) throws ConnectionException;
 
-	public abstract List<Object> getProducts(Document document);
+	public abstract Object getProducts(Document document);
 
 	public abstract List<URL> getNextPages(Document document);
 
@@ -180,7 +180,7 @@ public abstract class Selector {
 					return results;
 				}*/
 			}
-			List prods = getProducts(doc);
+			List prods = (List) getProducts(doc);
 			logger.debug(prods);
 			if (prods != null) {
 				results.addAll(prods);

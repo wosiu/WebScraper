@@ -43,7 +43,7 @@ public class GermanyPreisvergleich extends Selector {
 	}
 
 	@Override
-	public List<Object> getProducts(Document document) {
+	public Object getProducts(Document document) {
 		List<Object> asd = new LinkedList<>();
 		asd.add(document.toString().substring(0,30));
 
