@@ -1,6 +1,8 @@
 package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
 import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
+import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
@@ -19,8 +21,6 @@ public class GermanyPreisvergleich extends Selector {
 		super();
 		setCountry("Germany");
 		setSource("http://preisvergleich.de/");
-		//addProxy("46.101.167.103", 8118);
-		//addProxy("37.187.253.39", 8115);
 		Collection proxies = ProxyFinder.getProxies("Germany");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
@@ -29,9 +29,18 @@ public class GermanyPreisvergleich extends Selector {
 		}
 	}
 
-	//todo
+	/**
+	 * Prepare first url to visit for given product.
+	 * Output e.g. http://www.preisvergleich.de/search/result/query/xbox+one/
+	 *
+	 * @param product
+	 * @return
+	 * @throws ConnectionException
+	 */
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		URL url = Utils.stringToURL("http://www.preisvergleich.de/search/result/query/laptop/");
+		String target = getSourceURL().toString() + "search/result/query/" +
+				product.toLowerCase().trim().replaceAll(" ", "+");
+		URL url = Utils.stringToURL(target);
 		return url;
 	}
 
@@ -43,13 +52,45 @@ public class GermanyPreisvergleich extends Selector {
 		return asd;
 	}
 
+	/**
+	 * Find url in pagination list for the next page. If does not exist return null.
+	 * @param document
+	 * @return
+	 */
 	@Override
 	public URL getNextPage(Document document) {
-		return null;
+		document.setBaseUri("http://www.preisvergleich.de/");
+
+		String nextStrUrl = null;
+		URL res;
+
+		try {
+			Elements elements = document.getElementsByClass("next");
+			Element next = elements.first().select("a").first();
+			nextStrUrl = next.attr("abs:href");
+		} catch (NullPointerException e) {
+			return null;
+		}
+
+		try {
+			res = Utils.stringToURL(nextStrUrl);
+		} catch (ConnectionException e) {
+			logger.debug(e.toString());
+			return null;
+		}
+		return res;
 	}
 
+
 	@Override
-	public Document getDoc(String userAgent, URL targetURL) throws ConnectionException {
-		return super.getDoc(userAgent, targetURL);
+	public Document download(String userAgent, URL targetURL) throws ConnectionException {
+		// 1. dla linka /search/result/query/
+		// wchodzimy w pierwszy kafelek dot produktu, ale taki który nie ma "bei:", bo te przekierowuja na zewntarz
+		// 2. sprawdzamy czy ten kafelek, w ktory wchodzim to dobry produkt?
+		// 3. zwracamy document jesli link to /produkt/
+
+		//..ale czyzby? search/result/query/U2,+'Songs+of+Innocence'/ nie ma wynikow nie przekierowujacych na strony
+		// zewnetrzne, szukac w tym widoku?
+		return super.download(userAgent, targetURL);
 	}
 }

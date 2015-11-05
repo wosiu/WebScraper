@@ -31,13 +31,28 @@ public class Gatherproxy extends Selector {
 					"(\",\"PROXY_REFS\":)" +
 					"(.+)";
 
+
+	/*String example =
+			"gp.insertPrx({\"PROXY_CITY\":\"\",\"" +
+					"PROXY_COUNTRY\":\"" +
+					"Czech Republic" +
+					"\",\"PROXY_IP\":\"" +
+					"195.113.72.12" +
+					"\",\"PROXY_LAST_UPDATE\":\"" +
+					"387 33\",\"" +
+					"PROXY_PORT\":\"" +
+					"50" +
+					"\",\"PROXY_REFS\":" +
+					"null,\"PROXY_STATE\":\"\",\"PROXY_STATUS\":\"OK\",\"PROXY_TIME\":\"51\",\"PROXY_TYPE\":\"Elite\",\"PROXY_UID\":null,\"PROXY_UPTIMELD\":\"1/0\"});\n"
+				;*/
+
 	private static final Pattern pattern = Pattern.compile(PATTERN_STR);
 
 
 	public Gatherproxy(String country) {
 		super();
 
-		// TODO this is temporary
+		// TODO maybe do something?
 		try {
 			setSource("http://www.gatherproxy.com/proxylist/country/?c=" + country);
 		} catch (ConnectionException e) {

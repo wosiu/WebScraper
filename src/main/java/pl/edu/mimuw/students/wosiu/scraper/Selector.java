@@ -15,7 +15,7 @@ import java.util.List;
 public abstract class Selector {
 
 	private static int CONNECTION_TIMEOUT_MS = 4000;
-	private static int READ_TIMEOUT_MS = 7000;
+	private static int READ_TIMEOUT_MS = 10000;
 
 	private String country = null;
 	private URL sourceURL = null;
@@ -80,12 +80,13 @@ public abstract class Selector {
 		return uc;
 	}
 
-	public HttpURLConnection connect(String userAgent, URL targetURL) throws ConnectionException {
+	public Document download(String userAgent, URL targetURL) throws ConnectionException {
 		HttpURLConnection uc = null;
 
 		if (lastUsedProxy != null) {
 			try {
-				return connectByProxy(userAgent, targetURL, lastUsedProxy);
+				uc =  connectByProxy(userAgent, targetURL, lastUsedProxy);
+				return read(uc);
 			} catch (IOException e) {
 				logger.warn("Cannot use last used proxy: " + lastUsedProxy);
 				logger.debug(e.toString());
@@ -95,11 +96,11 @@ public abstract class Selector {
 
 		if (proxies != null) {
 			for (Proxy proxy : proxies) {
-				// Try to connect via proxy. If failed try next one.
+				// Try to download via proxy. If failed try next one.
 				try {
 					uc = connectByProxy(userAgent, targetURL, proxy);
 					lastUsedProxy = proxy;
-					return uc;
+					return read(uc);
 				} catch (IOException e) {
 					logger.warn("Cannot connect to: " + targetURL + ", using proxy server: " + proxy + ". Trying next " +
 							"proxy server..");
@@ -109,25 +110,24 @@ public abstract class Selector {
 			}
 		}
 
-		// if all proxies failed try to connect directly
+		// if all proxies failed try to download directly
 		try {
 			logger.info("Connecting directly (from local IP) to: " + targetURL);
 			uc = (HttpURLConnection) targetURL.openConnection();
 			uc.setRequestProperty("User-Agent", userAgent);
 			uc.connect();
-			return uc;
+			return read(uc);
 		} catch (IOException e) {
 			logger.warn("Cannot connect directly to: " + targetURL);
 		}
 
+		if (uc != null) {
+			uc.disconnect();
+		}
 		throw new ConnectionException("Cannot connect to: " + targetURL + ", userAgent: " + userAgent);
 	}
 
-	public void disconnect(HttpURLConnection connection) {
-		connection.disconnect();
-	}
-
-	public String download(HttpURLConnection connection) throws IOException {
+	public Document read(HttpURLConnection connection) throws IOException {
 		String line;
 		StringBuffer contentBuilder = new StringBuffer();
 		InputStreamReader isr = new InputStreamReader(connection.getInputStream());
@@ -137,25 +137,10 @@ public abstract class Selector {
 			contentBuilder.append(line + "\n");
 		}
 
-		return contentBuilder.toString();
-	}
-
-	public Document getDoc(String userAgent, URL targetURL) throws ConnectionException {
-		HttpURLConnection connection = connect(userAgent, targetURL);
-		String content = null;
-		try {
-			content = download(connection);
-		} catch (IOException e) {
-			logger.debug(e.toString());
-			disconnect(connection);
-			throw new ConnectionException("Cannot read content from connection: " + targetURL + ", userAgent:  "
-					+ userAgent);
-		}
+		String content = contentBuilder.toString();
 		Document doc = Jsoup.parse(content);
-		disconnect(connection);
 		return doc;
 	}
-
 
 	/**
 	 * Go thorough pagination list using `getNextPage`, get content of site using `getDoc`
@@ -168,8 +153,21 @@ public abstract class Selector {
 	public List<Object> traverseAndCollectProducts(String userAgent, URL startUrl) throws ConnectionException {
 		List<Object> results = new LinkedList<>();
 		for (URL targetURL = startUrl; targetURL != null; ) {
-			Document doc = getDoc(userAgent, targetURL);
+			logger.debug("Collecting from: " + targetURL);
+			Document doc;
+			try {
+				doc = download(userAgent, targetURL);
+			} catch (ConnectionException e) {
+				// if cannot process some page, return results collected by now if any and forget about next pages
+				if ( results.isEmpty() ) {
+					throw e;
+				} else {
+					logger.info("Return partly result, as cannot read: " + targetURL);
+					return results;
+				}
+			}
 			List prods = getProducts(doc);
+			logger.debug(prods);
 			if (prods != null) {
 				results.addAll(prods);
 			}

@@ -21,55 +21,12 @@ import java.util.regex.Matcher;
 
 public class Temp {
 
-	public static void main2(String[] args) {
-		String IPADDRESS_PATTERN =
-				"(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)";
-/*
-		String patternString = "(.+)(PROXY_COUNTRY\":\")([a-zA-Z ]+)(\",\"PROXY_IP\":\")(.+)(\"," +
-				"\"PROXY_LAST_UPDATE\":\")(.+)(PROXY_PORT\":\")([a-zA-Z ]+)(.+)(\",\"PROXY_REFS\":)(.+)";
-
-		String str = "gp.insertPrx({\"PROXY_CITY\":\"\",\"PROXY_COUNTRY\":\"Czech Republic\",\"PROXY_IP\":\"195.113" +
-				".72.12\",\"PROXY_LAST_UPDATE\":\"387 33\",\"PROXY_PORT\":\"50\",\"PROXY_REFS\":null,\"PROXY_STATE\":\"\",\"PROXY_STATUS\":\"OK\",\"PROXY_TIME\":\"51\",\"PROXY_TYPE\":\"Elite\",\"PROXY_UID\":null,\"PROXY_UPTIMELD\":\"1/0\"});\n";
-*/
-
-		String patternString =
-				"(.+)" +
-				"(PROXY_COUNTRY\":\")" +
-				"([a-zA-Z ]+)" +
-				"(\",\"PROXY_IP\":\")" +
-				"(.+)" +
-				"(\",\"PROXY_LAST_UPDATE\":\")" +
-				"(.+)" +
-				"(PROXY_PORT\":\")" +
-				"([0-9a-fA-F]+)" +
-				"(\",\"PROXY_REFS\":)" +
-				"(.+)"
-/**/				;
-
-		String example =
-				"gp.insertPrx({\"PROXY_CITY\":\"\",\"" +
-				"PROXY_COUNTRY\":\"" +
-				"Czech Republic" +
-				"\",\"PROXY_IP\":\"" +
-				"195.113.72.12" +
-				"\",\"PROXY_LAST_UPDATE\":\"" +
-				"387 33\",\"" +
-				"PROXY_PORT\":\"" +
-				"50" +
-				"\",\"PROXY_REFS\":" +
-				"null,\"PROXY_STATE\":\"\",\"PROXY_STATUS\":\"OK\",\"PROXY_TIME\":\"51\",\"PROXY_TYPE\":\"Elite\",\"PROXY_UID\":null,\"PROXY_UPTIMELD\":\"1/0\"});\n"
-/**/				;
-
-
-
-	}
-
 	public static void main(String[] args) throws IOException, URISyntaxException {
 
 		///Jsoup.connect(uri).userAgent(userAgent).get()
 		//Jsoup.connect(uri).get()
 
-		String base = "http://www.gatherproxy.com/proxylist/country/?c=Czech%20Republic";
+		String base = "http://www.preisvergleich.de/produkt/Microsoft-Xbox-One-500GB/33405853-8541/";
 		URI uri = new URI(base);
 		URL url = uri.toURL();
 
@@ -92,41 +49,29 @@ public class Temp {
 		}
 
 		Document document = Jsoup.parse(tmp.toString());
-
 		uc.disconnect();
+		document.setBaseUri("http://www.preisvergleich.de/");
 
-		document.setBaseUri(base);
-
-		//		System.out.println(doc);
-
-
+		String nextStrUrl = null;
+		URL res;
 
 		try {
-			/*Elements elements = doc.getElementsByClass("next");
+			Elements elements = document.getElementsByClass("next");
 			Element next = elements.first().select("a").first();
-			String nextStrUrl = next.attr("abs:href");
-			System.out.println(nextStrUrl);*/
-
-			/*Source htmlSource = new Source(tmp.toString());
-			Segment htmlSeg = new Segment(htmlSource, 0, htmlSource.length());
-			Renderer htmlRend = new Renderer(htmlSeg);
-			System.out.println(htmlRend.toString());*/
-
-			/*String html = tmp.toString(); //your external method to get html from memory, file, url etc.
-			HtmlCompressor compressor = new HtmlCompressor();
-			String compressedHtml = compressor.compress(html);
-			System.out.println(compressedHtml);*/
-
-
-
-		} catch (
-				NullPointerException e
-				)
-
-		{
-			System.out.print("dupa");
-
+			nextStrUrl = next.attr("abs:href");
+		} catch (NullPointerException e) {
+			//return null;
 		}
+
+		try {
+			res = Utils.stringToURL(nextStrUrl);
+		} catch (ConnectionException e) {
+			//logger.debug(e.toString());
+			//return null;
+		}
+
+
+
 
 
 	}
