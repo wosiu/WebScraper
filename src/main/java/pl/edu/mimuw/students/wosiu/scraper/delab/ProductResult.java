@@ -1,4 +1,5 @@
 package pl.edu.mimuw.students.wosiu.scraper.delab;
+import java.net.Proxy;
 import java.util.*;
 
 public class ProductResult {
@@ -9,13 +10,25 @@ public class ProductResult {
 	}
 	
 	public void setCountry(Object o) { fields.put("country", o);}
-	public void setSearcher(Object o) { fields.put("searcher", o);}
-	public void setProduct(Object o) { fields.put("product", o);}
-	public void setSearchURL(Object o) { fields.put("search-url", o);}
+	public void setSearcher(String o) { fields.put("searcher", o);}
+	public void setProduct(String o) { fields.put("product", o);}
+	// TODO rename setSearchListURL
+	public void setSearchURL(String o) { fields.put("search-url", o);}
 	public void setPrice (Object o) { fields.put("price", o);}
-	public void setShop(Object o) { fields.put("shop", o);}
-	public void setShopURL(Object o) { fields.put("shop-url", o);}
-	public void setTime(Object o) { fields.put("time", o);}
+	// TODO rename setShopName
+	public void setShop(String o) { fields.put("shop", o);}
+	// TODO rename setProductURL
+	public void setShopURL(String o) { fields.put("shop-url", o);}
+	public void setTime(long o) { fields.put("time", o);}
+	public void setTime() { fields.put("time", new Date().getTime()); }
 	public void setUserAgent(Object o) { fields.put("user-agent", o);}
+	public void setProxy(Proxy proxy) { fields.put("proxy", proxy.toString());}
+	public void setPercentageShopRating(int percentage) { fields.put("shop-rating", percentage);}
+	public void setShopClientsNum(int num) { fields.put("shop-clients-num", num);}
+	public void set (String key, Object value) { fields.put(key, value);}
 
+	@Override
+	public String toString() {
+		return fields.toString();
+	}
 }

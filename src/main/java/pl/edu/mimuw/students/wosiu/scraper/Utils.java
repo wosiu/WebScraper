@@ -20,10 +20,16 @@ public class Utils {
 	}
 
 	public static URL getRedirectUrl(String url) {
-		URL redirectedUrl = null;
+		URL orignal = null;
+		try {
+			orignal = new URL(url);
+		} catch (MalformedURLException e) {
+			return null;
+		}
+		URL redirectedUrl = orignal;
 		URLConnection con = null;
 		try {
-			con = new URL(url).openConnection();
+			con = orignal.openConnection();
 			con.connect();
 			InputStream is = con.getInputStream();
 			is.close();
@@ -36,5 +42,4 @@ public class Utils {
 
 		return redirectedUrl;
 	}
-
 }

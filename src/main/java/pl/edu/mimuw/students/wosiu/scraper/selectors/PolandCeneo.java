@@ -90,9 +90,9 @@ public class PolandCeneo extends Selector {
 		product.setProduct(getProduct(element));
 		product.setSearcher("Ceneo");
 		product.setSearchURL(getSourceURL().toString());
-		product.setShopURL(shopURL);
+		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
-		product.setTime(new Date().getTime());
+		product.setTime();
 		return product;
 	}
 
@@ -100,7 +100,7 @@ public class PolandCeneo extends Selector {
 		return Utils.getRedirectUrl(getSourceURL() + element.select("a[href]").get(0).attr("href"));
 	}
 
-	private Object getProduct(Element element) {
+	private String getProduct(Element element) {
 		return element.select("div.product-name").get(0).getElementsByClass("short-name__txt").text();
 	}
 

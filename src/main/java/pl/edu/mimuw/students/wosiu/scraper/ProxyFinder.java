@@ -25,6 +25,7 @@ public class ProxyFinder {
 			new Gatherproxy("Italy"),
 			new Gatherproxy("United%20Kingdom"),*/
 			new Gatherproxy("Germany"),
+			new Gatherproxy("Hungary"),
 	};
 
 
