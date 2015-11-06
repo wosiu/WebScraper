@@ -22,7 +22,13 @@ public class ProductResult {
 	public void setTime(long o) { fields.put("time", o);}
 	public void setTime() { fields.put("time", new Date().getTime()); }
 	public void setUserAgent(Object o) { fields.put("user-agent", o);}
-	public void setProxy(Proxy proxy) { fields.put("proxy", proxy.toString());}
+	public void setProxy(Proxy proxy) {
+		if (proxy == null) {
+			fields.put("proxy", "LOCAL");
+		} else {
+			fields.put("proxy", proxy.toString());
+		}
+	}
 	public void setPercentageShopRating(int percentage) { fields.put("shop-rating", percentage);}
 	public void setShopClientsNum(int num) { fields.put("shop-clients-num", num);}
 	public void set (String key, Object value) { fields.put(key, value);}

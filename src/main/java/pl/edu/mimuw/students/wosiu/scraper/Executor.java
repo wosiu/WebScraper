@@ -65,7 +65,7 @@ public class Executor {
 					List<Object> results = null;
 					results = selector.traverseAndCollectProducts(userAgent, startUrl);
 					if (results.isEmpty()) {
-						logger.error("Cannot process product: " + product + " with selector: " +
+						logger.error("Cannot process product: '" + product + "' with selector: " +
 								getClass().getSimpleName() + ", start url: " + startUrl);
 						break;
 					}

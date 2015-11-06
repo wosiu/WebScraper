@@ -74,7 +74,7 @@ public abstract class Selector {
 		uc.setReadTimeout(READ_TIMEOUT_MS);
 		uc.connect();
 		long elapsed = (System.currentTimeMillis() - start) / 1000;
-		logger.debug("Connected in: " + elapsed + "ms using proxy: " + proxy);
+		logger.debug("Connected in: " + elapsed + "ms to: " + targetURL + " using proxy: " + proxy);
 		return uc;
 	}
 
@@ -183,8 +183,11 @@ public abstract class Selector {
 			List prods = (List) getProducts(doc);
 			if (prods != null) {
 				results.addAll(prods);
+				logger.debug("Products number: " + prods.size());
+			} else {
+				logger.debug("Products number: 0");
 			}
-			logger.debug("prods downloaded: " + prods.size());
+
 			List<URL> nexts = getNextPages(doc);
 			if (nexts != null) {
 				urlToVisit.addAll(nexts);
