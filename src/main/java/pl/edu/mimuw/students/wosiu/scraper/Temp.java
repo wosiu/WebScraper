@@ -51,7 +51,7 @@ public class Temp {
 		///Jsoup.connect(uri).userAgent(userAgent).get()
 		//Jsoup.connect(uri).get()
 
-		String base = "http://www.pazaruvaj.com/CategorySearch.php?st=How+to+Train+Your+Dragon+2";
+		String base = "http://www.kelkoo.co.uk/c-146401-fridges.html";
 		//base = "http://www.arukereso.hu/mobiltelefon-c3277/htc/one-m9-32gb-p272441289/";
 		URI uri = new URI(base);
 		URL url = uri.toURL();
@@ -78,8 +78,16 @@ public class Temp {
 		uc.disconnect();
 		document.setBaseUri("http://www.preisvergleich.de/");
 
-		System.out.println( document.select("div.image-link-container > a[href].image").first().attr
-				("abs:href") );
+		List <URL> urls = new ArrayList<>();
+		document.setBaseUri("http://www.kelkoo.co.uk/");
+		for ( Element element : document.select(
+				"div.result > div.result-link > div.total-offers > a[href]") ) {
+			str = element.attr("abs:href");
+			try {
+				urls.add(Utils.stringToURL(str));
+			} catch (ConnectionException e) {}
+		}
+		System.out.println(urls);
 		/*
 		String nextStrUrl = null;
 		URL res;

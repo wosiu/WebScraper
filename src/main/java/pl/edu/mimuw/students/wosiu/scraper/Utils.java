@@ -30,9 +30,11 @@ public class Utils {
 			return null;
 		}
 		URL redirectedUrl = orignal;
-		URLConnection con = null;
+		HttpURLConnection con = null;
 		try {
-			con = orignal.openConnection();
+			con = (HttpURLConnection) orignal.openConnection();
+			con.setInstanceFollowRedirects(true);
+			con.setRequestProperty("User-Agent", USER_AGENT);
 			con.connect();
 			InputStream is = con.getInputStream();
 			is.close();
@@ -41,8 +43,46 @@ public class Utils {
 		}
 		if (con != null) {
 			redirectedUrl = con.getURL();
+			con.disconnect();
 		}
 
 		return redirectedUrl;
 	}
+
+	/*public static URL redirect2(String url) {
+		HttpURLConnection conn = null;
+		try {
+			conn = (HttpURLConnection) (new URL(url).openConnection());
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		try {
+			conn.connect();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		int responseCode = 0;
+		try {
+			responseCode = conn.getResponseCode();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (responseCode == 301) {
+			String location = conn.getHeaderField("Location");
+			try {
+				conn = (HttpURLConnection) (new URL(location).openConnection());
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+			conn.setInstanceFollowRedirects(false);
+			conn.setConnectTimeout(3000);
+			conn.setReadTimeout(3000);
+			try {
+				conn.connect();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		return conn.getURL();
+	}*/
 }

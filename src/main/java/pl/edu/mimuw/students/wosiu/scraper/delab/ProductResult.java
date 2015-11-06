@@ -31,6 +31,7 @@ public class ProductResult {
 	}
 	public void setPercentageShopRating(int percentage) { fields.put("shop-rating", percentage);}
 	public void setShopClientsNum(int num) { fields.put("shop-clients-num", num);}
+	public void setDeliveryCost(int cost) { fields.put("delivery-cost", cost); }
 	public void set (String key, Object value) { fields.put(key, value);}
 
 	@Override
