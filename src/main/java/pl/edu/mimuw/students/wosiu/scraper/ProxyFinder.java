@@ -24,10 +24,11 @@ public class ProxyFinder {
 			new Gatherproxy("Hungary"),
 			new Gatherproxy("Italy"),
 			new Gatherproxy("United%20Kingdom"),*/
-			new Gatherproxy("Germany"),
-			new Gatherproxy("Hungary"),
+			//new Gatherproxy("Germany"),
+			//new Gatherproxy("Hungary"),
 			new Gatherproxy("Croatia"),
-			new Gatherproxy("Austria")
+			new Gatherproxy("Austria"),
+			//new Gatherproxy("Bulgaria"),
 	};
 
 
