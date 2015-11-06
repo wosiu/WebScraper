@@ -9,8 +9,6 @@ import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
-import java.io.IOException;
-import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
@@ -18,13 +16,18 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CroatiaJeftinije extends Selector {
+/*
+Algorytm:
+1. Pobiera liste elementow z widoku 1
+2. Na podstawie powyzszego produkty.
+ */
+public class CzechHledejCeny extends Selector {
 
-	public CroatiaJeftinije() throws ConnectionException {
+	public CzechHledejCeny() throws ConnectionException {
 		super();
-		setCountry("Croatia");
-		setSource("http://www.jeftinije.hr/");
-		Collection proxies = ProxyFinder.getProxies("Croatia");
+		setCountry("Czech");
+		setSource("http://hledejceny.cz");
+		Collection proxies = ProxyFinder.getProxies("Czech");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {
@@ -33,33 +36,19 @@ public class CroatiaJeftinije extends Selector {
 	}
 
 	@Override
-	public Document download(String userAgent, URL targetURL) throws ConnectionException {
-		final Document doc = super.download(userAgent, targetURL);
-
-		String atr = doc.getElementsByClass("innerProductBox").first()
-				.child(2).child(2)
-				.select("a[href]")
-				.get(0).attr("href");
-		return super.download(userAgent, Utils.stringToURL(atr));
-	}
-
-	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		return Utils.stringToURL(
-				getSourceURL() + "Trazenje/Proizvodi?q=" + product.toLowerCase().trim().replaceAll(" ", "+")
-		);
+		return Utils.stringToURL(getSourceURL() + "/?s=" + product.toLowerCase().trim().replaceAll(" ", "+"));
 	}
 
 	@Override
 	public List<URL> getNextPages(Document document) {
 		final List<URL> urls = new LinkedList<>();
-		final Elements elements = document.getElementsByClass("innerProductBox");
+		final Elements elements = document.getElementsByClass("product");
 
 		for (Element element : elements) {
 			try {
-				urls.add(new URL(element.child(2).child(2)
-						.select("a[href]")
-						.get(0).attr("href")));
+				final String href = element.getElementsByClass("price-box").first().child(1).child(1).attr("href");
+				urls.add(new URL(href));
 			} catch (MalformedURLException e) {
 				logger.warn(e.getMessage());
 			}
@@ -69,13 +58,19 @@ public class CroatiaJeftinije extends Selector {
 
 	@Override
 	public Object getProducts(Document document) {
+		System.out.println(document);
 		List<ProductResult> products = new LinkedList<>();
-		final Elements elements = document.getElementsByClass("offerByBrandB");
 
-		String product = document.select("h1[itemprop]").first().text();
-		Date date = new Date();
-		for (Element element : elements) {
-			products.add(buildProductResult(element, product, date));
+		final Elements elements = document.select("div.item.first");
+
+		try {
+			String product = document.getElementById("prodname").text().trim();
+			Date date = new Date();
+			for (Element element : elements) {
+				products.add(buildProductResult(element, product, date));
+			}
+		} catch (NullPointerException e) {
+			logger.warn(e.getMessage());
 		}
 
 		return products;
@@ -84,10 +79,10 @@ public class CroatiaJeftinije extends Selector {
 	private ProductResult buildProductResult(Element element, String productName, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("Croatia");
+		product.setCountry("Czech");
 		product.setPrice(getPrice(element));
 		product.setProduct(productName);
-		product.setSearcher("Jeftinije");
+		product.setSearcher("HledejCeny");
 		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
 		product.setTime(date.getTime());
@@ -95,22 +90,11 @@ public class CroatiaJeftinije extends Selector {
 	}
 
 	public URL getShopURL(Element element) {
-		return Utils.getRedirectUrl(element.select("a[href]").first().attr("href"));
+		return Utils.getRedirectUrl(element.getElementsByClass("pricevat").first().child(0).attr("href"));
 	}
 
 
 	private String getPrice(Element element) {
-		return element.getElementsByClass("price").first().child(0).text();
-	}
-
-	@Override
-	public Document read(HttpURLConnection connection) throws IOException {
-		Document doc = super.read(connection);
-
-		if (doc.toString().contains("captcha")) { //TODO poprawic
-			throw new IOException("captcha occured");
-		}
-
-		return doc;
+		return element.getElementsByClass("pricevat").first().child(0).text();
 	}
 }

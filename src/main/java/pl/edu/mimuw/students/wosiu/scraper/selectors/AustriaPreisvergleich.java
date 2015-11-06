@@ -12,6 +12,10 @@ import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 import java.net.URL;
 import java.util.*;
 
+/**
+ * Algorytm:
+ * 1. Pobieramy wszystkie pozycje z widoku 1 z uwzględnieniem paginacji.
+ */
 public class AustriaPreisvergleich extends Selector {
 
 	public AustriaPreisvergleich() throws ConnectionException {
