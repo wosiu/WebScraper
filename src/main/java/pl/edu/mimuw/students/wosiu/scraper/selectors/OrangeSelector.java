@@ -10,6 +10,7 @@ import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.Array;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -47,16 +48,9 @@ public abstract class OrangeSelector extends Selector {
 		return url;
 	}
 
-	@Override
-	public List<ProductResult> getProducts(Document document) {
+	public List<ProductResult> processOfferBox(Document document) {
 		Elements elements = document.getElementsByClass("offer-box-container");
 		List<ProductResult> results = new ArrayList<>(elements.size());
-
-		if (document.select("#micro-data > div.row.category-page-wrapper > div.alert.alert-warning")
-				.size() > 0) {
-			logger.debug("Empty search page occurred");
-			return results;
-		}
 
 		for (Element element : elements) {
 			ProductResult result = new ProductResult();
@@ -90,49 +84,32 @@ public abstract class OrangeSelector extends Selector {
 	}
 
 	@Override
-	public List<URL> getNextPages(Document document) {
-		// do not paginate
-		return null;
+	public List<ProductResult> getProducts(Document document) {
+
+		if (document.select("#micro-data > div.row.category-page-wrapper > div.alert.alert-warning").size() > 0) {
+			logger.debug("Empty search page occurred");
+			return Arrays.asList();
+		}
+
+		return processOfferBox(document);
 	}
 
+	/**
+	 * Do not paginate. Collect links from first page.
+	 * @param document
+	 * @return
+	 */
 	@Override
-	public Document download(String userAgent, URL targetURL) throws ConnectionException {
-		if (targetURL.toString().contains("/CategorySearch.php?")) {
-			// probably need one more step
-			Document document = super.download(userAgent, targetURL);
-			document.setBaseUri(getSourceURL().toString());
-			String nextStrUrl = null;
+	public List<URL> getNextPages(Document document) {
+		Elements elements = document.getElementsByClass("product-box-container");
+		List <URL> urls = new ArrayList<>(elements.size());
+		for ( Element element : document.select("div.image-link-container > a[href].image") ) {
+			String str = element.attr("abs:href");
 			try {
-				Element box = document.getElementsByClass("product-box-container").first();
-				Element next = null;
-
-				Element orange = box.getElementsByClass("button-orange").first();
-				Element grey  = box.getElementsByClass("button-grey").first();
-
-				if (grey != null) {
-					next = grey.select("a").first();
-				} else if (orange != null) {
-					next = orange.select("a").first();
-				} else {
-					// no button
-					return document;
-				}
-
-				nextStrUrl = next.attr("abs:href");
-
-				if (nextStrUrl.contains("Jump.php")) {
-					// link redirects outside searcher
-					// so there is no product list for this product
-					return document;
-				}
-
-			} catch (NullPointerException e) {
-				// probably no results
-				return super.download(userAgent, targetURL);
-			}
-			targetURL = Utils.stringToURL(nextStrUrl);
+				urls.add(Utils.stringToURL(str));
+			} catch (ConnectionException e) {}
 		}
-		Document document = super.download(userAgent, targetURL);
-		return document;
+		logger.debug("Collected " + urls.size() + " urls to visit");
+		return urls;
 	}
 }
