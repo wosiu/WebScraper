@@ -15,6 +15,11 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
+/**
+ * Algorytm:
+ * 1. Z widoku pierwszego wybieramy pierwszą wyszukaną pozycję, przechodzimy do widoku 2.
+ * 2. Pobieramy wszystkie pozycje z widoku 2.
+ */
 public class PolandCeneo extends Selector {
 
 	public PolandCeneo() throws ConnectionException {
