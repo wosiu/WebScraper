@@ -51,7 +51,7 @@ public class Temp {
 		///Jsoup.connect(uri).userAgent(userAgent).get()
 		//Jsoup.connect(uri).get()
 
-		String base = "http://www.kelkoo.co.uk/c-146401-fridges.html";
+		String base = "http://www.kelkoo.co.uk/ctl/do/search?siteSearchQuery=Fujifilm+X+T10+body";
 		//base = "http://www.arukereso.hu/mobiltelefon-c3277/htc/one-m9-32gb-p272441289/";
 		URI uri = new URI(base);
 		URL url = uri.toURL();
@@ -78,16 +78,27 @@ public class Temp {
 		uc.disconnect();
 		document.setBaseUri("http://www.preisvergleich.de/");
 
-		List <URL> urls = new ArrayList<>();
-		document.setBaseUri("http://www.kelkoo.co.uk/");
-		for ( Element element : document.select(
-				"div.result > div.result-link > div.total-offers > a[href]") ) {
-			str = element.attr("abs:href");
-			try {
-				urls.add(Utils.stringToURL(str));
-			} catch (ConnectionException e) {}
+		List<ProductResult> results = new ArrayList<>();
+
+		for (Element element : document.select("section[role=main].od-main > div.od-results > div.result.js-result")) {
+			ProductResult result = new ProductResult();
+			String price = element.select("p.price > strong.value").first().text();
+			result.setPrice(price);
+
+			String shopname = element.select("p.merchant-name").first().text();
+			result.setShop(shopname);
+
+			String prod = element.select("h3.result-title").text();
+			result.setProduct(prod);
+
+			String link = element.select("a[href].result-link").first().attr("href");
+			String redirected = Utils.getRedirectUrl(link).toString();
+			result.setShopURL((redirected != null) ? redirected : link);
+
+			results.add(result);
 		}
-		System.out.println(urls);
+
+		System.out.println(results);
 		/*
 		String nextStrUrl = null;
 		URL res;

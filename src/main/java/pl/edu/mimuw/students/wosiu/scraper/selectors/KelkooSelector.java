@@ -23,7 +23,12 @@ public abstract class KelkooSelector extends Selector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		String target = getSourceURL().toString() + "/ctl/do/search?siteSearchQuery=" + product.trim();
+		try {
+			product = URLEncoder.encode(product.trim(), "UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			logger.error(e);
+		}
+		String target = getSourceURL().toString() + "ctl/do/search?siteSearchQuery=" + product;
 		URL url = Utils.stringToURL(target);
 		return url;
 	}
@@ -37,7 +42,7 @@ public abstract class KelkooSelector extends Selector {
 		}
 		List<ProductResult> results = new ArrayList<>();
 
-		for (Element element : document.select("div.result")) {
+		for (Element element : document.select("section[role=main].od-main > div.od-results > div.result.js-result")) {
 			ProductResult result = new ProductResult();
 
 			String price = element.select("p.price > strong.value").first().text();
@@ -64,7 +69,8 @@ public abstract class KelkooSelector extends Selector {
 	}
 
 	/**
-	 * Do not paginate. Collect links from first page.
+	 * Do not paginate. Collect links from first page if product name is too generall.
+	 *
 	 * @param document
 	 * @return
 	 */
