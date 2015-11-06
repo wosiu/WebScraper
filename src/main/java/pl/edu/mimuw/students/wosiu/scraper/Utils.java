@@ -7,6 +7,9 @@ import java.io.InputStream;
 import java.net.*;
 
 public class Utils {
+
+	public static String USER_AGENT = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36";
+
 	public static URL stringToURL(String url) throws ConnectionException {
 		URL targetURL = null;
 		try {

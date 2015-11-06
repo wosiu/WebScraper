@@ -15,9 +15,6 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
-/**
- * Created by maciej on 05.11.15.
- */
 public class PolandCeneo extends Selector {
 
 	public PolandCeneo() throws ConnectionException {
@@ -33,29 +30,13 @@ public class PolandCeneo extends Selector {
 
 	@Override
 	public List<URL> getNextPages(Document document) {
-		document.setBaseUri(getSourceURL().toString());
-
-		String nextStrUrl = null;
-		URL res = null;
-
-		try {
-			Elements elements = document.getElementsByClass("arrow-next");
-			Element next = elements.first().select("a").first();
-			nextStrUrl = next.attr("abs:href");
-			res = Utils.stringToURL(nextStrUrl);
-		} catch (ConnectionException e) {
-			logger.debug(e.toString());
-		} catch (NullPointerException e) {
-
-		}
-
-		return Arrays.asList(res);
+		return null;
 	}
 
 	@Override
 	public Document download(String userAgent, URL targetURL) throws ConnectionException {
 		final Document doc = super.download(userAgent, targetURL);
-		String atr = doc.select("div[data-pid]").get(0)
+		String atr = doc.select("div[data-pid]").first()
 				.getElementsByClass("btn-compare-outer")
 				.select("a[href]")
 				.get(0).attr("href");
@@ -68,12 +49,12 @@ public class PolandCeneo extends Selector {
 		final Elements elements = document
 				.select("tr[data-offer-price]");
 
+		Date date = new Date();
 		for (Element element : elements) {
 			if (isProperElement(element)) {
-				products.add(buildProductResult(element));
+				products.add(buildProductResult(element, date));
 			}
 		}
-
 
 		return products;
 	}
@@ -82,14 +63,13 @@ public class PolandCeneo extends Selector {
 		return element.select("div.product-name").size() > 0;
 	}
 
-	private ProductResult buildProductResult(Element element) {
+	private ProductResult buildProductResult(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
 		product.setCountry("Poland");
 		product.setPrice(getPrice(element));
 		product.setProduct(getProduct(element));
 		product.setSearcher("Ceneo");
-		product.setSearchURL(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
 		product.setTime();
@@ -97,7 +77,7 @@ public class PolandCeneo extends Selector {
 	}
 
 	public URL getShopURL(Element element) {
-		return Utils.getRedirectUrl(getSourceURL() + element.select("a[href]").get(0).attr("href"));
+		return Utils.getRedirectUrl(getSourceURL() + element.select("a[href]").first().attr("href"));
 	}
 
 	private String getProduct(Element element) {

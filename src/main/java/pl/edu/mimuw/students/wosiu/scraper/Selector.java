@@ -181,10 +181,10 @@ public abstract class Selector {
 				}*/
 			}
 			List prods = (List) getProducts(doc);
-			logger.debug(prods);
 			if (prods != null) {
 				results.addAll(prods);
 			}
+			logger.debug("prods downloaded: " + prods.size());
 			List<URL> nexts = getNextPages(doc);
 			if (nexts != null) {
 				urlToVisit.addAll(nexts);
