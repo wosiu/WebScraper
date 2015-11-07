@@ -74,7 +74,7 @@ public abstract class Selector {
 		uc.setReadTimeout(READ_TIMEOUT_MS);
 		uc.connect();
 		long elapsed = (System.currentTimeMillis() - start) / 1000;
-		logger.debug("Connected in: " + elapsed + "ms to: " + targetURL + " using proxy: " + proxy);
+		logger.debug("Connected in: " + elapsed + "s to: " + targetURL + " using proxy: " + proxy);
 		return uc;
 	}
 
@@ -140,7 +140,7 @@ public abstract class Selector {
 		Document doc = Jsoup.parse(content);
 
 		long elapsed = (System.currentTimeMillis() - start) / 1000;
-		logger.debug("Read in: " + elapsed + "ms ");
+		logger.debug("Read in: " + elapsed + "s ");
 
 		return doc;
 	}

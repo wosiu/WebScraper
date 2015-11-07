@@ -46,6 +46,8 @@ public class Executor {
 	}
 
 	public void run(String JSONconfigPath) {
+		long start = System.currentTimeMillis();
+
 		Config conf;
 		try {
 			conf = new Config(JSONconfigPath);
@@ -91,6 +93,9 @@ public class Executor {
 				}
 			}
 		}
+		long elapsed = (System.currentTimeMillis() - start) / 1000 / 60;
+		logger.info("Total time: " + elapsed + "min ");
+
 	}
 
 
