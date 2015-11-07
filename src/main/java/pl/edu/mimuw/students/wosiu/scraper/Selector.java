@@ -125,6 +125,9 @@ public abstract class Selector {
 		throw new ConnectionException("Cannot connect to: " + targetURL + ", userAgent: " + userAgent);
 	}
 
+	/**
+	 * Read and disconnect connection
+	 */
 	public Document read(HttpURLConnection connection) throws IOException {
 		long start = System.currentTimeMillis();
 		String line;
@@ -136,6 +139,8 @@ public abstract class Selector {
 			contentBuilder.append(line + "\n");
 		}
 
+		connection.disconnect();
+		
 		String content = contentBuilder.toString();
 		Document doc = Jsoup.parse(content);
 
