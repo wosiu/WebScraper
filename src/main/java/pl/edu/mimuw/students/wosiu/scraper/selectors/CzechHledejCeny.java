@@ -25,7 +25,7 @@ public class CzechHledejCeny extends Selector {
 
 	public CzechHledejCeny() throws ConnectionException {
 		super();
-		setCountry("Czech");
+		setCountry("Czech Republic");
 		setSource("http://hledejceny.cz");
 		Collection proxies = ProxyFinder.getProxies("Czech");
 		if (proxies == null || proxies.isEmpty() ) {

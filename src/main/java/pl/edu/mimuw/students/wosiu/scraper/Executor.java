@@ -57,12 +57,15 @@ public class Executor {
 		}
 
 		CSVWriter writer = null;
+		int recordCounter = 0;
+
 		try {
 			writer = new CSVWriter(new FileWriter(conf.getOutputPath()), '\t');
 		} catch (IOException e) {
 			logger.error(e.toString());
 			return;
 		}
+
 		// TODO moge do DELab executor
 		// TODO enum with ProductResult attr and then build CSV respecting header with enum values
 		String[] CSVheader = {"Product query", "Product name", "Country", "Search engine", "Price", "Shop name",
@@ -89,19 +92,27 @@ public class Executor {
 						break;
 					}
 
-					appendResults(writer, results, product, selector, userAgent, startUrl);
+					recordCounter += appendResults(writer, results, product, selector, userAgent, startUrl);
 				}
 			}
 		}
+
+		try {
+			writer.flush();
+			writer.close();
+		} catch (IOException e) {
+			logger.error(e);
+		}
 		long elapsed = (System.currentTimeMillis() - start) / 1000 / 60;
-		logger.info("Total time: " + elapsed + "min ");
+		logger.info("Total time: " + elapsed + "min . Wrote: " + recordCounter + " records.");
 
 	}
 
 
-	public void appendResults(CSVWriter writer, List<Object> results, String productName, Selector selector, String
+	public int appendResults(CSVWriter writer, List<Object> results, String productName, Selector selector, String
 			userAgent, URL url) {
 
+		int records = 0;
 		for (Object o : results) {
 			ProductResult res = (ProductResult) o;
 			/*
@@ -113,7 +124,17 @@ public class Executor {
 					res.getShop(), res.getProxy(), res.getShopURL(), url.toString(), userAgent
 			};
 			writer.writeNext(record);
-
+			records++;
 		}
+		try {
+			writer.flush();
+		} catch (IOException e) {
+			logger.error("CSV writer error");
+			logger.error(e);
+		}
+		if (writer.checkError()) {
+			logger.error("CSV writer error");
+		}
+		return records;
 	}
 }

@@ -4,6 +4,7 @@ import org.apache.log4j.Logger;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 
 public class Utils {
@@ -85,4 +86,20 @@ public class Utils {
 		}
 		return conn.getURL();
 	}*/
+
+	// TODO tests
+	public static String normalize(String in) {
+		return org.apache.commons.lang3.StringUtils.stripAccents(in);
+	}
+
+	// TODO tests
+	public static String urlEncode(String in) {
+		in = normalize(in.trim());
+		try {
+			in = URLEncoder.encode(in, "UTF-8");
+		} catch (UnsupportedEncodingException e) {}
+
+		return in;
+	}
+
 }

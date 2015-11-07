@@ -140,7 +140,7 @@ public abstract class Selector {
 		}
 
 		connection.disconnect();
-		
+
 		String content = contentBuilder.toString();
 		Document doc = Jsoup.parse(content);
 

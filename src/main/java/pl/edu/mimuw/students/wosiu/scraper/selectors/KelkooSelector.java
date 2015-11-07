@@ -23,11 +23,8 @@ public abstract class KelkooSelector extends Selector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		try {
-			product = URLEncoder.encode(product.trim(), "UTF-8");
-		} catch (UnsupportedEncodingException e) {
-			logger.error(e);
-		}
+		product = Utils.urlEncode(product);
+
 		String target = getSourceURL().toString() + "ctl/do/search?siteSearchQuery=" + product;
 		URL url = Utils.stringToURL(target);
 		return url;
