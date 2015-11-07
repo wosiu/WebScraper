@@ -37,7 +37,9 @@ public class CzechHledejCeny extends Selector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		return Utils.stringToURL(getSourceURL() + "/?s=" + product.toLowerCase().trim().replaceAll(" ", "+"));
+		final String normalize =
+				Utils.normalize(getSourceURL() + "/?s=" + product.toLowerCase().trim().replaceAll(" ", "+"));
+		return Utils.stringToURL(normalize);
 	}
 
 	@Override
@@ -60,8 +62,20 @@ public class CzechHledejCeny extends Selector {
 	public Object getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
 
-		final Elements elements = document.select("div.item.first");
 
+		//logika dla pobierania dla widoku 1 (linki bezposrednie zamiast linkow do widoku 2)
+		Elements elements = document.select("div.itemcell");
+		try {
+			Date date = new Date();
+			for (Element element : elements) {
+				products.add(buildProductResultDirectLink(element, date));
+			}
+		} catch (NullPointerException e) {
+			logger.warn(e.getMessage());
+		}
+
+		//logika dla pobierania dla widoku 2
+		elements = document.select("div.item.first");
 		try {
 			String product = document.getElementById("prodname").text().trim();
 			Date date = new Date();
@@ -71,6 +85,7 @@ public class CzechHledejCeny extends Selector {
 		} catch (NullPointerException e) {
 			logger.warn(e.getMessage());
 		}
+
 
 		return products;
 	}
@@ -92,8 +107,32 @@ public class CzechHledejCeny extends Selector {
 		return Utils.getRedirectUrl(element.getElementsByClass("pricevat").first().child(0).attr("href"));
 	}
 
-
 	private String getPrice(Element element) {
 		return element.getElementsByClass("pricevat").first().child(0).text();
+	}
+
+	private ProductResult buildProductResultDirectLink(Element element, Date date) {
+		final ProductResult product = new ProductResult();
+		URL shopURL = getShopURLDirectLink(element);
+		product.setCountry("Czech");
+		product.setPrice(getPriceDirectLink(element));
+		product.setProduct(getProductNameDirectLink(element));
+		product.setSearcher("HledejCeny");
+		product.setShopURL(shopURL.toString());
+		product.setShop(shopURL.getHost());
+		product.setTime(date.getTime());
+		return product;
+	}
+
+	private Object getPriceDirectLink(Element element) {
+		return element.getElementsByClass("search-item-name-headline").first().child(0).text();
+	}
+
+	private String getProductNameDirectLink(Element element) {
+		return element.getElementsByClass("pricevat").first().child(0).text();
+	}
+
+	private URL getShopURLDirectLink(Element element) {
+		return Utils.getRedirectUrl(element.getElementsByClass("pricevat").first().child(0).attr("href"));
 	}
 }
