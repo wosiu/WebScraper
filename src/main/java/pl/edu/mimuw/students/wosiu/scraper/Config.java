@@ -22,6 +22,8 @@ public class Config {
 	private List<String> userAgents;
 	private List<String> products;
 
+	private String outputPath;
+
 	private void init() {
 		selectors = new LinkedList<>();
 		userAgents = new LinkedList<>();
@@ -43,6 +45,10 @@ public class Config {
 
 	public List<String> getProducts() {
 		return products;
+	}
+
+	public String getOutputPath() {
+		return outputPath;
 	}
 
 	public Config(String JSONPath) throws ConfigException {
@@ -75,6 +81,7 @@ public class Config {
 		JSONArray selectors = (JSONArray) jsonObject.get("selectors");
 		JSONArray products = (JSONArray) jsonObject.get("products");
 		JSONArray userAgents = (JSONArray) jsonObject.get("userAgents");
+		this.outputPath = (String) jsonObject.get("out");
 
 		// create selectors
 		for (Object o : selectors) {

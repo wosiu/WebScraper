@@ -26,25 +26,5 @@ public class DELabProductsExecutor extends Executor {
 		// TODO create CSV
 	}
 
-	@Override
-	public void buildResult(List<Object> results, String productName, Selector selector, String userAgent, URL url) {
-		for (Object o : results) {
-			System.out.println(o);
-			/*
-			todo build csv
-			ProductResult record = (ProductResult) o;
-			record.setCountry(selector.getCountry());
-			record.setBrowser(selector.getBrowserURL().toString());
-			record.setProductName(productName);
-			record.setUserAgent(userAgent);
-			record.set
-					//TODO
-			summarize.addRecord();
-			*/
-			//kraj | przeglądarka | przedmiot | wysłane zapytanie | cena | sklep internetowy | url docelowy
-			//		(produkt+sklep) | data + godzina pobrania danych | przeglądarka internetowa/system operacyjny
-			//który udajemy
-		}
-	}
 
 }

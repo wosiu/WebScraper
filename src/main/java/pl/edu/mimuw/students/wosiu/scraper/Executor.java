@@ -1,7 +1,11 @@
 package pl.edu.mimuw.students.wosiu.scraper;
 
+import com.opencsv.CSVWriter;
 import org.apache.log4j.*;
+import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
+import java.io.FileWriter;
+import java.io.IOException;
 import java.net.*;
 import java.util.List;
 
@@ -50,6 +54,19 @@ public class Executor {
 			return;
 		}
 
+		CSVWriter writer = null;
+		try {
+			writer = new CSVWriter(new FileWriter(conf.getOutputPath()), '\t');
+		} catch (IOException e) {
+			logger.error(e.toString());
+			return;
+		}
+		// TODO moge do DELab executor
+		// TODO enum with ProductResult attr and then build CSV respecting header with enum values
+		String[] CSVheader = {"Product query", "Product name", "Country", "Search engine", "Price", "Shop name",
+				"Proxy", "Product shop URL", "Search engine result URL", "User agent"};
+		writer.writeNext(CSVheader);
+
 		for (String userAgent : conf.getUserAgents()) {
 			for (String product : conf.getProducts()) {
 				for (Selector selector : conf.getSelectors()) {
@@ -70,16 +87,28 @@ public class Executor {
 						break;
 					}
 
-					buildResult(results, product, selector, userAgent, startUrl);
+					appendResults(writer, results, product, selector, userAgent, startUrl);
 				}
 			}
 		}
 	}
 
 
-	public void buildResult(List<Object> results, String productName, Selector selector, String userAgent, URL url) {
+	public void appendResults(CSVWriter writer, List<Object> results, String productName, Selector selector, String
+			userAgent, URL url) {
+
 		for (Object o : results) {
-			System.out.println(o.toString());
+			ProductResult res = (ProductResult) o;
+			/*
+			"Product query", "Product name", "Country", "Search engine", "Price", "Shop name",
+				"Product shop URL", "Search engine result URL", "Proxy", "User agent"
+			 */
+			String[] record = new String[] {
+					productName, res.getProduct(), res.getCountry(), res.getSearcher(), res.getPrice(),
+					res.getShop(), res.getProxy(), res.getShopURL(), url.toString(), userAgent
+			};
+			writer.writeNext(record);
+
 		}
 	}
 }
