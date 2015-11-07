@@ -58,7 +58,6 @@ public class CzechHledejCeny extends Selector {
 
 	@Override
 	public Object getProducts(Document document) {
-		System.out.println(document);
 		List<ProductResult> products = new LinkedList<>();
 
 		final Elements elements = document.select("div.item.first");
