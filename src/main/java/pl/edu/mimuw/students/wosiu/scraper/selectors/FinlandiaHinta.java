@@ -21,13 +21,13 @@ import java.util.List;
  * 1. Z widoku 1 pobieram odnośniki do list z widoku 2.
  * 2. Z powyższego produkty.
  */
-public class EstoniaHinnavaatlus extends Selector {
+public class FinlandiaHinta extends Selector {
 
-	public EstoniaHinnavaatlus() throws ConnectionException {
+	public FinlandiaHinta() throws ConnectionException {
 		super();
-		setCountry("Estonia");
-		setSource("http://hinnavaatlus.ee");
-//		Collection proxies = ProxyFinder.getProxies("Estonia");
+		setCountry("Finlandia");
+		setSource("http://hinta.fi");
+//		Collection proxies = ProxyFinder.getProxies("Finlandia");
 //		if (proxies == null || proxies.isEmpty() ) {
 //			logger.debug("No proxy in ProxyFinder");
 //		} else {
@@ -37,19 +37,20 @@ public class EstoniaHinnavaatlus extends Selector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		final String encoded = getSourceURL() + "/search/?Type=products&Query=" +
-				Utils.urlEncode(product.toLowerCase()).trim().replaceAll(" ", "+");
+		final String encoded = getSourceURL() + "/haku?q=" +
+			Utils.urlEncode(product.toLowerCase().trim().replaceAll(" ", "+"));
 		return Utils.stringToURL(encoded);
 	}
 
 	@Override
 	public List<URL> getNextPages(Document document) {
 		final List<URL> urls = new LinkedList<>();
-		final Elements elements = document.getElementsByClass("product-list-item");
+		final Elements elements = document.select("a.hv--product-a");
+		document.setBaseUri(getSourceURL().toString());
 
 		for (Element element : elements) {
 			try {
-				final String href = element.select("p.product-list-price-line").first().child(0).attr("abs:href");
+				final String href = element.attr("abs:href");
 				urls.add(new URL(href));
 			} catch (MalformedURLException e) {
 				logger.warn(e.getMessage());
@@ -63,15 +64,14 @@ public class EstoniaHinnavaatlus extends Selector {
 	@Override
 	public Object getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
+		document.setBaseUri(getSourceURL().toString());
 		final String source = document.toString();
-		if (!source.contains("Ühtegi toodet ei leitud.") && !source.contains("Otsing")) {
-			String title =
-					document.select("h2.section-title.blue.no-border.regular.big.no-transform.margin").first().text();
-			Elements elements = document.select("div.col-1-1.extra-offers-offer.opened.bg-white");
+		if (!source.contains("ei löytynyt tuotteita")) {
+			Elements elements = document.select("tr.hv-table-list-tr.hv--offer-list");
 			try {
 				Date date = new Date();
 				for (Element element : elements) {
-					products.add(buildProductResult(element, title, date));
+					products.add(buildProductResult(element, date));
 				}
 			} catch (NullPointerException e) {
 				logger.warn(e.getMessage());
@@ -81,31 +81,39 @@ public class EstoniaHinnavaatlus extends Selector {
 		return products;
 	}
 
-	private ProductResult buildProductResult(Element element, String productName, Date date) {
+	private ProductResult buildProductResult(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("Estonia");
+		product.setCountry("Finlandia");
 		product.setPrice(getPrice(element));
-		product.setProduct(productName);
-		product.setSearcher("Hinnavaatlus");
+		product.setProduct(getProductName(element));
+		product.setSearcher("Hinta");
 		if (shopURL != null) {
 			product.setShopURL(shopURL.toString());
-			product.setShop(shopURL.getHost());
 		}
+		product.setShop(getShop(element));
 		product.setTime(date.getTime());
 		return product;
 	}
 
+	private String getShop(Element element) {
+		return element.select("img.hv-store-logo.hvjs-lazy-image").attr("alt");
+	}
+
+	private String getProductName(Element element) {
+		return element.select("span[itemprop=name]").first().text();
+	}
+
 	private String getPrice(Element element) {
-		return element.select("p[data-price]").first().text();
+		return element.select("span[itemprop=price]").first().text();
 	}
 
 	private URL getShopURL(Element element) {
 		URL res = null;
 		try {
-			res = Utils.stringToURL(element.select("li.extra-offers-actions-item").first().child(0).attr("href"));
-		} catch (ConnectionException e) {
-			e.printStackTrace();
+			res = Utils.getRedirectUrl(element.select("a.hv-button.hv--green.hvjs-tooltip").first().attr("abs:href"));
+		} catch (NullPointerException npe) {
+			npe.printStackTrace(); //npe jest ok, czasami nie ma linku do sklepów
 		}
 		return res;
 	}

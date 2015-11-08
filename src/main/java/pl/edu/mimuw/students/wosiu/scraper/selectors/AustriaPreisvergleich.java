@@ -22,17 +22,19 @@ public class AustriaPreisvergleich extends Selector {
 		super();
 		setCountry("Austria");
 		setSource("http://preisvergleich.at/");
-		Collection proxies = ProxyFinder.getProxies("Austria");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+//		Collection proxies = ProxyFinder.getProxies("Austria");
+//		if (proxies == null || proxies.isEmpty() ) {
+//			logger.debug("No proxy in ProxyFinder");
+//		} else {
+//			addAllProxies(proxies);
+//		}
 	}
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		return Utils.stringToURL(getSourceURL() + "tag/?tag=" + product.toLowerCase().trim().replaceAll(" ", "+"));
+		String encoded = getSourceURL() + "tag/?tag=" +
+				Utils.urlEncode(product.toLowerCase().trim()).replaceAll(" ", "+");
+		return Utils.stringToURL(encoded);
 	}
 
 	@Override
@@ -80,9 +82,13 @@ public class AustriaPreisvergleich extends Selector {
 		product.setProduct(getProduct(element));
 		product.setSearcher("Preisvergleich");
 		product.setShopURL(shopURL.toString());
-		product.setShop(shopURL.getHost());
+		product.setShop(getShopName(element));
 		product.setTime(date.getTime());
 		return product;
+	}
+
+	private String getShopName(Element element) {
+		return element.select("a.shoplogo").first().text();
 	}
 
 	private URL getShopURL(Element element) {

@@ -30,7 +30,9 @@ public class PolandCeneo extends Selector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		return Utils.stringToURL(getSourceURL() + ";szukaj-" + product.toLowerCase().trim().replaceAll(" ", "+"));
+		String encoded = getSourceURL() + ";szukaj-"
+				+ Utils.urlEncode(product.toLowerCase().trim()).replaceAll(" ", "+");
+		return Utils.stringToURL(encoded);
 	}
 
 	@Override

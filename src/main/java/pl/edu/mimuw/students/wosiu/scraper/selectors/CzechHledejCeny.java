@@ -37,9 +37,9 @@ public class CzechHledejCeny extends Selector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		final String normalize =
-				Utils.normalize(getSourceURL() + "/?s=" + product.toLowerCase().trim().replaceAll(" ", "+"));
-		return Utils.stringToURL(normalize);
+		final String encoded = getSourceURL() + "/?s=" +
+				Utils.urlEncode(product.toLowerCase().trim().replaceAll(" ", "+"));
+		return Utils.stringToURL(encoded);
 	}
 
 	@Override
