@@ -40,30 +40,33 @@ public class AustriaPreisvergleich extends Selector {
 		document.setBaseUri(getSourceURL().toString());
 
 		String nextStrUrl = null;
-		URL res = null;
+		List<URL> res = new LinkedList<>();
 
 		try {
 			Elements elements = document.getElementsByClass("pag-link");
 			Element next = elements.first().select("a").first();
 			nextStrUrl = next.attr("abs:href");
-			res = Utils.stringToURL(nextStrUrl);
+			res.add(Utils.stringToURL(nextStrUrl));
 		} catch (ConnectionException e) {
 			logger.debug(e.toString());
 		} catch (NullPointerException e) {
 			logger.warn("npe: " + e.getMessage());
 		}
 
-		return Arrays.asList(res);
+		return res;
 	}
 
 	@Override
 	public Object getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
-		final Elements elements = document.getElementsByClass("article");
 
-		Date date = new Date(); //TODO ladniej na czytelny format przerobic (to samo w pl)
-		for (Element element : elements) {
-			products.add(buildProductResult(element, date));
+		if (!document.toString().contains("Ihre Suchanfrage hat keine Ergebnisse erbracht")) {
+			final Elements elements = document.getElementsByClass("article");
+
+			Date date = new Date(); //TODO ladniej na czytelny format przerobic (to samo w pl)
+			for (Element element : elements) {
+				products.add(buildProductResult(element, date));
+			}
 		}
 
 		return products;

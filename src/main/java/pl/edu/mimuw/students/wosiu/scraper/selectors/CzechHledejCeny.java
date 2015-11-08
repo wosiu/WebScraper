@@ -62,28 +62,29 @@ public class CzechHledejCeny extends Selector {
 	public Object getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
 
-
-		//logika dla pobierania dla widoku 1 (linki bezposrednie zamiast linkow do widoku 2)
-		Elements elements = document.select("div.itemcell");
-		try {
-			Date date = new Date();
-			for (Element element : elements) {
-				products.add(buildProductResultDirectLink(element, date));
+		if (!document.toString().contains("Nebyly nalezeny žádné produkty s názvem")) {
+			//logika dla pobierania dla widoku 1 (linki bezposrednie zamiast linkow do widoku 2)
+			Elements elements = document.select("div.itemcell");
+			try {
+				Date date = new Date();
+				for (Element element : elements) {
+					products.add(buildProductResultDirectLink(element, date));
+				}
+			} catch (NullPointerException e) {
+				logger.warn(e.getMessage());
 			}
-		} catch (NullPointerException e) {
-			logger.warn(e.getMessage());
-		}
 
-		//logika dla pobierania dla widoku 2
-		elements = document.select("div.item.first");
-		try {
-			String product = document.getElementById("prodname").text().trim();
-			Date date = new Date();
-			for (Element element : elements) {
-				products.add(buildProductResult(element, product, date));
+			//logika dla pobierania dla widoku 2
+			elements = document.select("div.item.first");
+			try {
+				String product = document.getElementById("prodname").text().trim();
+				Date date = new Date();
+				for (Element element : elements) {
+					products.add(buildProductResult(element, product, date));
+				}
+			} catch (NullPointerException e) {
+				logger.warn(e.getMessage());
 			}
-		} catch (NullPointerException e) {
-			logger.warn(e.getMessage());
 		}
 
 

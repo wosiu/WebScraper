@@ -41,23 +41,30 @@ public class PolandCeneo extends Selector {
 	@Override
 	public Document download(String userAgent, URL targetURL) throws ConnectionException {
 		final Document doc = super.download(userAgent, targetURL);
-		String atr = doc.select("div[data-pid]").first()
-				.getElementsByClass("btn-compare-outer")
-				.select("a[href]")
-				.get(0).attr("href");
-		return super.download(userAgent, Utils.stringToURL(getSourceURL().toString() + atr));
+		if (doc.toString().contains("Niestety nic nie znaleziono")) {
+			logger.warn("Nie znaleziono produktu w PolandCeneo");
+			return null;
+		} else {
+			String atr = doc.select("div[data-pid]").first()
+					.getElementsByClass("btn-compare-outer")
+					.select("a[href]")
+					.get(0).attr("href");
+			return super.download(userAgent, Utils.stringToURL(getSourceURL().toString() + atr));
+		}
 	}
 
 	@Override
 	public Object getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
-		final Elements elements = document
-				.select("tr[data-offer-price]");
+		if (document != null) {
+			final Elements elements = document
+					.select("tr[data-offer-price]");
 
-		Date date = new Date();
-		for (Element element : elements) {
-			if (isProperElement(element)) {
-				products.add(buildProductResult(element, date));
+			Date date = new Date();
+			for (Element element : elements) {
+				if (isProperElement(element)) {
+					products.add(buildProductResult(element, date));
+				}
 			}
 		}
 
