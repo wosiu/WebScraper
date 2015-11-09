@@ -22,17 +22,19 @@ public class AustriaPreisvergleich extends Selector {
 		super();
 		setCountry("Austria");
 		setSource("http://preisvergleich.at/");
-		Collection proxies = ProxyFinder.getProxies("Austria");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+//		Collection proxies = ProxyFinder.getProxies("Austria");
+//		if (proxies == null || proxies.isEmpty() ) {
+//			logger.debug("No proxy in ProxyFinder");
+//		} else {
+//			addAllProxies(proxies);
+//		}
 	}
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		return Utils.stringToURL(getSourceURL() + "tag/?tag=" + product.toLowerCase().trim().replaceAll(" ", "+"));
+		String encoded = getSourceURL() + "tag/?tag=" +
+				Utils.urlEncode(product.toLowerCase().trim()).replaceAll(" ", "+");
+		return Utils.stringToURL(encoded);
 	}
 
 	@Override
@@ -40,30 +42,33 @@ public class AustriaPreisvergleich extends Selector {
 		document.setBaseUri(getSourceURL().toString());
 
 		String nextStrUrl = null;
-		URL res = null;
+		List<URL> res = new LinkedList<>();
 
 		try {
 			Elements elements = document.getElementsByClass("pag-link");
 			Element next = elements.first().select("a").first();
 			nextStrUrl = next.attr("abs:href");
-			res = Utils.stringToURL(nextStrUrl);
+			res.add(Utils.stringToURL(nextStrUrl));
 		} catch (ConnectionException e) {
 			logger.debug(e.toString());
 		} catch (NullPointerException e) {
 			logger.warn("npe: " + e.getMessage());
 		}
 
-		return Arrays.asList(res);
+		return res;
 	}
 
 	@Override
 	public Object getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
-		final Elements elements = document.getElementsByClass("article");
 
-		Date date = new Date(); //TODO ladniej na czytelny format przerobic (to samo w pl)
-		for (Element element : elements) {
-			products.add(buildProductResult(element, date));
+		if (!document.toString().contains("Ihre Suchanfrage hat keine Ergebnisse erbracht")) {
+			final Elements elements = document.getElementsByClass("article");
+
+			Date date = new Date(); //TODO ladniej na czytelny format przerobic (to samo w pl)
+			for (Element element : elements) {
+				products.add(buildProductResult(element, date));
+			}
 		}
 
 		return products;
@@ -77,9 +82,13 @@ public class AustriaPreisvergleich extends Selector {
 		product.setProduct(getProduct(element));
 		product.setSearcher("Preisvergleich");
 		product.setShopURL(shopURL.toString());
-		product.setShop(shopURL.getHost());
+		product.setShop(getShopName(element));
 		product.setTime(date.getTime());
 		return product;
+	}
+
+	private String getShopName(Element element) {
+		return element.select("a.shoplogo").first().text();
 	}
 
 	private URL getShopURL(Element element) {
