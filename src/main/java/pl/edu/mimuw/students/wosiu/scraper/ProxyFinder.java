@@ -22,14 +22,16 @@ public class ProxyFinder {
 			//new Gatherproxy("Belgium"),
 			//new Gatherproxy("Hungary"),
 			//new Gatherproxy("Germany"),
-			new Gatherproxy("Hungary"),
 			//new Gatherproxy("Croatia"),
-			new Gatherproxy("Austria"),
-			new Gatherproxy("Bulgaria"),
-			new Gatherproxy("Italy"),
-			new Gatherproxy("United%20Kingdom"),
-			new Gatherproxy("Denmark"),
-			new Gatherproxy("Czech%20Republic"),
+//			new Gatherproxy("Hungary"),
+//			new Gatherproxy("Austria"),
+//			new Gatherproxy("Bulgaria"),
+//			new Gatherproxy("Italy"),
+//			new Gatherproxy("United%20Kingdom"),
+//			new Gatherproxy("Denmark"),
+//			new Gatherproxy("Czech%20Republic"),
+//			new Gatherproxy("Sweden"),
+//			new Gatherproxy("Ireland"),
 	};
 
 

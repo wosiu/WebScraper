@@ -56,12 +56,9 @@ public class Temp {
 		Selector selector = new HungaryArukereso();
 
 		String base = "";
-		base = "http://www.arukereso.hu/mobiltelefon-c3277/htc/one-m9-32gb-p272441289/";
+		base = "http://pricespy.ie/product.php?p=2661725";
 		URI uri = new URI(base);
 		URL url = uri.toURL();
-
-		url = selector.prepareTargetUrl("Saint-Émilion Grand Cru 2009");
-		System.out.println("tu:" + url.toString());
 
 
 		Proxy proxy = new Proxy(Proxy.Type.HTTP, new InetSocketAddress(
@@ -85,7 +82,10 @@ public class Temp {
 		Document document = Jsoup.parse(tmp.toString());
 		uc.disconnect();
 
-		System.out.println(document.toString());
+
+
+
+
 
 
 		/*
