@@ -11,10 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import net.htmlparser.*;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
-import pl.edu.mimuw.students.wosiu.scraper.selectors.BelgiumKieskeurig;
-import pl.edu.mimuw.students.wosiu.scraper.selectors.HungaryArukereso;
-import pl.edu.mimuw.students.wosiu.scraper.selectors.KainosLithuania;
-import pl.edu.mimuw.students.wosiu.scraper.selectors.UnitedKingdomKelkoo;
+import pl.edu.mimuw.students.wosiu.scraper.selectors.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -51,8 +48,8 @@ public class Temp {
 
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		String url =
-				"http://www.kainos.lt/lt/search?page_nr=1&category_ids=0&sort_by=title&search_query=xbox+one";
-		Selector selector = new KainosLithuania();
+				"http://www.csv.lv/search?q=LG+G3#page=3&sort=3";
+		Selector selector = new LatviaCsv();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
 		//System.out.println(selector.getNextPages(document));
