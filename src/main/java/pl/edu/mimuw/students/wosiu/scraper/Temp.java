@@ -11,6 +11,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import net.htmlparser.*;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
+import pl.edu.mimuw.students.wosiu.scraper.selectors.BelgiumKieskeurig;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.HungaryArukereso;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.UnitedKingdomKelkoo;
 
@@ -50,6 +51,16 @@ public class Temp {
 	}
 
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
+		String url =
+				"http://www.kieskeurig.be/smartphone/product/2566348-lg-g3-d855/prijzen";
+		Selector selector = new BelgiumKieskeurig();
+		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+
+		//System.out.println(selector.getNextPages(document));
+		System.out.println(selector.getProducts(document));
+	}
+
+	public static void main2(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		///Jsoup.connect(uri).userAgent(userAgent).get()
 		//Jsoup.connect(uri).get()
 

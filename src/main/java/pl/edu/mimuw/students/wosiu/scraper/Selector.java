@@ -147,6 +147,9 @@ public abstract class Selector {
 		long elapsed = (System.currentTimeMillis() - start) / 1000;
 		logger.debug("Read in: " + elapsed + "s ");
 
+		if (getSourceURL() != null) {
+			doc.setBaseUri(getSourceURL().toString());
+		}
 		return doc;
 	}
 

@@ -4,25 +4,38 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
+import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 /**
  * @author w
  */
-public abstract class PricespySelector extends Selector {
+public class BelgiumKieskeurig extends Selector {
+
+	public BelgiumKieskeurig() throws ConnectionException {
+		super();
+		setCountry("Belgium");
+		setSource("http://kieskeurig.be/");
+		Collection proxies = ProxyFinder.getProxies("Belgium");
+		if (proxies == null || proxies.isEmpty() ) {
+			logger.debug("No proxy in ProxyFinder");
+		} else {
+			addAllProxies(proxies);
+		}
+	}
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		product = Utils.urlEncode(product);
 
-		String target = getSourceURL().toString() + "search.php?s=" + product + "#t-product";
+		String target = getSourceURL().toString() + "search?q=" + product;
 		URL url = Utils.stringToURL(target);
 		return url;
 	}
@@ -32,24 +45,31 @@ public abstract class PricespySelector extends Selector {
 	public List<ProductResult> getProducts(Document document) {
 		List<ProductResult> results = new ArrayList<>();
 
-		document.setBaseUri(getSourceURL().toString());
+		Element prodName = document.select("div.product-detail-container h1[itemprop=name]").first();
 
-		// non-featured when record inactive
-		for (Element element : document.select("table#prislista tbody > tr:not(.non-featured)")) {
+		if (prodName == null) {
+			// this is not offerts list
+			return results;
+		}
+
+		String prod = prodName.text();
+
+		// div.price-row:not([class*=advert]) = all div with class prive-row, but without classes matching *advert*
+		for (Element element : document.select("form.product-prices > div.price-row:not([class*=advert])")) {
 			ProductResult result = new ProductResult();
-			String price = element.select("td:eq(4)").first().text();
+
+			String price = element.select("div.prices > span.price-delivered").first().text();
 			result.setPrice(price);
 
-			String shopname = element.select("td:eq(0)").first().text();
+			String shopname = element.select("div.shop-info > div.shop-logo > img[alt]").first().attr("alt");
 			result.setShop(shopname);
 
-			Element a = element.select("td:eq(8) > a[href]").first(); //FIX
+			Element a = element.select("div.price-row > a[href]").first();
 
 			String link = a.attr("abs:href");
 			String redirected = Utils.getRedirectUrl(link).toString();
 			result.setShopURL((redirected != null) ? redirected : link);
 
-			String prod = a.attr("title");
 			result.setProduct(prod);
 			result.setCountry(getCountry());
 			result.setProxy(getLastUsedProxy());
@@ -62,7 +82,7 @@ public abstract class PricespySelector extends Selector {
 	}
 
 	/**
-	 * Do not paginate. Collect links (max 12) from first page if product name is too generall.
+	 * Do not paginate. Collect links from first page.
 	 *
 	 * @param document
 	 * @return
@@ -72,12 +92,8 @@ public abstract class PricespySelector extends Selector {
 		List<URL> urls = new ArrayList<>();
 		document.setBaseUri(getSourceURL().toString());
 
-		final int MAX_PRODUCTS = 12;
-		Elements elements = document.select("table#table_produktlista > tbody > tr:lt( " + MAX_PRODUCTS + ") > td > " +
-				"a[href].price");
-
-		for (Element element : elements) {
-			String str = element.attr("abs:href");
+		for (Element element : document.select("ul#product-listers div.product:has(div.price > a[href])")) {
+			String str = element.select("div.product > a[href]").first().attr("abs:href");
 			try {
 				urls.add(Utils.stringToURL(str));
 			} catch (ConnectionException e) {
