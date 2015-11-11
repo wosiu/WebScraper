@@ -13,6 +13,7 @@ import net.htmlparser.*;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.BelgiumKieskeurig;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.HungaryArukereso;
+import pl.edu.mimuw.students.wosiu.scraper.selectors.KainosLithuania;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.UnitedKingdomKelkoo;
 
 import java.io.BufferedReader;
@@ -44,20 +45,19 @@ public class Temp {
 		}
 		return out.toString();
 	}
-	public static void main3(String[] args) throws IOException, URISyntaxException {
-		String wzo = "Tefal+hb866+%2B+3-+\"*.+>+%21%40%23%24%25%5E%26%28%29%3F%2C%2F%3B%3A%27%5B%5D%7B%7D%5C";
-		String out = convert("Tefal hb866 + 3- \"*. > !@#$%^&()?,/;:'[]{}\\");
-		System.out.println( wzo.equals(out) );
-	}
+
+
+
 
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		String url =
-				"http://www.kieskeurig.be/smartphone/product/2566348-lg-g3-d855/prijzen";
-		Selector selector = new BelgiumKieskeurig();
+				"http://www.kainos.lt/lt/search?page_nr=1&category_ids=0&sort_by=title&search_query=xbox+one";
+		Selector selector = new KainosLithuania();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
 		//System.out.println(selector.getNextPages(document));
 		System.out.println(selector.getProducts(document));
+//		System.out.println(selector.getNextPages(document));
 	}
 
 	public static void main2(String[] args) throws IOException, URISyntaxException, ConnectionException {
