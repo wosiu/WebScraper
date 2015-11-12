@@ -36,21 +36,21 @@ public class Utils {
 			con = (HttpURLConnection) orignal.openConnection();
 			con.setInstanceFollowRedirects(true);
 			con.setRequestProperty("User-Agent", USER_AGENT);
+			con.setConnectTimeout(3000);
+			con.setReadTimeout(3000);
 			con.connect();
 			InputStream is = con.getInputStream();
 			is.close();
-		} catch (IOException e) {
-			//nie wazne dla nas (http 403)
-		}
-		if (con != null) {
 			redirectedUrl = con.getURL();
 			con.disconnect();
+		} catch (IOException e) {
+			//nie wazne dla nas (http 403)
 		}
 
 		return redirectedUrl;
 	}
 
-	/*public static URL redirect2(String url) {
+	public static URL redirect2(String url) {
 		HttpURLConnection conn = null;
 		try {
 			conn = (HttpURLConnection) (new URL(url).openConnection());
@@ -85,7 +85,7 @@ public class Utils {
 			}
 		}
 		return conn.getURL();
-	}*/
+	}
 
 	// TODO tests
 	public static String normalize(String in) {
