@@ -1,5 +1,5 @@
 {
-	"selectors": ["UnitedKingdomKelkoo", "ItalyKelkoo", "HungaryArukereso", "DenmarkKelkoo", "CzechHledejCeny", "BulgariaPazaruvaj", "AustriaPreisvergleich"],
+	"selectors": ["UnitedKingdomKelkoo", "ItalyKelkoo", "HungaryArukereso", "DenmarkKelkoo", "CzechHledejCeny", "BulgariaPazaruvaj", "AustriaPreisvergleich", "BelgiumKieskeurig", "EstoniaHinnavaatlus", "FinlandiaHinta", "FranceIdealo", "IrelandPricespy", "KainosLithuania", "LatviaCsv", "PolandCeneo", "RomaniaCompari", "SwedenPrisjakt"],
 	"products": ["Fujifilm X T10 body", "Canon EOS M3 body", "oxford wordpower", "xbox one","How to Train Your Dragon 2", "U2, 'Songs of Innocence'","Saint-Émilion Grand Cru 2009"],
 	"userAgents": ["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36"],
 	"out": "data_proxy.csv"
