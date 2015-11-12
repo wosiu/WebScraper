@@ -20,7 +20,7 @@ public class DELabProductsExecutor extends Executor {
 			//return; //TODO
 		}
 		//String configPath = args[0];
-		String configPath = "/home/m/scraper/config.json";
+		String configPath = "/home/m/scraper/config_full.json";
 		exe.run(configPath);
 
 		// TODO create CSV

@@ -72,6 +72,7 @@ public class Executor {
 				"Proxy", "Product shop URL", "Search engine result URL", "User agent"};
 		writer.writeNext(CSVheader);
 
+		logger.info("Scraping for " + conf.getSelectors().size() + " selectors.");
 		for (String userAgent : conf.getUserAgents()) {
 			for (String product : conf.getProducts()) {
 				for (Selector selector : conf.getSelectors()) {
@@ -89,10 +90,9 @@ public class Executor {
 					if (results.isEmpty()) {
 						logger.info("No results for: '" + product + "' with selector: " +
 								selector.getClass().getSimpleName() + ", start url: " + startUrl);
-						break;
+					} else {
+						recordCounter += appendResults(writer, results, product, selector, userAgent, startUrl);
 					}
-
-					recordCounter += appendResults(writer, results, product, selector, userAgent, startUrl);
 				}
 			}
 		}
