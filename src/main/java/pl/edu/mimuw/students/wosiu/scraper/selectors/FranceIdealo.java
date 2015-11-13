@@ -24,7 +24,6 @@ import java.util.List;
  */
 public class FranceIdealo extends DELabProductSelector {
 
-	// TODO !!!
 	private boolean view1Processed = false;
 
 	public FranceIdealo() throws ConnectionException {
@@ -33,6 +32,7 @@ public class FranceIdealo extends DELabProductSelector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
+        view1Processed = false; //HACK
 		String encoded = getSourceURL() + "prechcat.html?q=" +
 				Utils.urlEncode(product.toLowerCase().trim()).replaceAll(" ", "+");
 		return Utils.stringToURL(encoded);
