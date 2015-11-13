@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 /**
- * //TODO problem z amazonem/ebayem
  * Algorytm:
  * 1. Z widoku 1 pobieramy odnosniki do list widoku 2 i linki bezpośrednie.
  * 2. Z widoku 2 linki bezposrednie (jest paginacja).
