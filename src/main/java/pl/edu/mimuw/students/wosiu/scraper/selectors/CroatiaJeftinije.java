@@ -4,8 +4,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
@@ -14,7 +12,6 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -25,34 +22,30 @@ public class CroatiaJeftinije extends DELabProductSelector {
 		super("Croatia", "http://www.jeftinije.hr/");
 	}
 
-	@Override
-	public Document download(String userAgent, URL targetURL) throws ConnectionException {
-		final Document doc = super.download(userAgent, targetURL);
-
-		String atr = doc.getElementsByClass("innerProductBox").first()
-				.child(2).child(2)
-				.select("a[href]")
-				.get(0).attr("href");
-		return super.download(userAgent, Utils.stringToURL(atr));
-	}
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		return Utils.stringToURL(
-				getSourceURL() + "Trazenje/Proizvodi?q=" + product.toLowerCase().trim().replaceAll(" ", "+")
-		);
+        // change diacritics
+        product = Utils.normalize(product);
+        product = product.toLowerCase();
+        // remove !@#$... etc
+        product = Utils.stripNonEnglish(product);
+        // replace ' ' with '+'
+        product = Utils.urlEncode(product);
+
+        String target = getSourceURL() + "Trazenje/Proizvodi?q=" + product;
+        URL url = Utils.stringToURL(target);
+        return url;
 	}
 
 	@Override
 	public List<URL> getNextPages(Document document) {
 		final List<URL> urls = new LinkedList<>();
-		final Elements elements = document.getElementsByClass("innerProductBox");
+        final Elements elements = document.select("div.innerProductBox div.imgWrap a[href]");
 
 		for (Element element : elements) {
 			try {
-				urls.add(new URL(element.child(2).child(2)
-						.select("a[href]")
-						.get(0).attr("href")));
+                urls.add(new URL(element.attr("href")));
 			} catch (MalformedURLException e) {
 				logger.warn(e.getMessage());
 			}
@@ -63,16 +56,24 @@ public class CroatiaJeftinije extends DELabProductSelector {
 	@Override
 	public Object getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
-		final Elements elements = document.getElementsByClass("offerByBrandB");
 
-		String product = document.select("h1[itemprop]").first().text();
 		Date date = new Date();
+        final Elements pname = document.select("div.newPPh1 h1[itemprop]");
+        String productName = null;
+        if (!pname.isEmpty()) {
+            productName = pname.first().text();
+        } else {
+            return products;
+        }
+
+        final Elements elements = document.select("div.offerByBrandB");
 		for (Element element : elements) {
-			products.add(buildProductResult(element, product, date));
+            products.add(buildProductResult(element, productName, date));
 		}
 
 		return products;
 	}
+
 
 	private ProductResult buildProductResult(Element element, String productName, Date date) {
 		final ProductResult product = new ProductResult();
@@ -81,19 +82,46 @@ public class CroatiaJeftinije extends DELabProductSelector {
 		product.setPrice(getPrice(element));
 		product.setProduct(productName);
         product.setSearcher(getSourceURL().toString());
-		product.setShopURL(shopURL.toString());
-		product.setShop(shopURL.getHost());
+        if (shopURL != null) {
+            product.setShopURL(shopURL.toString());
+        }
+        product.setShop(getShopName(element));
 		product.setTime(date.getTime());
+        product.setProxy(getLastUsedProxy());
 		return product;
 	}
 
-	public URL getShopURL(Element element) {
-		return followUrl(element.select("a[href]").first().attr("href"));
+    private String getShopName(Element element) {
+        String res = "";
+        final Elements select = element.select("div.topRow img[src]");
+        if (!select.isEmpty()) {
+            res = select.first().attr("alt");
+        } else {
+            logger.warn("Can't get host name");
+        }
+        return res;
 	}
 
+    public URL getShopURL(Element element) {
+        URL res = null;
+        final Elements select = element.select("div.priceBox a[href]");
+        if (!select.isEmpty()) {
+            res = followUrl(select.first().attr("href"));
+        } else {
+            logger.warn("Can't get shop url");
+        }
+        return res;
+    }
 
 	private String getPrice(Element element) {
-		return element.getElementsByClass("price").first().child(0).text();
+        String res = "";
+        final Elements select = element.select("div.price a");
+        if (!select.isEmpty()) {
+            res = select.text();
+        } else {
+            logger.warn("Can't get price");
+        }
+        return res;
 	}
 
 	@Override
