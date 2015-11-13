@@ -75,6 +75,7 @@ public class AustriaPreisvergleich extends DELabProductSelector {
 		product.setShopURL(shopURL.toString());
 		product.setShop(getShopName(element));
 		product.setTime(date.getTime());
+		product.setProxy(getLastUsedProxy());
 		return product;
 	}
 

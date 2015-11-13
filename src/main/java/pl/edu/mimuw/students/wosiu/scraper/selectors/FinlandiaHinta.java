@@ -72,6 +72,7 @@ public class FinlandiaHinta extends DELabProductSelector {
 		product.setPrice(getPrice(element));
 		product.setProduct(getProductName(element));
         product.setSearcher(getSourceURL().toString());
+		product.setProxy(getLastUsedProxy());
 
 		if (shopURL != null) {
 			product.setShopURL(shopURL.toString());

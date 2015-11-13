@@ -81,6 +81,8 @@ public class GreeceBestPrice extends DELabProductSelector {
         product.setShop(getShopName(element));
         product.setProduct(getProductName(element));
         product.setTime(date.getTime());
+        product.setProxy(getLastUsedProxy());
+
         return product;
     }
 

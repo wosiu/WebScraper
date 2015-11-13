@@ -43,6 +43,8 @@ public class EstoniaHinnavaatlus extends DELabProductSelector {
 				urls.add(new URL(href));
 			} catch (MalformedURLException e) {
 				logger.warn(e.getMessage());
+
+				// TODO
 			} catch (NullPointerException npe) {
 				npe.printStackTrace();
 			}
@@ -79,6 +81,7 @@ public class EstoniaHinnavaatlus extends DELabProductSelector {
 		product.setPrice(getPrice(element));
 		product.setProduct(productName);
         product.setSearcher(getSourceURL().toString());
+		product.setProxy(getLastUsedProxy());
 		if (shopURL != null) {
 			product.setShopURL(shopURL.toString());
 			product.setShop(shopURL.getHost());

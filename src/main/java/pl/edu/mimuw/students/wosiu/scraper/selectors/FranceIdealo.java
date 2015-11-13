@@ -116,6 +116,8 @@ public class FranceIdealo extends DELabProductSelector {
 		product.setShop(shopURL.getHost());
 		product.setProduct(getProductName(element, product.getShop()));
 		product.setTime(date.getTime());
+		product.setProxy(getLastUsedProxy());
+
 		return product;
 	}
 
@@ -127,6 +129,7 @@ public class FranceIdealo extends DELabProductSelector {
 		return followUrl(element.select("td.cta > a[href]").first().attr("abs:href"));
 	}
 
+	// TODO Freshy: copy paste
 	private ProductResult buildProductResultDirectLink(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURLDirectLink(element);
@@ -137,9 +140,12 @@ public class FranceIdealo extends DELabProductSelector {
 		product.setShop(shopURL.getHost());
 		product.setProduct(getProductName(element, product.getShop()));
 		product.setTime(date.getTime());
+		product.setProxy(getLastUsedProxy());
+
 		return product;
 	}
 
+	// TODO Freshy: copy paste
 	private Object getPriceDirectLink(Element element) {
 		return element.select("span.price.link-1").text();
 	}

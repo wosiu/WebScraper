@@ -86,6 +86,8 @@ public class PolandCeneo extends DELabProductSelector {
 		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
         product.setTime(date.getTime());
+		product.setProxy(getLastUsedProxy());
+
 		return product;
 	}
 

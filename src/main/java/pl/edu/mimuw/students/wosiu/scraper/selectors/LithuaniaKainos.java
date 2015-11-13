@@ -18,9 +18,9 @@ import java.util.List;
 /**
  * @author w
  */
-public class KainosLithuania extends DELabProductSelector {
+public class LithuaniaKainos extends DELabProductSelector {
 
-	public KainosLithuania() throws ConnectionException {
+	public LithuaniaKainos() throws ConnectionException {
 		super("Lithuania", "http://kainos.lt/");
 	}
 
