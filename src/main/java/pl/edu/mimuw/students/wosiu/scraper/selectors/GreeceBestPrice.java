@@ -46,8 +46,7 @@ public class GreeceBestPrice extends DELabProductSelector {
 		document.setBaseUri(getSourceURL().toString());
 		final List<URL> urls = new LinkedList<>();
 
-		Elements elements = document.select("table.products > tbody > tr > td > div.info > p.stores > a[href]:has" +
-				"(strong)");
+		Elements elements = document.select("table.products > tbody > tr > td > div.info > p.price > a[href]");
 
 		for (Element element : elements) {
 			final String href = element.attr("abs:href");
@@ -81,28 +80,6 @@ public class GreeceBestPrice extends DELabProductSelector {
 			product.setShop( element.select("td.store a.mbanner").first().attr("title") );
 			product.setProduct( element.select("th.descr a.title.no-img").first().text() );
 			product.setProxy(getLastUsedProxy());
-
-			products.add(product);
-		}
-
-		// Product view
-		Elements elementsProduct =
-				document.select("table.products > tbody > tr > " +
-						"td:has(div.info > p.stores > a[href]:not(:has(strong)))");
-
-		for (Element element : elementsProduct) {
-			ProductResult product = new ProductResult();
-			product.setPrice( element.select("div.info > p.price > a").first().text());
-
-			String href = element.select("div.info > p.price > a[href]").first().attr("abs:href");
-			product.setShopURL( followUrl(href).toString() );
-
-			product.setShop( element.select("div.info > p.stores > a").first().text() );
-			product.setProduct( element.select("h4 > a").first().text() );
-
-			product.setProxy(getLastUsedProxy());
-			product.setCountry(getCountry());
-			product.setSearcher(getSourceURL().toString());
 
 			products.add(product);
 		}

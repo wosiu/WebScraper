@@ -46,8 +46,8 @@ public class Temp {
 		Selector selector = new GreeceBestPrice();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
-		System.out.println(selector.getNextPages(document));
-//		System.out.println(selector.getProducts(document));
+//		System.out.println(selector.getNextPages(document));
+		System.out.println(selector.getProducts(document));
 //		System.out.println(selector.getNextPages(document));
 	}
 
