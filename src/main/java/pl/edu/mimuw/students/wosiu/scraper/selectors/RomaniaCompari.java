@@ -8,14 +8,6 @@ import java.util.Collection;
 public class RomaniaCompari extends OrangeSelector {
 
 	public RomaniaCompari() throws ConnectionException {
-		super();
-		setCountry("Romania");
-		setSource("http://www.compari.ro/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Romania");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Romania", "http://www.compari.ro/");
 	}
 }

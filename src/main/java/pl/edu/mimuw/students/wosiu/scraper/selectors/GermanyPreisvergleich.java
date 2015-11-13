@@ -7,24 +7,17 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.*;
 
-public class GermanyPreisvergleich extends Selector {
+public class GermanyPreisvergleich extends DELabProductSelector {
 
 	public GermanyPreisvergleich() throws ConnectionException {
-		super();
-		setCountry("Germany");
-		setSource("http://preisvergleich.de/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Germany");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Germany", "http://preisvergleich.de/");
 	}
 
 	/**

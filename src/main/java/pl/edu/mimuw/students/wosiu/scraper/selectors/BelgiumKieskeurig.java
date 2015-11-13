@@ -7,6 +7,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.URL;
@@ -17,18 +18,10 @@ import java.util.List;
 /**
  * @author w
  */
-public class BelgiumKieskeurig extends Selector {
+public class BelgiumKieskeurig extends DELabProductSelector {
 
 	public BelgiumKieskeurig() throws ConnectionException {
-		super();
-		setCountry("Belgium");
-		setSource("http://kieskeurig.be/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Belgium");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Belgium", "http://kieskeurig.be/");
 	}
 
 	@Override

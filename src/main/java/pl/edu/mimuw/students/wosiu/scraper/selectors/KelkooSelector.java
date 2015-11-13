@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.io.UnsupportedEncodingException;
@@ -19,7 +20,11 @@ import java.util.List;
 /**
  * @author w
  */
-public abstract class KelkooSelector extends Selector {
+public abstract class KelkooSelector extends DELabProductSelector {
+
+	public KelkooSelector(String country, String source) throws ConnectionException {
+		super(country, source);
+	}
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {

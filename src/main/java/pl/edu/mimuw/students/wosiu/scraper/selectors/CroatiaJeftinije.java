@@ -7,6 +7,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.io.IOException;
@@ -18,18 +19,10 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class CroatiaJeftinije extends Selector {
+public class CroatiaJeftinije extends DELabProductSelector {
 
 	public CroatiaJeftinije() throws ConnectionException {
-		super();
-		setCountry("Croatia");
-		setSource("http://www.jeftinije.hr/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Croatia");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Croatia", "http://www.jeftinije.hr/");
 	}
 
 	@Override

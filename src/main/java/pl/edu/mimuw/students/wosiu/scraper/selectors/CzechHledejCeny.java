@@ -7,6 +7,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.MalformedURLException;
@@ -16,23 +17,17 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+
+// TODO Freshy: english (widok 1 = product view, widok 2 = offers view)
 /*
 Algorytm:
 1. Pobiera liste elementow z widoku 1
 2. Na podstawie powyzszego produkty.
  */
-public class CzechHledejCeny extends Selector {
+public class CzechHledejCeny extends DELabProductSelector {
 
 	public CzechHledejCeny() throws ConnectionException {
-		super();
-		setCountry("Czech Republic");
-		setSource("http://hledejceny.cz");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Czech");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Czech Republic", "http://hledejceny.cz");
 	}
 
 	@Override
@@ -94,10 +89,10 @@ public class CzechHledejCeny extends Selector {
 	private ProductResult buildProductResult(Element element, String productName, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("Czech");
+		product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
 		product.setProduct(productName);
-		product.setSearcher("HledejCeny");
+		product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
 		product.setTime(date.getTime());
@@ -115,10 +110,10 @@ public class CzechHledejCeny extends Selector {
 	private ProductResult buildProductResultDirectLink(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURLDirectLink(element);
-		product.setCountry("Czech");
+		product.setCountry(getCountry());
 		product.setPrice(getPriceDirectLink(element));
 		product.setProduct(getProductNameDirectLink(element));
-		product.setSearcher("HledejCeny");
+		product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
 		product.setTime(date.getTime());

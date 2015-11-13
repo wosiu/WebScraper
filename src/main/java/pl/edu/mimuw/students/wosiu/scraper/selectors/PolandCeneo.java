@@ -7,6 +7,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.io.IOException;
@@ -20,12 +21,10 @@ import java.util.*;
  * 1. Z widoku pierwszego wybieramy pierwszą wyszukaną pozycję, przechodzimy do widoku 2.
  * 2. Pobieramy wszystkie pozycje z widoku 2.
  */
-public class PolandCeneo extends Selector {
+public class PolandCeneo extends DELabProductSelector {
 
 	public PolandCeneo() throws ConnectionException {
-		super();
-		setCountry("Poland");
-		setSource("http://ceneo.pl/");
+		super("Poland", "http://ceneo.pl/");
 	}
 
 	@Override

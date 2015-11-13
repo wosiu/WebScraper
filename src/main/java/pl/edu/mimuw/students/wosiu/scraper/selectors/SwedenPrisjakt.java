@@ -8,14 +8,6 @@ import java.util.Collection;
 public class SwedenPrisjakt extends PricespySelector {
 
 	public SwedenPrisjakt() throws ConnectionException {
-		super();
-		setCountry("Sweden");
-		setSource("http://www.prisjakt.nu/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Sweden");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Sweden", "http://www.prisjakt.nu/");
 	}
 }

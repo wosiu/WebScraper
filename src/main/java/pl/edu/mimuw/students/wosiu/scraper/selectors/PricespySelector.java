@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.URL;
@@ -16,7 +17,11 @@ import java.util.List;
 /**
  * @author w
  */
-public abstract class PricespySelector extends Selector {
+public abstract class PricespySelector extends DELabProductSelector {
+
+	public PricespySelector(String country, String source) throws ConnectionException {
+		super(country, source);
+	}
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {

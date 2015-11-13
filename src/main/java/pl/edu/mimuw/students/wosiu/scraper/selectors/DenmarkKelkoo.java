@@ -8,14 +8,6 @@ import java.util.Collection;
 public class DenmarkKelkoo extends KelkooSelector {
 
 	public DenmarkKelkoo() throws ConnectionException {
-		super();
-		setCountry("Denmark");
-		setSource("http://www.kelkoo.dk/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Denmark");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Denmark", "http://www.kelkoo.dk/");
 	}
 }

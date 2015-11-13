@@ -8,14 +8,6 @@ import java.util.Collection;
 public class IrelandPricespy extends PricespySelector {
 
 	public IrelandPricespy() throws ConnectionException {
-		super();
-		setCountry("Ireland");
-		setSource("http://www.pricespy.ie/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Ireland");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Ireland", "http://www.pricespy.ie/");
 	}
 }

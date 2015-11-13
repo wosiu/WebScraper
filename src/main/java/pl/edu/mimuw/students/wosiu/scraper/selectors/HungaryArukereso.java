@@ -17,14 +17,6 @@ import java.util.*;
 public class HungaryArukereso extends OrangeSelector {
 
 	public HungaryArukereso() throws ConnectionException {
-		super();
-		setCountry("Hungary");
-		setSource("http://www.arukereso.hu/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Hungary");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Hungary", "http://www.arukereso.hu/");
 	}
 }

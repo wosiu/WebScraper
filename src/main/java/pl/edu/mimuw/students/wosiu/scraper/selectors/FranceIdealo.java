@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.MalformedURLException;
@@ -14,25 +15,19 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+// TODO comments to english
+// TODO remove catch nullPtr/Exc
 /**
  * Algorytm:
  * 1. Z widoku 1 pobieramy odnosniki do list widoku 2 i linki bezpośrednie.
  * 2. Z widoku 2 linki bezposrednie (jest paginacja).
  */
-public class FranceIdealo extends Selector {
+public class FranceIdealo extends DELabProductSelector {
 
 	private boolean view1Processed = false;
 
 	public FranceIdealo() throws ConnectionException {
-		super();
-		setCountry("France");
-		setSource("http://www.idealo.fr/");
-//		Collection proxies = ProxyFinder.getInstance().getProxies("France");
-//		if (proxies == null || proxies.isEmpty() ) {
-//			logger.debug("No proxy in ProxyFinder");
-//		} else {
-//			addAllProxies(proxies);
-//		}
+		super("France", "http://www.idealo.fr/");
 	}
 
 	@Override

@@ -7,6 +7,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.MalformedURLException;
@@ -21,18 +22,10 @@ import java.util.List;
  * 1. Z widoku 1 pobieram odnośniki do list z widoku 2.
  * 2. Z powyższego produkty.
  */
-public class FinlandiaHinta extends Selector {
+public class FinlandiaHinta extends DELabProductSelector {
 
 	public FinlandiaHinta() throws ConnectionException {
-		super();
-		setCountry("Finlandia");
-		setSource("http://hinta.fi");
-//		Collection proxies = ProxyFinder.getInstance().getProxies("Finlandia");
-//		if (proxies == null || proxies.isEmpty() ) {
-//			logger.debug("No proxy in ProxyFinder");
-//		} else {
-//			addAllProxies(proxies);
-//		}
+		super("Finland", "http://hinta.fi");
 	}
 
 	@Override

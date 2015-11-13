@@ -7,6 +7,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.io.UnsupportedEncodingException;
@@ -21,9 +22,13 @@ import java.util.List;
 /**
  * @author w
  */
-public abstract class OrangeSelector extends Selector {
+public abstract class OrangeSelector extends DELabProductSelector {
 
 	private static final List<Character> SPECIAL = Arrays.asList('"','*','>');
+
+	public OrangeSelector(String country, String source) throws ConnectionException {
+		super(country, source);
+	}
 
 	private String convert(String str) {
 		StringBuilder out = new StringBuilder();

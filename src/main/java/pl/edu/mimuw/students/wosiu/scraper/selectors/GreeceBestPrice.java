@@ -6,6 +6,7 @@ import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.MalformedURLException;
@@ -19,18 +20,10 @@ import java.util.List;
  * 1. Z widoku 1 pobieram odnośniki do widoku 2.
  * 2. Z widoku 2 linki do produktów.
  */
-public class GreeceBestPrice extends Selector {
+public class GreeceBestPrice extends DELabProductSelector {
 
     public GreeceBestPrice() throws ConnectionException {
-        super();
-        setCountry("Greece");
-        setSource("http://www.bestprice.gr/");
-//		Collection proxies = ProxyFinder.getProxies("Greece");
-//		if (proxies == null || proxies.isEmpty() ) {
-//			logger.debug("No proxy in ProxyFinder");
-//		} else {
-//			addAllProxies(proxies);
-//		}
+        super("Greece", "http://www.bestprice.gr/");
     }
 
     @Override

@@ -7,6 +7,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.URL;
@@ -17,18 +18,10 @@ import java.util.List;
 /**
  * @author w
  */
-public class KainosLithuania extends Selector {
+public class KainosLithuania extends DELabProductSelector {
 
 	public KainosLithuania() throws ConnectionException {
-		super();
-		setCountry("Lithuania");
-		setSource("http://kainos.lt/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Lithuania");
-		if (proxies == null || proxies.isEmpty() ) {
-			logger.debug("No proxy in ProxyFinder");
-		} else {
-			addAllProxies(proxies);
-		}
+		super("Lithuania", "http://kainos.lt/");
 	}
 
 	// rows in search result (there are mixed: links to shops and link to oferts list within keinos)
