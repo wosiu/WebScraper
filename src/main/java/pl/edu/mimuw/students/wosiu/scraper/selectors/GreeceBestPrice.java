@@ -21,90 +21,89 @@ import java.util.List;
  */
 public class GreeceBestPrice extends DELabProductSelector {
 
-    public GreeceBestPrice() throws ConnectionException {
-        super("Greece", "http://www.bestprice.gr/");
-    }
+	public GreeceBestPrice() throws ConnectionException {
+		super("Greece", "http://www.bestprice.gr/");
+	}
 
-    @Override
-    public URL prepareTargetUrl(String product) throws ConnectionException {
-        String encoded = getSourceURL() + "products/r/" +
-                Utils.urlEncode(product.toLowerCase().trim()).replaceAll(" ", "+") + "/";
-        return Utils.stringToURL(encoded);
-    }
+	@Override
+	public URL prepareTargetUrl(String product) throws ConnectionException {
 
-    @Override
-    public List<URL> getNextPages(Document document) {
-        document.setBaseUri(getSourceURL().toString());
-        final List<URL> urls = new LinkedList<>();
+		product = Utils.urlEncode(product);
 
-        final Elements elements = document.select("td.one-merchant");
-        for (Element element : elements) {
-            try {
-                final String href = element.select("a[href]").first().attr("abs:href");
-                urls.add(new URL(href));
-            } catch (MalformedURLException e) {
-                logger.warn(e.getMessage());
-            }
-        }
+		String target = getSourceURL() + "search?q=" + product;
+		URL url = Utils.stringToURL(target);
+		return url;
+	}
 
-        return urls;
-    }
+	@Override
+	public List<URL> getNextPages(Document document) {
+		document.setBaseUri(getSourceURL().toString());
+		final List<URL> urls = new LinkedList<>();
 
-    @Override
-    public Object getProducts(Document document) {
-        document.setBaseUri(getSourceURL().toString());
-        List<ProductResult> products = new LinkedList<>();
+		Elements elements = document.select("table.products > tbody > tr > td > div.info > p.stores >" +
+				" a[href]:has(strong)");
 
-        if (!document.toString().contains("Δεν βρέθηκαν αποτελέσματα, δοκίμασε " +
-                "να τροποποιήσεις τους όρους αναζήτησης και προσπάθησε ξανά.")) {
-            Elements elements = document.select("tbody.physical-products").select("tr");
-            Date date = new Date();
-            for (Element element : elements) {
-                try {
-                    products.add(buildProductResult(element, date));
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+		for (Element element : elements) {
+			final String href = element.attr("abs:href");
+			try {
+				urls.add(new URL(href));
+			} catch (MalformedURLException e) {
+				logger.warn(e.getMessage());
+			}
+		}
 
-        return products;
-    }
+		return urls;
+	}
 
-    private ProductResult buildProductResult(Element element, Date date) {
-        final ProductResult product = new ProductResult();
-        URL shopURL = getShopURL(element);
-        product.setCountry(getCountry());
-        product.setPrice(getPrice(element));
-        product.setSearcher(getSourceURL().toString());
-        product.setShopURL(shopURL.toString());
-        product.setShop(getShopName(element));
-        product.setProduct(getProductName(element));
-        product.setTime(date.getTime());
-        product.setProxy(getLastUsedProxy());
+	@Override
+	public Object getProducts(Document document) {
+		document.setBaseUri(getSourceURL().toString());
+		List<ProductResult> products = new LinkedList<>();
 
-        return product;
-    }
+		// empty rows has 'td' with class 'store' as well but without 'diff' class
+		Elements elements = document.select("tbody.physical-products > tr.paid:has(td.store.diff)");
 
-    private String getShopName(Element element) {
-        return element.select("td.store a.mbanner").attr("title");
-    }
+		for (Element element : elements) {
+				products.add(buildProductResult(element));
+		}
 
-    private String getProductName(Element element) {
-        return element.select("th.descr a.title.no-img").first().text();
-    }
+		return products;
+	}
 
-    private String getPrice(Element element) {
-        return element.select("a.button.tomer.title.no-img").first().text();
-    }
+	private ProductResult buildProductResult(Element element) {
+		final ProductResult product = new ProductResult();
+		URL shopURL = getShopURL(element);
+		product.setCountry(getCountry());
+		product.setPrice(getPrice(element));
+		product.setSearcher(getSourceURL().toString());
+		product.setShopURL(shopURL.toString());
+		product.setShop(getShopName(element));
+		product.setProduct(getProductName(element));
+		product.setProxy(getLastUsedProxy());
 
-    private URL getShopURL(Element element) {
-        URL res = null;
-        try {
-            res = Utils.stringToURL(element.select("th.descr a.title.no-img").first().attr("abs:href"));
-        } catch (ConnectionException e) {
-            e.printStackTrace();
-        }
-        return res;
-    }
+		return product;
+	}
+
+	private String getShopName(Element element) {
+		return element.select("td.store a.mbanner").first().attr("title");
+	}
+
+	private String getProductName(Element element) {
+		return element.select("th.descr a.title.no-img").first().text();
+	}
+
+	private String getPrice(Element element) {
+		return element.select("a.button.tomer.title.no-img").first().text();
+	}
+
+	private URL getShopURL(Element element) {
+		URL res = null;
+		String href = element.select("th.descr a[href].title.no-img").first().attr("abs:href");
+		try {
+			res = Utils.stringToURL(href);
+		} catch (ConnectionException e) {
+			logger.warn(e);
+		}
+		return res;
+	}
 }

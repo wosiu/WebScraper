@@ -47,7 +47,7 @@ public class CzechHledejCeny extends DELabProductSelector {
 
 	/**
 	 * Do not paginate.
-	 * 
+	 *
 	 * @param document
 	 * @return
 	 */

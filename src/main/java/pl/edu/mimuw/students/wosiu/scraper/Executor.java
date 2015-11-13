@@ -92,6 +92,8 @@ public class Executor {
 								selector.getClass().getSimpleName() + ", start url: " + startUrl);
 					} else {
 						recordCounter += appendResults(writer, results, product, selector, userAgent, startUrl);
+						logger.debug(results.size() + " for: " + product + "' with selector: " +
+								selector.getClass().getSimpleName() + ", start url: " + startUrl);
 					}
 				}
 			}
