@@ -8,7 +8,9 @@ import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
+import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
+import javax.rmi.CORBA.Util;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -29,33 +31,72 @@ public class GermanyPreisvergleich extends DELabProductSelector {
 	 * @throws ConnectionException
 	 */
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		String target = getSourceURL().toString() + "search/result/query/" +
-				product.toLowerCase().trim().replaceAll(" ", "+");
+		product = product.toLowerCase().trim().replaceAll(" ", "+");
+
+		String target = getSourceURL().toString() + "search/result/query/" + product;
 		URL url = Utils.stringToURL(target);
 		return url;
 	}
 
 	@Override
 	public Object getProducts(Document document) {
-		List<Object> asd = new LinkedList<>();
-		asd.add(document.toString().substring(0,30));
+		List<ProductResult> results = new ArrayList<>();
 
-		return asd;
+		// Product view
+		for (Element element : document.select("div#productView > div.jsConversionTag")) {
+			ProductResult result = new ProductResult();
+			Element a = element.select("a[href].productName").first();
+
+			result.setProduct(a.text());
+			String href = a.attr("abs:href");
+			result.setSearchURL(followUrl(href).toString());
+
+			result.setPrice(element.select("a.productPrice").first().text());
+			result.setShop(element.select("img[name].productShopImg").first().attr("name"));
+
+			result.setCountry(getCountry());
+			result.setProxy(getLastUsedProxy());
+			result.setSearcher(getSourceURL().toString());
+
+			results.add(result);
+		}
+
+		// Offer view
+		for (Element element : document.select("ul.productOffers > li.box")) {
+			ProductResult result = new ProductResult();
+			Element a = element.select("a[href].productPrice").first();
+
+			result.setProduct(element.select("div.description > p:eq(0)").first().text());
+			String href = a.attr("abs:href");
+			result.setSearchURL(followUrl(href).toString());
+
+			result.setPrice(a.text());
+			result.setShop(element.select("div.merchant > img[alt]").first().attr("alt"));
+
+			result.setCountry(getCountry());
+			result.setProxy(getLastUsedProxy());
+			result.setSearcher(getSourceURL().toString());
+
+			results.add(result);
+		}
+
+		return results;
 	}
 
 	/**
-	 * Find next urls, e.g. get one next page from pagination list. If any does not exist return null.
+	 * Do not paginate.
 	 *
 	 * @param document
 	 * @return
 	 */
 	@Override
 	public List<URL> getNextPages(Document document) {
-		document.setBaseUri("http://www.preisvergleich.de/");
+		List<URL> urls = new ArrayList<>();
 
 		String nextStrUrl = null;
-		URL res;
 
+		// Pagination
+		/*URL res;
 		try {
 			Elements elements = document.getElementsByClass("next");
 			Element next = elements.first().select("a").first();
@@ -70,7 +111,17 @@ public class GermanyPreisvergleich extends DELabProductSelector {
 			logger.debug(e.toString());
 			return null;
 		}
-		return Arrays.asList(res);
+		urls.add(res);*/
+
+		for (Element element : document.select("div#productView > div.productCompare")) {
+			String href = element.select("a[href].buttonRetail").first().attr("abs:href");
+			try {
+				urls.add(Utils.stringToURL(href));
+			} catch (ConnectionException e) {
+			}
+		}
+
+		return urls;
 	}
 
 

@@ -42,8 +42,9 @@ public class Temp {
 				//"http://www.bestprice.gr/search?refqid=34D6eM2uR3I_839ed&q=xbox+one";
 				//"http://www.bestprice.gr/search?q=Fujifilm+X+T10+body";
 				//"http://www.bestprice.gr/search?q=xbox+one";
-				"http://www.bestprice.gr/item/2153473554/microsoft-xbox-one.html?qid=34D7PjT7DDh_178b0&seq=1";
-		Selector selector = new GreeceBestPrice();
+//				"http://www.preisvergleich.de/search/result/query/xbox+one/";
+				"http://www.preisvergleich.de/produkt/Microsoft-Xbox-One-500GB/33405853-8541/";
+		Selector selector = new GermanyPreisvergleich();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
 		System.out.println(selector.getNextPages(document));
