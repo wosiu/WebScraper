@@ -54,8 +54,7 @@ public class LatviaCsv extends DELabProductSelector {
 			Element a = element.select("div:eq(0) a[href]").first();
 
 			String link = a.attr("abs:href");
-			String redirected = Utils.getRedirectUrl(link).toString();
-			result.setShopURL((redirected != null) ? redirected : link);
+			result.setShopURL(followUrl(link).toString());
 
 			String prod = element.select("div:eq(2)").first().text();
 			result.setProduct(prod);

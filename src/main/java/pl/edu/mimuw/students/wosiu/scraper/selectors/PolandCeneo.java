@@ -90,7 +90,7 @@ public class PolandCeneo extends DELabProductSelector {
 	}
 
 	public URL getShopURL(Element element) {
-		return Utils.getRedirectUrl(getSourceURL() + element.select("a[href]").first().attr("href"));
+		return followUrl(getSourceURL() + element.select("a[href]").first().attr("href"));
 	}
 
 	private String getProduct(Element element) {

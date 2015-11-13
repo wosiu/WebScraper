@@ -24,6 +24,7 @@ import java.util.List;
  */
 public class FranceIdealo extends DELabProductSelector {
 
+	// TODO !!!
 	private boolean view1Processed = false;
 
 	public FranceIdealo() throws ConnectionException {
@@ -122,7 +123,7 @@ public class FranceIdealo extends DELabProductSelector {
 	}
 
 	private URL getShopURL(Element element) {
-		return Utils.getRedirectUrl(element.select("td.cta > a").first().attr("abs:href"));
+		return followUrl(element.select("td.cta > a[href]").first().attr("abs:href"));
 	}
 
 	private ProductResult buildProductResultDirectLink(Element element, Date date) {
@@ -172,6 +173,6 @@ public class FranceIdealo extends DELabProductSelector {
 	}
 
 	private URL getShopURLDirectLink(Element element) {
-		return Utils.getRedirectUrl(element.select("a.offer-title.link-2.webtrekk.wt-prompt").first().attr("abs:href"));
+		return followUrl(element.select("a.offer-title.link-2.webtrekk.wt-prompt").first().attr("abs:href"));
 	}
 }

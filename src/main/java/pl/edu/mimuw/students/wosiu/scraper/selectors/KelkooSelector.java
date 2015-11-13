@@ -57,8 +57,7 @@ public abstract class KelkooSelector extends DELabProductSelector {
 			result.setProduct(prod);
 
 			String link = element.select("a[href].result-link").first().attr("href");
-			String redirected = Utils.getRedirectUrl(link).toString();
-			result.setShopURL((redirected != null) ? redirected : link);
+			result.setShopURL(followUrl(link).toString());
 
 			result.setCountry(getCountry());
 			result.setProxy(getLastUsedProxy());

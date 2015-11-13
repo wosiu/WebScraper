@@ -53,8 +53,7 @@ public class PortugalBuscape extends DELabProductSelector {
 			result.setShop(shopname);
 
 			String link = a.attr("abs:href");
-			String redirected = Utils.getRedirectUrl(link).toString();
-			result.setShopURL((redirected != null) ? redirected : link);
+			result.setShopURL(followUrl(link).toString());
 
 			String prod = element.select("div.description > a.track_checkout").first().text();
 			result.setProduct(prod);
@@ -78,8 +77,7 @@ public class PortugalBuscape extends DELabProductSelector {
 			result.setShop(shopname);
 
 			String link = a.attr("abs:href");
-			String redirected = Utils.getRedirectUrl(link).toString();
-			result.setShopURL((redirected != null) ? redirected : link);
+			result.setShopURL(followUrl(link).toString());
 
 			String prod = element.select("img[alt].bp_prevent_error").first().attr("alt");
 			result.setProduct(prod);

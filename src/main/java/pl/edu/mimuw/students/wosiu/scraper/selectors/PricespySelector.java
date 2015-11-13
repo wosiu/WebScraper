@@ -51,8 +51,7 @@ public abstract class PricespySelector extends DELabProductSelector {
 			Element a = element.select("td:eq(8) > a[href]").first(); //FIX
 
 			String link = a.attr("abs:href");
-			String redirected = Utils.getRedirectUrl(link).toString();
-			result.setShopURL((redirected != null) ? redirected : link);
+			result.setShopURL(followUrl(link).toString());
 
 			String prod = a.attr("title");
 			result.setProduct(prod);

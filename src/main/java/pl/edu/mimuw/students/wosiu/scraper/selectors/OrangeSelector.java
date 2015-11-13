@@ -69,11 +69,7 @@ public abstract class OrangeSelector extends DELabProductSelector {
 			result.setProduct(prod);
 
 			String prodHref = title.select("a[href]").first().attr("href").toString();
-			URL redirectUrl = Utils.getRedirectUrl(prodHref);
-			if (redirectUrl != null) {
-				prodHref = redirectUrl.toString();
-			}
-			result.setShopURL(prodHref);
+			result.setShopURL(followUrl(prodHref).toString());
 
 			String shopName = element.getElementsByClass("shopname").first().text();
 			result.setShop(shopName);
