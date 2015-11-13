@@ -44,7 +44,7 @@ public class EstoniaHinnavaatlus extends DELabProductSelector {
 			} catch (MalformedURLException e) {
 				logger.warn(e.getMessage());
 
-				// TODO
+				// TODO http://hinnavaatlus.ee/search/?Type=products&Query=xbox+one
 			} catch (NullPointerException npe) {
 				npe.printStackTrace();
 			}

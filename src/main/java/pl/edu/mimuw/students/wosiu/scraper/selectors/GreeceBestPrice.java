@@ -46,7 +46,8 @@ public class GreeceBestPrice extends DELabProductSelector {
 		document.setBaseUri(getSourceURL().toString());
 		final List<URL> urls = new LinkedList<>();
 
-		Elements elements = document.select("table.products > tbody > tr > td > div.info > p.price > a[href]");
+		Elements elements = document.select("div#results-main > table.products > tbody > tr > td > div.info > p.price" +
+				" > a[href]");
 
 		for (Element element : elements) {
 			final String href = element.attr("abs:href");
@@ -67,7 +68,9 @@ public class GreeceBestPrice extends DELabProductSelector {
 
 		// Offers view
 		// empty rows has 'td' with class 'store' as well but without 'diff' class
-		Elements elementsOffer = document.select("tbody.physical-products > tr.paid:has(td.store.diff)");
+		Elements elementsOffer = document.select("div#content div#prices tbody.physical-products > tr.paid:has(td" +
+				".store" +
+				".diff)");
 
 		for (Element element : elementsOffer) {
 			ProductResult product = new ProductResult();
