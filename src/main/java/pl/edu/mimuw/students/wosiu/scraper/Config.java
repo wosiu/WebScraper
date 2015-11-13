@@ -55,6 +55,13 @@ public class Config {
 		readJSON(JSONPath);
 	}
 
+	public void check(Object o, String objectName, String filePath) throws ConfigException {
+		if ( o == null ) {
+			throw new ConfigException("Incorrect config JSON schema. Missing field: '" + objectName + "'. Check file: " +
+					filePath);
+		}
+	}
+
 	public void readJSON(String filePath) throws ConfigException {
 		// clear prior config
 		init();
@@ -79,8 +86,11 @@ public class Config {
 
 		// get arrays from the JSON object
 		JSONArray selectors = (JSONArray) jsonObject.get("selectors");
+		check(selectors, "selectors", filePath);
 		JSONArray products = (JSONArray) jsonObject.get("products");
+		check(products, "products", filePath);
 		JSONArray userAgents = (JSONArray) jsonObject.get("userAgents");
+		check(userAgents, "userAgents", filePath);
 		this.outputPath = (String) jsonObject.get("out");
 
 		// create selectors

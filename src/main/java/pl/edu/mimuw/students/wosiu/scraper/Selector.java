@@ -19,6 +19,7 @@ public abstract class Selector {
 	private URL sourceURL = null;
 	private List<Proxy> proxies = null;
 	private Proxy lastUsedProxy = null;
+	private int MAX_RESULTS_NUM = -1; // -1 = inf
 
 	protected Logger logger;
 
@@ -194,9 +195,13 @@ public abstract class Selector {
 			long elapsed = (System.currentTimeMillis() - start) / 1000;
 			logger.debug("Got products in: " + elapsed + "s ");
 
-
 			if (prods != null) {
+				if (MAX_RESULTS_NUM != -1 && results.size() + prods.size() > MAX_RESULTS_NUM) {
+					results.addAll(prods.subList(0, MAX_RESULTS_NUM - results.size()));
+					return results;
+				}
 				results.addAll(prods);
+
 				logger.debug("Products number: " + prods.size());
 			} else {
 				logger.debug("Products number: 0");
