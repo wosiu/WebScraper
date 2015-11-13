@@ -144,12 +144,13 @@ public abstract class Selector {
 		String content = contentBuilder.toString();
 		Document doc = Jsoup.parse(content);
 
-		long elapsed = (System.currentTimeMillis() - start) / 1000;
-		logger.debug("Read in: " + elapsed + "s ");
-
 		if (getSourceURL() != null) {
 			doc.setBaseUri(getSourceURL().toString());
 		}
+
+		long elapsed = (System.currentTimeMillis() - start) / 1000;
+		logger.debug("Read in: " + elapsed + "s ");
+
 		return doc;
 	}
 
@@ -188,7 +189,12 @@ public abstract class Selector {
 					return results;
 				}*/
 			}
+			long start = System.currentTimeMillis();
 			List prods = (List) getProducts(doc);
+			long elapsed = (System.currentTimeMillis() - start) / 1000;
+			logger.debug("Got products in: " + elapsed + "s ");
+
+
 			if (prods != null) {
 				results.addAll(prods);
 				logger.debug("Products number: " + prods.size());
