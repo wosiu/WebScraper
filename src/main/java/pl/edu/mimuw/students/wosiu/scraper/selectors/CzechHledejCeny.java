@@ -27,16 +27,30 @@ Algorytm:
 public class CzechHledejCeny extends DELabProductSelector {
 
 	public CzechHledejCeny() throws ConnectionException {
-		super("Czech Republic", "http://hledejceny.cz");
+		super("Czech Republic", "http://hledejceny.cz/");
 	}
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		final String encoded = getSourceURL() + "/?s=" +
-				Utils.urlEncode(product.toLowerCase().trim().replaceAll(" ", "+"));
-		return Utils.stringToURL(encoded);
+		// change diacritics
+		product = Utils.normalize(product);
+		product = product.toLowerCase();
+		// remove !@#$... etc
+		product = Utils.stripNonEnglish(product);
+		// replace ' ' with '+'
+		product = Utils.urlEncode(product);
+
+		String target = getSourceURL() + "?s=" + product;
+		URL url = Utils.stringToURL(target);
+		return url;
 	}
 
+	/**
+	 * Do not paginate.
+	 * 
+	 * @param document
+	 * @return
+	 */
 	@Override
 	public List<URL> getNextPages(Document document) {
 		final List<URL> urls = new LinkedList<>();
