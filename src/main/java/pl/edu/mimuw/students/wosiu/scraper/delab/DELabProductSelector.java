@@ -8,12 +8,19 @@ import pl.edu.mimuw.students.wosiu.scraper.selectors.proxy.Gatherproxy;
 import java.util.Collection;
 
 public abstract class DELabProductSelector extends Selector {
+
+	public void setCollectProxy(boolean collectProxy) {
+		this.collectProxy = collectProxy;
+	}
+
+	private boolean collectProxy = false;
+
 	public DELabProductSelector(String country, String source) throws ConnectionException {
 		super();
 		setCountry(country);
 		setSource(source);
 
-		if (!"Poland".equals(country)) {
+		if (collectProxy && !"Poland".equals(country)) {
 			ProxyFinder.getInstance().addProxySelector(new Gatherproxy(country));
 			Collection proxies = ProxyFinder.getInstance().getProxies(country);
 			if (proxies == null || proxies.isEmpty()) {

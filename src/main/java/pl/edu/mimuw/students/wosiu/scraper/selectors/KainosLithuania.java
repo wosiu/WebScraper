@@ -36,6 +36,7 @@ public class KainosLithuania extends DELabProductSelector {
 		return url;
 	}
 
+	private final String SHOP_NAME_PREFIX = "Pardavėjas: ";
 
 	@Override
 	public List<ProductResult> getProducts(Document document) {
@@ -69,14 +70,20 @@ public class KainosLithuania extends DELabProductSelector {
 		}
 
 		// products view
-		for (Element element : document.select(PRODUCTS_ROW_QUERY+"[onclick]")){
+		for (Element element : document.select(PRODUCTS_ROW_QUERY + "[onclick]")) {
 			ProductResult result = new ProductResult();
 
 			Element mix = element.select("span.price").first();
 			String price = mix.ownText();
 			result.setPrice(price);
 
-			String shopname = mix.select("span.compare-other-count").first().text().substring("Pardavėjas: ".length());
+			String shopname = mix.select("span.compare-other-count").first().text();
+			if (shopname.length() <= SHOP_NAME_PREFIX.length()) {
+				logger.debug("Skip element - incorrect shop name");
+				continue;
+			}
+
+			shopname = shopname.substring(SHOP_NAME_PREFIX.length());
 			result.setShop(shopname);
 
 			String link = element.attr("abs:href");
@@ -106,7 +113,7 @@ public class KainosLithuania extends DELabProductSelector {
 		List<URL> urls = new ArrayList<>();
 
 		// Collect rows with links to comparing offerts links
-		Elements elements = document.select(PRODUCTS_ROW_QUERY+":not([onclick])");
+		Elements elements = document.select(PRODUCTS_ROW_QUERY + ":not([onclick])");
 
 		for (Element element : elements) {
 			String str = element.attr("abs:href");
