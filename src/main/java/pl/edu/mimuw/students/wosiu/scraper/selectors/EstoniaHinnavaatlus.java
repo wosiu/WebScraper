@@ -4,15 +4,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -61,26 +58,27 @@ public class EstoniaHinnavaatlus extends DELabProductSelector {
 			String title =
 					document.select("h2.section-title.blue.no-border.regular.big.no-transform.margin").first().text();
 			Elements elements = document.select("div.col-1-1.extra-offers-offer.opened.bg-white");
-			try {
-				Date date = new Date();
-				for (Element element : elements) {
-					products.add(buildProductResult(element, title, date));
-				}
-			} catch (NullPointerException e) {
-				logger.warn(e.getMessage());
-			}
 
+            Date date = new Date();
+            for (Element element : elements) {
+                try {
+					products.add(buildProductResult(element, title, date));
+                } catch (NullPointerException e) {
+                    logger.warn(e.getMessage());
+				}
+			}
 		}
+
 		return products;
 	}
 
 	private ProductResult buildProductResult(Element element, String productName, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("Estonia");
+        product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
 		product.setProduct(productName);
-		product.setSearcher("Hinnavaatlus");
+        product.setSearcher(getSourceURL().toString());
 		if (shopURL != null) {
 			product.setShopURL(shopURL.toString());
 			product.setShop(shopURL.getHost());

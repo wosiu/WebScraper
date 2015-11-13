@@ -77,10 +77,10 @@ public class CroatiaJeftinije extends DELabProductSelector {
 	private ProductResult buildProductResult(Element element, String productName, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("Croatia");
+        product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
 		product.setProduct(productName);
-		product.setSearcher("Jeftinije");
+        product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
 		product.setTime(date.getTime());

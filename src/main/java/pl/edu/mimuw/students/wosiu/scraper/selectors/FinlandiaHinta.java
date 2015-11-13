@@ -4,15 +4,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -31,7 +28,7 @@ public class FinlandiaHinta extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		final String encoded = getSourceURL() + "/haku?q=" +
-			Utils.urlEncode(product.toLowerCase().trim().replaceAll(" ", "+"));
+                Utils.urlEncode(product.toLowerCase().trim().replaceAll(" ", "+"));
 		return Utils.stringToURL(encoded);
 	}
 
@@ -61,15 +58,14 @@ public class FinlandiaHinta extends DELabProductSelector {
 		final String source = document.toString();
 		if (!source.contains("ei löytynyt tuotteita")) {
 			Elements elements = document.select("tr.hv-table-list-tr.hv--offer-list");
-			try {
-				Date date = new Date();
-				for (Element element : elements) {
+            Date date = new Date();
+            for (Element element : elements) {
+                try {
 					products.add(buildProductResult(element, date));
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
 				}
-			} catch (NullPointerException e) {
-				logger.warn(e.getMessage());
 			}
-
 		}
 		return products;
 	}
@@ -77,10 +73,10 @@ public class FinlandiaHinta extends DELabProductSelector {
 	private ProductResult buildProductResult(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("Finlandia");
+        product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
 		product.setProduct(getProductName(element));
-		product.setSearcher("Hinta");
+        product.setSearcher(getSourceURL().toString());
 		if (shopURL != null) {
 			product.setShopURL(shopURL.toString());
 		}
