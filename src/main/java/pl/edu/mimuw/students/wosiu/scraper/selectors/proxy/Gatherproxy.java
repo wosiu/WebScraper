@@ -48,36 +48,43 @@ public class Gatherproxy extends Selector {
 
 	private static final Pattern pattern = Pattern.compile(PATTERN_STR);
 
+	private String prepareCountryName(String country) {
+		return (country == null) ? country : country.replaceAll(" ", "%20");
+	}
 
 	public Gatherproxy(String country) {
 		super();
 
-		// TODO maybe do something?
+		country = prepareCountryName(country);
 		try {
 			setSource("http://www.gatherproxy.com/proxylist/country/?c=" + country);
 		} catch (ConnectionException e) {
 			e.printStackTrace();
 		}
+	}
 
-		/*try {
+	public Gatherproxy() {
+		super();
+		try {
 			setSource("http://www.gatherproxy.com/");
 		} catch (ConnectionException e) {
 			logger.error(e.toString());
-		}*/
+		}
 	}
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
+		product = prepareCountryName(product);
 		String productURL = getSourceURL() + "proxylist/country/?c=" + product;
 		return Utils.stringToURL(productURL);
 	}
 
 	@Override
-	public List<Object> getProducts(Document document) {
+	public List<ProxyWrapper> getProducts(Document document) {
 
 		Element table = document.select("tbody").first();
 		Elements rows = table.select("script");
-		List<Object> res = new ArrayList<>(rows.size());
+		List<ProxyWrapper> res = new ArrayList<>(rows.size());
 
 		ListIterator it = rows.listIterator();
 		while (it.hasNext()) {

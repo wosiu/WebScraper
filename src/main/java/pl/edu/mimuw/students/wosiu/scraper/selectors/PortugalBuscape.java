@@ -2,7 +2,6 @@ package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
@@ -17,28 +16,28 @@ import java.util.List;
 /**
  * @author w
  */
-public class KainosLithuania extends Selector {
+public class PortugalBuscape extends Selector {
 
-	public KainosLithuania() throws ConnectionException {
+	public PortugalBuscape() throws ConnectionException {
 		super();
-		setCountry("Lithuania");
-		setSource("http://kainos.lt/");
-		Collection proxies = ProxyFinder.getInstance().getProxies("Lithuania");
-		if (proxies == null || proxies.isEmpty() ) {
+		setCountry("Portugal");
+		setSource("http://www.buscape.com.br/");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Portugal");
+		if (proxies == null || proxies.isEmpty()) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {
 			addAllProxies(proxies);
 		}
 	}
 
-	// rows in search result (there are mixed: links to shops and link to oferts list within keinos)
-	private final String PRODUCTS_ROW_QUERY = "table#search_results > tbody > tr > td > a[href].go-to-shop";
-
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		product = Utils.urlEncode(product);
+		// remove special chars from product
+		product = Utils.normalize(product);
+		product = Utils.stripNonEnglish(product);
+		product = product.replaceAll(" ", "+");
 
-		String target = getSourceURL().toString() + "lt/search?search_query=" + product;
+		String target = getSourceURL().toString() + product;
 		URL url = Utils.stringToURL(target);
 		return url;
 	}
@@ -48,25 +47,23 @@ public class KainosLithuania extends Selector {
 	public List<ProductResult> getProducts(Document document) {
 		List<ProductResult> results = new ArrayList<>();
 
-		document.setBaseUri(getSourceURL().toString());
+		// product search view
+		for (Element element :
+				document.select("section.proc-search-results > ul.bp-product-list > li.offer")) {
 
-		// offerts view:
-		for (Element element : document.select("table.compare > tbody > tr.price-row")) {
 			ProductResult result = new ProductResult();
-
-			Element a = element.select("td:eq(2) > a[href]").first();
-
-			String price = a.select("span.price").first().ownText();
+			String price = element.select("div.single-price > a[href].price > span.value").first().text();
 			result.setPrice(price);
 
-			String shopname = element.select("td:eq(0) img[alt]").first().attr("alt");
+			Element a = element.select("div.details > a[href]").first();
+			String shopname = a.select("img[alt]").first().attr("alt");
 			result.setShop(shopname);
 
 			String link = a.attr("abs:href");
 			String redirected = Utils.getRedirectUrl(link).toString();
 			result.setShopURL((redirected != null) ? redirected : link);
 
-			String prod = a.select("span.info > strong").text();
+			String prod = element.select("div.description > a.track_checkout").first().text();
 			result.setProduct(prod);
 			result.setCountry(getCountry());
 			result.setProxy(getLastUsedProxy());
@@ -75,23 +72,25 @@ public class KainosLithuania extends Selector {
 			results.add(result);
 		}
 
-		// products view
-		for (Element element : document.select(PRODUCTS_ROW_QUERY+"[onclick]")){
+		// offer view
+		for (Element element : document.select("div.offers-list ul > li[log_id]")) {
 			ProductResult result = new ProductResult();
 
-			Element mix = element.select("span.price").first();
-			String price = mix.ownText();
+			Element a = element.select("a[href].price__link").first();
+
+			String price = a.text();
 			result.setPrice(price);
 
-			String shopname = mix.select("span.compare-other-count").first().text().substring("Pardavėjas: ".length());
+			String shopname = element.select("img[alt].store-logo").first().attr("alt");
 			result.setShop(shopname);
 
-			String link = element.attr("abs:href");
+			String link = a.attr("abs:href");
 			String redirected = Utils.getRedirectUrl(link).toString();
 			result.setShopURL((redirected != null) ? redirected : link);
 
-			String prod = element.select("span.info > strong").text();
+			String prod = element.select("img[alt].bp_prevent_error").first().attr("alt");
 			result.setProduct(prod);
+
 			result.setCountry(getCountry());
 			result.setProxy(getLastUsedProxy());
 			result.setSearcher(getSourceURL().toString());
@@ -103,7 +102,8 @@ public class KainosLithuania extends Selector {
 	}
 
 	/**
-	 * Take links from results and do pagination (max 7 times).
+	 * Do not paginate.
+	 * Collect urls to offers view from product view.
 	 *
 	 * @param document
 	 * @return
@@ -112,27 +112,12 @@ public class KainosLithuania extends Selector {
 	public List<URL> getNextPages(Document document) {
 		List<URL> urls = new ArrayList<>();
 
-		// Collect rows with links to comparing offerts links
-		Elements elements = document.select(PRODUCTS_ROW_QUERY+":not([onclick])");
-
-		for (Element element : elements) {
+		for (Element element :
+				document.select("ul.bp-product-list > li.unique-product > div.actions > a[href]:not(.track_checkout)")) {
 			String str = element.attr("abs:href");
 			try {
 				urls.add(Utils.stringToURL(str));
 			} catch (ConnectionException e) {
-			}
-		}
-
-		// Pagination
-		final int MAX_PAGE = 7;
-		Element next = document.select("a[href].next").first();
-		if (next != null) {
-			String nextStr = next.attr("href");
-			if (!nextStr.contains("page_nr=" + MAX_PAGE)) {
-				try {
-					urls.add(Utils.stringToURL(nextStr));
-				} catch (ConnectionException e) {
-				}
 			}
 		}
 

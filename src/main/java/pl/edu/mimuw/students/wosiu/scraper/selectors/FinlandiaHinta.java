@@ -27,7 +27,7 @@ public class FinlandiaHinta extends Selector {
 		super();
 		setCountry("Finlandia");
 		setSource("http://hinta.fi");
-//		Collection proxies = ProxyFinder.getProxies("Finlandia");
+//		Collection proxies = ProxyFinder.getInstance().getProxies("Finlandia");
 //		if (proxies == null || proxies.isEmpty() ) {
 //			logger.debug("No proxy in ProxyFinder");
 //		} else {

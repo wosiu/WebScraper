@@ -23,7 +23,7 @@ public class LatviaCsv extends Selector {
 		super();
 		setCountry("Latvia");
 		setSource("http://www.csv.lv/");
-		Collection proxies = ProxyFinder.getProxies("Latvia");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Latvia");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

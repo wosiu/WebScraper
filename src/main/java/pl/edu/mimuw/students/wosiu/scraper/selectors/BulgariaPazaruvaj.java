@@ -11,7 +11,7 @@ public class BulgariaPazaruvaj extends OrangeSelector {
 		super();
 		setCountry("Bulgaria");
 		setSource("http://www.pazaruvaj.com/");
-		Collection proxies = ProxyFinder.getProxies("Bulgaria");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Bulgaria");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

@@ -22,7 +22,7 @@ public class AustriaPreisvergleich extends Selector {
 		super();
 		setCountry("Austria");
 		setSource("http://preisvergleich.at/");
-		Collection proxies = ProxyFinder.getProxies("Austria");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Austria");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

@@ -37,7 +37,7 @@ public class Utils {
 			con.setInstanceFollowRedirects(true);
 			con.setRequestProperty("User-Agent", USER_AGENT);
 			con.setConnectTimeout(3000);
-			con.setReadTimeout(3000);
+			con.setReadTimeout(1500);
 			con.connect();
 			InputStream is = con.getInputStream();
 			is.close();
@@ -85,6 +85,10 @@ public class Utils {
 			}
 		}
 		return conn.getURL();
+	}
+
+	public static String stripNonEnglish(String in) {
+		return in.replaceAll("[^\\w\\s]","").replaceAll("\\s+", " ").trim();
 	}
 
 	// TODO tests

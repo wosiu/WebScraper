@@ -11,7 +11,7 @@ public class ItalyKelkoo extends KelkooSelector {
 		super();
 		setCountry("Italy");
 		setSource("http://www.kelkoo.it/");
-		Collection proxies = ProxyFinder.getProxies("Italy");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Italy");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

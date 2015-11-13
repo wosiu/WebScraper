@@ -19,7 +19,7 @@ public class GermanyPreisvergleich extends Selector {
 		super();
 		setCountry("Germany");
 		setSource("http://preisvergleich.de/");
-		Collection proxies = ProxyFinder.getProxies("Germany");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Germany");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

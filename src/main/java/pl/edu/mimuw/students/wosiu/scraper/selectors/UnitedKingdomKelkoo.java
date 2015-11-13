@@ -11,7 +11,7 @@ public class UnitedKingdomKelkoo extends KelkooSelector {
 		super();
 		setCountry("United Kingdom");
 		setSource("http://www.kelkoo.co.uk/");
-		Collection proxies = ProxyFinder.getProxies("United Kingdom");
+		Collection proxies = ProxyFinder.getInstance().getProxies("United Kingdom");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

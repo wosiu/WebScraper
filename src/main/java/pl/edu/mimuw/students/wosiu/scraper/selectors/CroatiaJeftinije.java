@@ -24,7 +24,7 @@ public class CroatiaJeftinije extends Selector {
 		super();
 		setCountry("Croatia");
 		setSource("http://www.jeftinije.hr/");
-		Collection proxies = ProxyFinder.getProxies("Croatia");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Croatia");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

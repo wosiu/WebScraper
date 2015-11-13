@@ -23,7 +23,7 @@ public class BelgiumKieskeurig extends Selector {
 		super();
 		setCountry("Belgium");
 		setSource("http://kieskeurig.be/");
-		Collection proxies = ProxyFinder.getProxies("Belgium");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Belgium");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

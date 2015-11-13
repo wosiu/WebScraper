@@ -27,7 +27,7 @@ public class EstoniaHinnavaatlus extends Selector {
 		super();
 		setCountry("Estonia");
 		setSource("http://hinnavaatlus.ee");
-//		Collection proxies = ProxyFinder.getProxies("Estonia");
+//		Collection proxies = ProxyFinder.getInstance().getProxies("Estonia");
 //		if (proxies == null || proxies.isEmpty() ) {
 //			logger.debug("No proxy in ProxyFinder");
 //		} else {

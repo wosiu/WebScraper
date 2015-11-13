@@ -20,7 +20,7 @@ public class HungaryArukereso extends OrangeSelector {
 		super();
 		setCountry("Hungary");
 		setSource("http://www.arukereso.hu/");
-		Collection proxies = ProxyFinder.getProxies("Hungary");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Hungary");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

@@ -28,7 +28,7 @@ public class FranceIdealo extends Selector {
 		super();
 		setCountry("France");
 		setSource("http://www.idealo.fr/");
-//		Collection proxies = ProxyFinder.getProxies("France");
+//		Collection proxies = ProxyFinder.getInstance().getProxies("France");
 //		if (proxies == null || proxies.isEmpty() ) {
 //			logger.debug("No proxy in ProxyFinder");
 //		} else {

@@ -11,7 +11,7 @@ public class RomaniaCompari extends OrangeSelector {
 		super();
 		setCountry("Romania");
 		setSource("http://www.compari.ro/");
-		Collection proxies = ProxyFinder.getProxies("Romania");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Romania");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

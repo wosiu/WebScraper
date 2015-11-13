@@ -11,7 +11,7 @@ public class DenmarkKelkoo extends KelkooSelector {
 		super();
 		setCountry("Denmark");
 		setSource("http://www.kelkoo.dk/");
-		Collection proxies = ProxyFinder.getProxies("Denmark");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Denmark");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

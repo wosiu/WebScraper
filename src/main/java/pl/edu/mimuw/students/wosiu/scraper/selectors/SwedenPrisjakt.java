@@ -11,7 +11,7 @@ public class SwedenPrisjakt extends PricespySelector {
 		super();
 		setCountry("Sweden");
 		setSource("http://www.prisjakt.nu/");
-		Collection proxies = ProxyFinder.getProxies("Sweden");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Sweden");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

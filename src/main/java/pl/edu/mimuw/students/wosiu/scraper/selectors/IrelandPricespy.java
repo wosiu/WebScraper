@@ -11,7 +11,7 @@ public class IrelandPricespy extends PricespySelector {
 		super();
 		setCountry("Ireland");
 		setSource("http://www.pricespy.ie/");
-		Collection proxies = ProxyFinder.getProxies("Ireland");
+		Collection proxies = ProxyFinder.getInstance().getProxies("Ireland");
 		if (proxies == null || proxies.isEmpty() ) {
 			logger.debug("No proxy in ProxyFinder");
 		} else {

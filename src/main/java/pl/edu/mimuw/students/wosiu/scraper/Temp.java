@@ -1,16 +1,8 @@
 package pl.edu.mimuw.students.wosiu.scraper;
 
-import net.htmlparser.jericho.Renderer;
-import net.htmlparser.jericho.Segment;
-import net.htmlparser.jericho.Source;
-import org.apache.commons.lang3.StringEscapeUtils;
-import org.apache.commons.lang3.math.NumberUtils;
+import org.apache.log4j.BasicConfigurator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import net.htmlparser.*;
-import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.*;
 
 import java.io.BufferedReader;
@@ -18,10 +10,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
-import java.text.Normalizer;
 import java.util.*;
-import java.util.regex.Pattern;
-import java.util.regex.Matcher;
 
 
 public class Temp {
@@ -47,12 +36,14 @@ public class Temp {
 
 
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
+		BasicConfigurator.configure();
 		String url =
-				"http://www.csv.lv/search?q=LG+G3#page=3&sort=3";
-		Selector selector = new LatviaCsv();
+				//"http://www.buscape.com.br/xbox+one";
+				"http://www.buscape.com.br/microsoft-xbox-one-500-gb.html?pos=1";
+		Selector selector = new PortugalBuscape();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
-		//System.out.println(selector.getNextPages(document));
+//		System.out.println(selector.getNextPages(document));
 		System.out.println(selector.getProducts(document));
 //		System.out.println(selector.getNextPages(document));
 	}
