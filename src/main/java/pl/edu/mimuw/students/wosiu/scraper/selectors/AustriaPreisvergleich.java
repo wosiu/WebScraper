@@ -4,8 +4,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
@@ -58,7 +56,7 @@ public class AustriaPreisvergleich extends DELabProductSelector {
 		if (!document.toString().contains("Ihre Suchanfrage hat keine Ergebnisse erbracht")) {
 			final Elements elements = document.getElementsByClass("article");
 
-			Date date = new Date(); //TODO ladniej na czytelny format przerobic (to samo w pl)
+            Date date = new Date();
 			for (Element element : elements) {
 				products.add(buildProductResult(element, date));
 			}
@@ -70,10 +68,10 @@ public class AustriaPreisvergleich extends DELabProductSelector {
 	private ProductResult buildProductResult(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("Austria");
+        product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
 		product.setProduct(getProduct(element));
-		product.setSearcher("Preisvergleich");
+        product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
 		product.setShop(getShopName(element));
 		product.setTime(date.getTime());

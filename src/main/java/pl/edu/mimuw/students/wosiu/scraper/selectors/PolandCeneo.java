@@ -79,13 +79,13 @@ public class PolandCeneo extends DELabProductSelector {
 	private ProductResult buildProductResult(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("Poland");
+        product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
 		product.setProduct(getProduct(element));
-		product.setSearcher("Ceneo");
+        product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
-		product.setTime();
+        product.setTime(date.getTime());
 		return product;
 	}
 

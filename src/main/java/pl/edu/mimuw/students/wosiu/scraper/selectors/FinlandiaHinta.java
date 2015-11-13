@@ -4,15 +4,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -70,10 +67,12 @@ public class FinlandiaHinta extends DELabProductSelector {
 	private ProductResult buildProductResult(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry(getCountry());
+
+        product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
 		product.setProduct(getProductName(element));
-		product.setSearcher(getSourceURL().toString());
+        product.setSearcher(getSourceURL().toString());
+
 		if (shopURL != null) {
 			product.setShopURL(shopURL.toString());
 		}

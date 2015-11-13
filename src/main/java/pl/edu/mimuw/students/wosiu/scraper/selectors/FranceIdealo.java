@@ -4,7 +4,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
@@ -17,6 +16,7 @@ import java.util.List;
 
 // TODO comments to english
 // TODO remove catch nullPtr/Exc
+
 /**
  * Algorytm:
  * 1. Z widoku 1 pobieramy odnosniki do list widoku 2 i linki bezpośrednie.
@@ -39,7 +39,7 @@ public class FranceIdealo extends DELabProductSelector {
 	}
 
 	@Override
-	public List<URL> getNextPages(Document document){
+    public List<URL> getNextPages(Document document) {
 		document.setBaseUri(getSourceURL().toString());
 		final List<URL> urls = new LinkedList<>();
 
@@ -81,18 +81,19 @@ public class FranceIdealo extends DELabProductSelector {
 		if (!document.toString().contains("Aucun résultat ne correspond à la recherche")) {
 			//logika dla pobierania dla widoku 1 (linki bezposrednie zamiast linkow do widoku 2)
 			Elements elements = document.select("td.tile.offer-tile");
-			try {
-				Date date = new Date();
-				for (Element element : elements) {
+
+            Date date = new Date();
+            for (Element element : elements) {
+                try {
 					products.add(buildProductResultDirectLink(element, date));
+                } catch (NullPointerException e) {
+                    e.printStackTrace();
 				}
-			} catch (NullPointerException e) {
-				logger.warn(e.getMessage());
 			}
+
 
 			//logika dla pobierania dla widoku 2
 			elements = document.select("table.list.modular tr");
-			Date date = new Date();
 			for (Element element : elements) {
 				try {
 					products.add(buildProductResult(element, date));
@@ -108,9 +109,9 @@ public class FranceIdealo extends DELabProductSelector {
 	private ProductResult buildProductResult(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("France");
+        product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
-		product.setSearcher("Idealo");
+        product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
 		product.setProduct(getProductName(element, product.getShop()));
@@ -129,9 +130,9 @@ public class FranceIdealo extends DELabProductSelector {
 	private ProductResult buildProductResultDirectLink(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURLDirectLink(element);
-		product.setCountry("France");
+        product.setCountry(getCountry());
 		product.setPrice(getPriceDirectLink(element));
-		product.setSearcher("Idealo");
+        product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
 		product.setShop(shopURL.getHost());
 		product.setProduct(getProductName(element, product.getShop()));
@@ -144,7 +145,7 @@ public class FranceIdealo extends DELabProductSelector {
 	}
 
 	private String getProductName(Element element, String shop) {
-		final String GET_CONTENTS ="getContents(";
+        final String GET_CONTENTS = "getContents(";
 		final String ENDING = "');/* ]]>";
 		final String ENDING2 = "');\n/* ]]>";
 		String res = "";
