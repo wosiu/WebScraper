@@ -57,8 +57,7 @@ public class KainosLithuania extends DELabProductSelector {
 			result.setShop(shopname);
 
 			String link = a.attr("abs:href");
-			String redirected = Utils.getRedirectUrl(link).toString();
-			result.setShopURL((redirected != null) ? redirected : link);
+			result.setShopURL(followUrl(link).toString());
 
 			String prod = a.select("span.info > strong").text();
 			result.setProduct(prod);

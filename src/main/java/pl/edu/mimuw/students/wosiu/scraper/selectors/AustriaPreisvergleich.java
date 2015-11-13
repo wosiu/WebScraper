@@ -85,7 +85,7 @@ public class AustriaPreisvergleich extends DELabProductSelector {
 	}
 
 	private URL getShopURL(Element element) {
-		return Utils.getRedirectUrl(
+		return followUrl(
 				getSourceURL() +
 						element.getElementsByClass("namedescription").get(0).select("a[href]").get(0).attr("href")
 		);

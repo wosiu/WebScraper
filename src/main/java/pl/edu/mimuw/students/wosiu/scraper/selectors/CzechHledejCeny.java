@@ -100,7 +100,7 @@ public class CzechHledejCeny extends DELabProductSelector {
 	}
 
 	public URL getShopURL(Element element) {
-		return Utils.getRedirectUrl(element.getElementsByClass("pricevat").first().child(0).attr("href"));
+		return followUrl(element.getElementsByClass("pricevat").first().child(0).attr("href"));
 	}
 
 	private String getPrice(Element element) {
@@ -129,6 +129,6 @@ public class CzechHledejCeny extends DELabProductSelector {
 	}
 
 	private URL getShopURLDirectLink(Element element) {
-		return Utils.getRedirectUrl(element.getElementsByClass("pricevat").first().child(0).attr("href"));
+		return followUrl(element.getElementsByClass("pricevat").first().child(0).attr("href"));
 	}
 }

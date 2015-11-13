@@ -88,7 +88,7 @@ public class CroatiaJeftinije extends DELabProductSelector {
 	}
 
 	public URL getShopURL(Element element) {
-		return Utils.getRedirectUrl(element.select("a[href]").first().attr("href"));
+		return followUrl(element.select("a[href]").first().attr("href"));
 	}
 
 

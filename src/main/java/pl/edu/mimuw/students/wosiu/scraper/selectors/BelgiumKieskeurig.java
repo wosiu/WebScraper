@@ -60,8 +60,7 @@ public class BelgiumKieskeurig extends DELabProductSelector {
 			Element a = element.select("div.price-row > a[href]").first();
 
 			String link = a.attr("abs:href");
-			String redirected = Utils.getRedirectUrl(link).toString();
-			result.setShopURL((redirected != null) ? redirected : link);
+			result.setShopURL(followUrl(link).toString());
 
 			result.setProduct(prod);
 			result.setCountry(getCountry());

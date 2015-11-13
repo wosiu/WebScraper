@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
+// TODO to english
+
 /**
  * Algorytm:
  * 1. Z widoku 1 pobieram odnośniki do list z widoku 2.
@@ -31,26 +33,24 @@ public class FinlandiaHinta extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		final String encoded = getSourceURL() + "/haku?q=" +
-			Utils.urlEncode(product.toLowerCase().trim().replaceAll(" ", "+"));
+				Utils.urlEncode(product.toLowerCase().trim().replaceAll(" ", "+"));
 		return Utils.stringToURL(encoded);
 	}
 
 	@Override
 	public List<URL> getNextPages(Document document) {
 		final List<URL> urls = new LinkedList<>();
-		final Elements elements = document.select("a.hv--product-a");
-		document.setBaseUri(getSourceURL().toString());
+		final Elements elements = document.select("a[href].hv--product-a");
 
 		for (Element element : elements) {
 			try {
 				final String href = element.attr("abs:href");
 				urls.add(new URL(href));
 			} catch (MalformedURLException e) {
-				logger.warn(e.getMessage());
-			} catch (NullPointerException npe) {
-				npe.printStackTrace();
+				logger.info(e.getMessage());
 			}
 		}
+
 		return urls;
 	}
 
@@ -58,29 +58,22 @@ public class FinlandiaHinta extends DELabProductSelector {
 	public Object getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
 		document.setBaseUri(getSourceURL().toString());
-		final String source = document.toString();
-		if (!source.contains("ei löytynyt tuotteita")) {
-			Elements elements = document.select("tr.hv-table-list-tr.hv--offer-list");
-			try {
-				Date date = new Date();
-				for (Element element : elements) {
-					products.add(buildProductResult(element, date));
-				}
-			} catch (NullPointerException e) {
-				logger.warn(e.getMessage());
-			}
 
+		Date date = new Date();
+		for (Element element : document.select("tr.hv-table-list-tr.hv--offer-list")) {
+			products.add(buildProductResult(element, date));
 		}
+
 		return products;
 	}
 
 	private ProductResult buildProductResult(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURL(element);
-		product.setCountry("Finlandia");
+		product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
 		product.setProduct(getProductName(element));
-		product.setSearcher("Hinta");
+		product.setSearcher(getSourceURL().toString());
 		if (shopURL != null) {
 			product.setShopURL(shopURL.toString());
 		}
@@ -103,11 +96,11 @@ public class FinlandiaHinta extends DELabProductSelector {
 
 	private URL getShopURL(Element element) {
 		URL res = null;
-		try {
-			res = Utils.getRedirectUrl(element.select("a.hv-button.hv--green.hvjs-tooltip").first().attr("abs:href"));
-		} catch (NullPointerException npe) {
-			npe.printStackTrace(); //npe jest ok, czasami nie ma linku do sklepów
+		Element a = element.select("a.hv-button.hv--green.hvjs-tooltip").first();
+		if (a == null) {
+			return null;
 		}
+		res = followUrl(a.attr("abs:href"));
 		return res;
 	}
 }

@@ -3,8 +3,11 @@ package pl.edu.mimuw.students.wosiu.scraper.delab;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
+import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.proxy.Gatherproxy;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.Collection;
 
 public abstract class DELabProductSelector extends Selector {
@@ -14,6 +17,8 @@ public abstract class DELabProductSelector extends Selector {
 	}
 
 	private boolean collectProxy = false;
+	private boolean redirectShopLink = false;
+
 
 	public DELabProductSelector(String country, String source) throws ConnectionException {
 		super();
@@ -30,5 +35,23 @@ public abstract class DELabProductSelector extends Selector {
 				addAllProxies(proxies);
 			}
 		}
+	}
+
+	protected URL followUrl(String url) {
+		URL org;
+		try {
+			org = new URL(url);
+		} catch (MalformedURLException e) {
+			logger.warn("Malformed shop url: " + url);
+			return null;
+		}
+		if (!redirectShopLink) {
+			return org;
+		}
+		URL redirected = Utils.getRedirectUrl(url);
+		if (redirected != null) {
+			return redirected;
+		}
+		return org;
 	}
 }
