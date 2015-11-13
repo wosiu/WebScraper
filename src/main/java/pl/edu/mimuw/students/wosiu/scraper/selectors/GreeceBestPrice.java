@@ -35,13 +35,19 @@ public class GreeceBestPrice extends DELabProductSelector {
 		return url;
 	}
 
+	/**
+	 * Do not paginate
+	 *
+	 * @param document
+	 * @return
+	 */
 	@Override
 	public List<URL> getNextPages(Document document) {
 		document.setBaseUri(getSourceURL().toString());
 		final List<URL> urls = new LinkedList<>();
 
-		Elements elements = document.select("table.products > tbody > tr > td > div.info > p.stores >" +
-				" a[href]:has(strong)");
+		Elements elements = document.select("table.products > tbody > tr > td > div.info > p.stores > a[href]:has" +
+				"(strong)");
 
 		for (Element element : elements) {
 			final String href = element.attr("abs:href");
@@ -60,50 +66,47 @@ public class GreeceBestPrice extends DELabProductSelector {
 		document.setBaseUri(getSourceURL().toString());
 		List<ProductResult> products = new LinkedList<>();
 
+		// Offers view
 		// empty rows has 'td' with class 'store' as well but without 'diff' class
-		Elements elements = document.select("tbody.physical-products > tr.paid:has(td.store.diff)");
+		Elements elementsOffer = document.select("tbody.physical-products > tr.paid:has(td.store.diff)");
 
-		for (Element element : elements) {
-				products.add(buildProductResult(element));
+		for (Element element : elementsOffer) {
+			ProductResult product = new ProductResult();
+
+			product.setCountry(getCountry());
+			product.setPrice( element.select("a.button.tomer.title.no-img").first().text() );
+			product.setSearcher(getSourceURL().toString());
+			String href = element.select("th.descr a[href].title.no-img").first().attr("abs:href");
+			product.setShopURL( followUrl(href).toString() );
+			product.setShop( element.select("td.store a.mbanner").first().attr("title") );
+			product.setProduct( element.select("th.descr a.title.no-img").first().text() );
+			product.setProxy(getLastUsedProxy());
+
+			products.add(product);
+		}
+
+		// Product view
+		Elements elementsProduct =
+				document.select("table.products > tbody > tr > " +
+						"td:has(div.info > p.stores > a[href]:not(:has(strong)))");
+
+		for (Element element : elementsProduct) {
+			ProductResult product = new ProductResult();
+			product.setPrice( element.select("div.info > p.price > a").first().text());
+
+			String href = element.select("div.info > p.price > a[href]").first().attr("abs:href");
+			product.setShopURL( followUrl(href).toString() );
+
+			product.setShop( element.select("div.info > p.stores > a").first().text() );
+			product.setProduct( element.select("h4 > a").first().text() );
+
+			product.setProxy(getLastUsedProxy());
+			product.setCountry(getCountry());
+			product.setSearcher(getSourceURL().toString());
+
+			products.add(product);
 		}
 
 		return products;
-	}
-
-	private ProductResult buildProductResult(Element element) {
-		final ProductResult product = new ProductResult();
-		URL shopURL = getShopURL(element);
-		product.setCountry(getCountry());
-		product.setPrice(getPrice(element));
-		product.setSearcher(getSourceURL().toString());
-		product.setShopURL(shopURL.toString());
-		product.setShop(getShopName(element));
-		product.setProduct(getProductName(element));
-		product.setProxy(getLastUsedProxy());
-
-		return product;
-	}
-
-	private String getShopName(Element element) {
-		return element.select("td.store a.mbanner").first().attr("title");
-	}
-
-	private String getProductName(Element element) {
-		return element.select("th.descr a.title.no-img").first().text();
-	}
-
-	private String getPrice(Element element) {
-		return element.select("a.button.tomer.title.no-img").first().text();
-	}
-
-	private URL getShopURL(Element element) {
-		URL res = null;
-		String href = element.select("th.descr a[href].title.no-img").first().attr("abs:href");
-		try {
-			res = Utils.stringToURL(href);
-		} catch (ConnectionException e) {
-			logger.warn(e);
-		}
-		return res;
 	}
 }
