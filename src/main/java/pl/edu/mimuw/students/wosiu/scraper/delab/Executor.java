@@ -1,14 +1,15 @@
-package pl.edu.mimuw.students.wosiu.scraper;
+package pl.edu.mimuw.students.wosiu.scraper.delab;
 
 import com.opencsv.CSVWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.*;
-import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
+import pl.edu.mimuw.students.wosiu.scraper.ConfigException;
+import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
+import pl.edu.mimuw.students.wosiu.scraper.Selector;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -22,13 +23,20 @@ public class Executor {
 		log4jInit();
 	}
 
+	private static final String DEFAULT_CONFIG = "/home/m/scraper/config_full.json";
+
 	public static void main(String[] args) {
 		Executor exe = new Executor();
+		String configPath;
+
 		if (args.length != 1) {
-			logger.error("Argument missing - add config file path.");
-			return;
+			logger.warn("Argument missing - add config file path. Set default: " + DEFAULT_CONFIG);
+			configPath = DEFAULT_CONFIG;
+		} else {
+			configPath = args[0];
 		}
-		exe.run(args[0]);
+
+		exe.run(configPath);
 	}
 
 	public void log4jInit() {
@@ -113,8 +121,8 @@ public class Executor {
 			logger.error(e);
 		}
 		long elapsed = (System.currentTimeMillis() - start) / 1000 / 60;
-		logger.info("total time:\trecords:\tcountries\tproducts\tproxy\tredirect" );
-		logger.info(StringUtils.join(new Object[]{elapsed, recordCounter, selectorsNum, productsNum, conf
+		System.out.println("total time:\trecords:\tcountries\tproducts\tproxy\tredirect" );
+		System.out.println(StringUtils.join(new Object[]{elapsed, recordCounter, selectorsNum, productsNum, conf
 				.isCollectProxy(), conf.isRedirectShopLink()}, "\t"));
 	}
 

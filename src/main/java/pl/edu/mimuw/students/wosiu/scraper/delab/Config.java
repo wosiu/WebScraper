@@ -1,4 +1,4 @@
-package pl.edu.mimuw.students.wosiu.scraper;
+package pl.edu.mimuw.students.wosiu.scraper.delab;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
@@ -12,7 +12,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
-import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
+import pl.edu.mimuw.students.wosiu.scraper.ConfigException;
 
 
 public class Config {
