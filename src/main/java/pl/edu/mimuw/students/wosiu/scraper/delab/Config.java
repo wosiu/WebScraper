@@ -76,7 +76,7 @@ public class Config {
 	}
 
 	public void check(Object o, String objectName, String filePath) throws ConfigException {
-		if ( o == null ) {
+		if (o == null) {
 			throw new ConfigException("Incorrect config JSON schema. Missing field: '" + objectName + "'. Check file: " +
 					filePath);
 		}
@@ -134,8 +134,10 @@ public class Config {
 			try {
 				clazz = Class.forName("pl.edu.mimuw.students.wosiu.scraper.selectors." + str);
 				DELabProductSelector sel = (DELabProductSelector) clazz.newInstance();
-				sel.setCollectProxy(this.collectProxy);
 				sel.setRedirectShopLink(this.redirectShopLink);
+				if (this.collectProxy) {
+					sel.collectProxies();
+				}
 				this.selectors.add(sel);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				logger.debug(e.toString());

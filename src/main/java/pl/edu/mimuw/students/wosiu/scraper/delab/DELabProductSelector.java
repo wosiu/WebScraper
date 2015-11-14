@@ -12,14 +12,6 @@ import java.util.Collection;
 
 public abstract class DELabProductSelector extends Selector {
 
-	public void setCollectProxy(boolean collectProxy) {
-		this.collectProxy = collectProxy;
-	}
-
-	public boolean isCollectProxy() {
-		return collectProxy;
-	}
-
 	public boolean isRedirectShopLink() {
 		return redirectShopLink;
 	}
@@ -28,24 +20,25 @@ public abstract class DELabProductSelector extends Selector {
 		this.redirectShopLink = redirectShopLink;
 	}
 
-	private boolean collectProxy = false;
 	private boolean redirectShopLink = false;
-
 
 	public DELabProductSelector(String country, String source) throws ConnectionException {
 		super();
 		setCountry(country);
 		setSource(source);
+	}
 
-		if (collectProxy && !"Poland".equals(country)) {
-			ProxyFinder.getInstance().addProxySelector(new Gatherproxy(country));
-			Collection proxies = ProxyFinder.getInstance().getProxies(country);
-			if (proxies == null || proxies.isEmpty()) {
-				logger.info(country + ": No proxy in ProxyFinder");
-			} else {
-				logger.info(country + ": " + proxies.size() + " proxy servers found");
-				addAllProxies(proxies);
-			}
+	public void collectProxies() {
+		if ("Poland".equals(getCountry())) {
+			return;
+		}
+		ProxyFinder.getInstance().addProxySelector(new Gatherproxy(getCountry()));
+		Collection proxies = ProxyFinder.getInstance().getProxies(getCountry());
+		if (proxies == null || proxies.isEmpty()) {
+			logger.info(getCountry() + ": No proxy in ProxyFinder");
+		} else {
+			logger.info(getCountry() + ": " + proxies.size() + " proxy servers found");
+			addAllProxies(proxies);
 		}
 	}
 

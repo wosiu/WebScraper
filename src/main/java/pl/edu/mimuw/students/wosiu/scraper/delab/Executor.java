@@ -23,7 +23,7 @@ public class Executor {
 		log4jInit();
 	}
 
-	private static final String DEFAULT_CONFIG = "/home/m/scraper/config_full.json";
+	private static final String DEFAULT_CONFIG = "config.json";
 
 	public static void main(String[] args) {
 		Executor exe = new Executor();
@@ -36,7 +36,11 @@ public class Executor {
 			configPath = args[0];
 		}
 
-		exe.run(configPath);
+		try {
+			exe.run(configPath);
+		} catch (IOException | ConfigException e) {
+			logger.error(e.toString());
+		}
 	}
 
 	public void log4jInit() {
@@ -57,33 +61,26 @@ public class Executor {
 */
 	}
 
-	public void run(String JSONconfigPath) {
-		long start = System.currentTimeMillis();
-
-		Config conf;
-		try {
-			conf = new Config(JSONconfigPath);
-		} catch (ConfigException e) {
-			logger.error(e.toString());
-			return;
-		}
-
+	public CSVWriter createResultWriter(Config conf) throws IOException {
 		CSVWriter writer = null;
-		int recordCounter = 0;
+		writer = new CSVWriter(new FileWriter(conf.getOutputPath()), '\t');
 
-		try {
-			writer = new CSVWriter(new FileWriter(conf.getOutputPath()), '\t');
-		} catch (IOException e) {
-			logger.error(e.toString());
-			return;
-		}
-
-		// TODO moge do DELab executor
 		// TODO enum with ProductResult attr and then build CSV respecting header with enum values
 		String[] CSVheader = {"Product query", "Product name", "Country", "Search engine", "Price", "Shop name",
 				"Proxy", "Product shop URL", "Search engine result URL", "User agent"};
 		writer.writeNext(CSVheader);
+		return writer;
+	}
 
+
+	public void run(String JSONconfigPath) throws IOException, ConfigException {
+		long start = System.currentTimeMillis();
+
+		Config conf = new Config(JSONconfigPath);
+		CSVWriter writerResult = createResultWriter(conf);
+		CSVWriter writerEmpty = new CSVWriter(new FileWriter("empty.csv"), '\t');
+
+		int recordCounter = 0;
 		int selectorsNum = conf.getSelectors().size();
 		int productsNum = conf.getProducts().size();
 
@@ -97,16 +94,18 @@ public class Executor {
 					} catch (ConnectionException e) {
 						logger.error("Cannot process product - url malformed: " + product + ", selector: " + selector
 								.getClass().getSimpleName());
-						logger.debug(e.toString());
+						logger.error(e.toString());
+						continue;
 					}
 					// traverse through pagination
 					List<Object> results = null;
 					results = selector.traverseAndCollectProducts(userAgent, startUrl);
 					if (results.isEmpty()) {
+						appendEmpty(writerEmpty, product, selector, userAgent, startUrl);
 						logger.info("No results for: '" + product + "' with selector: " +
 								selector.getClass().getSimpleName() + ", start url: " + startUrl);
 					} else {
-						recordCounter += appendResults(writer, results, product, selector, userAgent, startUrl);
+						recordCounter += appendResults(writerResult, results, product, selector, userAgent, startUrl);
 						logger.debug(results.size() + " for: " + product + "' with selector: " +
 								selector.getClass().getSimpleName() + ", start url: " + startUrl);
 					}
@@ -114,12 +113,9 @@ public class Executor {
 			}
 		}
 
-		try {
-			writer.flush();
-			writer.close();
-		} catch (IOException e) {
-			logger.error(e);
-		}
+		writerResult.close();
+
+
 		long elapsed = (System.currentTimeMillis() - start) / 1000 / 60;
 		System.out.println("total time:\trecords:\tcountries\tproducts\tproxy\tredirect" );
 		System.out.println(StringUtils.join(new Object[]{elapsed, recordCounter, selectorsNum, productsNum, conf
@@ -133,14 +129,10 @@ public class Executor {
 		int records = 0;
 		for (Object o : results) {
 			ProductResult res = (ProductResult) o;
-			/*
-			"Product query", "Product name", "Country", "Search engine", "Price", "Shop name",
-				"Product shop URL", "Search engine result URL", "Proxy", "User agent"
-			 */
 			String[] record = Arrays.asList(
 					productName, res.getProduct(), res.getCountry(), res.getSearcher(), res.getPrice(), res.getShop(),
 					res.getProxy(), res.getShopURL(), url.toString(), userAgent).
-						stream().map(String::trim).collect(Collectors.toList()).toArray(new String[]{});
+					stream().map(String::trim).collect(Collectors.toList()).toArray(new String[]{});
 
 			writer.writeNext(record);
 			records++;
@@ -155,5 +147,22 @@ public class Executor {
 			logger.error("CSV writer error");
 		}
 		return records;
+	}
+
+	public void appendEmpty(CSVWriter writer, String productName, Selector selector, String userAgent, URL url) {
+			String proxy = (selector.getLastUsedProxy() == null) ? "LOCAL" : selector.getLastUsedProxy().toString();
+			String[] record = Arrays.asList(selector.getCountry(), productName, url.toString(), proxy, userAgent).
+					stream().map(String::trim).collect(Collectors.toList()).toArray(new String[]{});
+
+		writer.writeNext(record);
+		try {
+			writer.flush();
+		} catch (IOException e) {
+			logger.error("CSV writer error");
+			logger.error(e);
+		}
+		if (writer.checkError()) {
+			logger.error("CSV writer error");
+		}
 	}
 }

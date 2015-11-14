@@ -1,6 +1,36 @@
 {
-    "selectors": ["SloveniaCeneje"],
-	"products": ["xbox one"],
-	"userAgents": ["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36"],
-	"out": "data.csv"
+	"selectors2": [
+		"AustriaPreisvergleich",
+		"BelgiumKieskeurig",
+		"BulgariaPazaruvaj",
+		"CroatiaJeftinije",
+		"CzechHledejCeny",
+		"DenmarkKelkoo",
+		"EstoniaHinnavaatlus",
+		"FinlandiaHinta",
+		"FranceIdealo",
+		"GermanyPreisvergleich",
+		"GreeceBestPrice",
+		"HungaryArukereso",
+		"IrelandPricespy",
+		"ItalyKelkoo",
+		"LatviaCsv",
+		"LithuaniaKainos",
+		"PolandCeneo",
+		"PortugalBuscape",
+		"RomaniaCompari",
+		"SloveniaCeneje",
+		"SwedenPrisjakt",
+		"UnitedKingdomKelkoo",
+	],
+	"selectors": [
+		"FinlandiaHinta",
+	],
+	"products": [
+		"xbox one"
+	],
+	"userAgents": ["Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"],
+	"out": "data.csv",
+	"collectProxy" : false,
+	"redirectShopLink": false,
 }
