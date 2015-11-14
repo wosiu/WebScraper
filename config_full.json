@@ -1,24 +1,27 @@
 {
 	"selectors": [
 "AustriaPreisvergleich",
-"BelgiumKieskeurig",
-"BulgariaPazaruvaj",
-"CroatiaJeftinije",
 "CzechHledejCeny",
-"DenmarkKelkoo",
 "EstoniaHinnavaatlus",
 "FinlandiaHinta",
 "FranceIdealo",
 "GreeceBestPrice",
+"PolandCeneo",
+"CroatiaJeftinije",
+"LatviaCsv",
+"ItalyKelkoo",
+"BelgiumKieskeurig",
+"BulgariaPazaruvaj",
+"DenmarkKelkoo",
+"HungaryArukereso",
 "IrelandPricespy",
 "LithuaniaKainos",
-"PolandCeneo"
 "PortugalBuscape",
 "RomaniaCompari",
 "SwedenPrisjakt"
 "UnitedKingdomKelkoo",
-"HungaryArukereso",
-"ItalyKelkoo"
+"GermanyPreisvergleich",
+"CroatiaJeftinije"
 	],
 	"selectors2": [
 ],
