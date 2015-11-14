@@ -118,6 +118,7 @@ public abstract class Selector {
 			return read(uc);
 		} catch (IOException e) {
 			logger.warn("Cannot connect directly to: " + targetURL);
+			logger.debug(e.toString());
 		}
 
 		if (uc != null) {
