@@ -62,11 +62,12 @@ public class FranceIdealo extends DELabProductSelector {
 		} else {
 			//logika dla widoku 2, moga wystapic kolejne strony
 			try {
-				urls.add(new URL(document.select("a.page-next.webtrekk").first().attr("abs:href")));
+                final Elements select = document.select("a.page-next.webtrekk");
+                if (!select.isEmpty()) {
+                    urls.add(new URL(select.first().attr("abs:href")));
+                }
 			} catch (MalformedURLException e) {
 				logger.warn(e.getMessage());
-			} catch (NullPointerException npe) {
-				npe.printStackTrace(); //nie ma kolejnej strony
 			}
 		}
 
@@ -84,22 +85,13 @@ public class FranceIdealo extends DELabProductSelector {
 
             Date date = new Date();
             for (Element element : elements) {
-                try {
-					products.add(buildProductResultDirectLink(element, date));
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
-				}
+                products.add(buildProductResultDirectLink(element, date));
 			}
 
-
 			//logika dla pobierania dla widoku 2
-			elements = document.select("table.list.modular tr");
+            elements = document.select("table.list.modular tr[data-offer-id]");
 			for (Element element : elements) {
-				try {
-					products.add(buildProductResult(element, date));
-				} catch (NullPointerException e) {
-					e.printStackTrace();
-				}
+                products.add(buildProductResult(element, date));
 			}
 		}
 
@@ -112,8 +104,10 @@ public class FranceIdealo extends DELabProductSelector {
         product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
         product.setSearcher(getSourceURL().toString());
-		product.setShopURL(shopURL.toString());
-		product.setShop(shopURL.getHost());
+        if (shopURL != null) {
+            product.setShopURL(shopURL.toString());
+        }
+        product.setShop(getShopName(element));
 		product.setProduct(getProductName(element, product.getShop()));
 		product.setTime(date.getTime());
 		product.setProxy(getLastUsedProxy());
@@ -121,15 +115,28 @@ public class FranceIdealo extends DELabProductSelector {
 		return product;
 	}
 
+    private String getShopName(Element element) {
+        String res = "";
+        Elements select = element.select("td.rating img[src]");
+        if (!select.isEmpty()) {
+            res = select.first().attr("alt");
+        }
+        return res;
+    }
+
 	private Object getPrice(Element element) {
 		return element.select("span.price").text();
 	}
 
 	private URL getShopURL(Element element) {
-		return followUrl(element.select("td.cta > a[href]").first().attr("abs:href"));
+        URL res = null;
+        final Elements select = element.select("td.cta > a[href]");
+        if (!select.isEmpty()) {
+            res = followUrl(select.first().attr("abs:href"));
+        }
+        return res;
 	}
 
-	// TODO Freshy: copy paste
 	private ProductResult buildProductResultDirectLink(Element element, Date date) {
 		final ProductResult product = new ProductResult();
 		URL shopURL = getShopURLDirectLink(element);
@@ -145,7 +152,6 @@ public class FranceIdealo extends DELabProductSelector {
 		return product;
 	}
 
-	// TODO Freshy: copy paste
 	private Object getPriceDirectLink(Element element) {
 		return element.select("span.price.link-1").text();
 	}
@@ -155,9 +161,10 @@ public class FranceIdealo extends DELabProductSelector {
 		final String ENDING = "');/* ]]>";
 		final String ENDING2 = "');\n/* ]]>";
 		String res = "";
-		if (shop.equals("www.amazon.fr") || shop.equals("www.ebay.fr")) {
+        if (shop.contains("Amazon.fr") || shop.contains("amazon-marketplace")|| shop.contains("Ebay.fr")) {
 			try {
 				//magia parsowania, miliard przypadków
+                final Element select = element.select("a.offer-title.link-2.webtrekk.wt-prompt").first();
 				final String script = element.select("a.offer-title.link-2.webtrekk.wt-prompt").first().toString();
 				final String cuttedPrefix = script.substring(script.indexOf(GET_CONTENTS) + GET_CONTENTS.length() + 1);
 				int indexEnd = cuttedPrefix.indexOf(ENDING);
@@ -165,7 +172,7 @@ public class FranceIdealo extends DELabProductSelector {
 					indexEnd = cuttedPrefix.indexOf(ENDING2);
 				}
 				if (indexEnd == -1) {
-					res = element.select("a.offer-title.link-2.webtrekk.wt-prompt").text();
+                    res = element.select("a.offer-title.link-2.webtrekk.wt-prompt").first().text();
 				} else {
 					final String cuttedSuffix = cuttedPrefix.substring(0, indexEnd);
 					res = Utils.Rot47PasswordEncoder.encodePassword(cuttedSuffix, "").replace("&shy;", "");

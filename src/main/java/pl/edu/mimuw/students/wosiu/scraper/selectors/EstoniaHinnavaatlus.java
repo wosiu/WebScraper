@@ -39,14 +39,13 @@ public class EstoniaHinnavaatlus extends DELabProductSelector {
 
 		for (Element element : elements) {
 			try {
-				final String href = element.select("p.product-list-price-line").first().child(0).attr("abs:href");
-				urls.add(new URL(href));
+                Elements select = element.select("p.product-list-price-line");
+                if (!select.isEmpty()) {
+                    final String href = select.first().child(0).attr("abs:href");
+                    urls.add(new URL(href));
+                }
 			} catch (MalformedURLException e) {
 				logger.warn(e.getMessage());
-
-				// TODO http://hinnavaatlus.ee/search/?Type=products&Query=xbox+one
-			} catch (NullPointerException npe) {
-				npe.printStackTrace();
 			}
 		}
 		return urls;
