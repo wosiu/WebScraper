@@ -49,7 +49,7 @@ public class GermanyPreisvergleich extends DELabProductSelector {
 
 			result.setProduct(a.text());
 			String href = a.attr("abs:href");
-			result.setSearchURL(followUrl(href).toString());
+			result.setShopURL(followUrl(href).toString());
 
 			result.setPrice(element.select("a.productPrice").first().text());
 			result.setShop(element.select("img[name].productShopImg").first().attr("name"));
@@ -68,7 +68,7 @@ public class GermanyPreisvergleich extends DELabProductSelector {
 
 			result.setProduct(element.select("div.description > p:eq(0)").first().text());
 			String href = a.attr("abs:href");
-			result.setSearchURL(followUrl(href).toString());
+			result.setShopURL(followUrl(href).toString());
 
 			result.setPrice(a.text());
 			result.setShop(element.select("div.merchant > img[alt]").first().attr("alt"));
