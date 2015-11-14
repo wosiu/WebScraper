@@ -4,15 +4,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -74,28 +71,25 @@ public class CzechHledejCeny extends DELabProductSelector {
 		if (!document.toString().contains("Nebyly nalezeny žádné produkty s názvem")) {
 			//logika dla pobierania dla widoku 1 (linki bezposrednie zamiast linkow do widoku 2)
 			Elements elements = document.select("div.itemcell");
-			try {
-				Date date = new Date();
-				for (Element element : elements) {
-					products.add(buildProductResultDirectLink(element, date));
-				}
-			} catch (NullPointerException e) {
-				logger.warn(e.getMessage());
+
+			Date date = new Date();
+			for (Element element : elements) {
+				products.add(buildProductResultDirectLink(element, date));
 			}
 
 			//logika dla pobierania dla widoku 2
-			elements = document.select("div.item.first");
-			try {
-				String product = document.getElementById("prodname").text().trim();
-				Date date = new Date();
-				for (Element element : elements) {
-					products.add(buildProductResult(element, product, date));
-				}
-			} catch (NullPointerException e) {
-				logger.warn(e.getMessage());
-			}
-		}
+			elements = document.select("div.itenvlp");
 
+			String product = "";
+			final Element select = document.getElementById("prodname");
+			if (select != null) {
+				product = select.text().trim();
+			}
+			for (Element element : elements) {
+				products.add(buildProductResult(element, product, date));
+			}
+
+		}
 
 		return products;
 	}
@@ -108,10 +102,19 @@ public class CzechHledejCeny extends DELabProductSelector {
 		product.setProduct(productName);
 		product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
-		product.setShop(shopURL.getHost());
+		product.setShop(getShopName(element));
 		product.setTime(date.getTime());
 		product.setProxy(getLastUsedProxy());
 		return product;
+	}
+
+	private String getShopName(Element element) {
+		String res = "";
+		Elements select = element.select("a.shop-name");
+		if (!select.isEmpty()) {
+			res = select.text();
+		}
+		return res;
 	}
 
 	public URL getShopURL(Element element) {
@@ -130,18 +133,27 @@ public class CzechHledejCeny extends DELabProductSelector {
 		product.setProduct(getProductNameDirectLink(element));
 		product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
-		product.setShop(shopURL.getHost());
+		product.setShop(getShopDirectLink(element));
 		product.setTime(date.getTime());
 		product.setProxy(getLastUsedProxy());
 		return product;
 	}
 
+	private String getShopDirectLink(Element element) {
+		String res = "";
+		Elements select = element.select("div.intoshop a.shop-name");
+		if (!select.isEmpty()) {
+			res = select.first().text();
+		}
+		return res;
+	}
+
 	private Object getPriceDirectLink(Element element) {
-		return element.getElementsByClass("search-item-name-headline").first().child(0).text();
+		return element.getElementsByClass("pricevat").first().child(0).text();
 	}
 
 	private String getProductNameDirectLink(Element element) {
-		return element.getElementsByClass("pricevat").first().child(0).text();
+		return element.getElementsByClass("search-item-name-headline").first().child(0).text();
 	}
 
 	private URL getShopURLDirectLink(Element element) {
