@@ -1,31 +1,35 @@
 {
 	"selectors": [
 "AustriaPreisvergleich",
+"BelgiumKieskeurig",
+"BulgariaPazaruvaj",
+"CroatiaJeftinije",
 "CzechHledejCeny",
+"DenmarkKelkoo",
 "EstoniaHinnavaatlus",
 "FinlandiaHinta",
 "FranceIdealo",
+"GermanyPreisvergleich",
 "GreeceBestPrice",
-"PolandCeneo",
-"CroatiaJeftinije",
-"LatviaCsv",
-"ItalyKelkoo",
-"BelgiumKieskeurig",
-"BulgariaPazaruvaj",
-"DenmarkKelkoo",
 "HungaryArukereso",
 "IrelandPricespy",
+"ItalyKelkoo",
+"LatviaCsv",
 "LithuaniaKainos",
+"PolandCeneo",
 "PortugalBuscape",
 "RomaniaCompari",
-"SwedenPrisjakt"
+"SloveniaCeneje",
+"SwedenPrisjakt",
 "UnitedKingdomKelkoo",
-"GermanyPreisvergleich",
-"CroatiaJeftinije"
 	],
-	"selectors2": [
-],
-	"products": ["Fujifilm X T10 body", "Canon EOS M3 body", "oxford wordpower", "xbox one","How to Train Your Dragon 2", "U2, 'Songs of Innocence'","Saint-Émilion Grand Cru 2009"],
+
+	"products": ["xbox one"],
+
 	"userAgents": ["Mozilla/5.0 (Macintosh; Intel Mac OS X 10_9_2) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/33.0.1750.152 Safari/537.36"],
-	"out": "data_proxy.csv"
+
+	"out": "data_proxy.csv",
+
+	"collectProxy" : false,
+	"redirectShopLink": false,
 }

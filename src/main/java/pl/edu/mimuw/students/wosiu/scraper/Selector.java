@@ -117,8 +117,8 @@ public abstract class Selector {
 			uc.connect();
 			return read(uc);
 		} catch (IOException e) {
-			logger.warn("Cannot connect directly to: " + targetURL);
-			logger.debug(e.toString());
+			logger.error("Cannot connect directly to: " + targetURL);
+			logger.error(e.toString());
 		}
 
 		if (uc != null) {
@@ -194,7 +194,7 @@ public abstract class Selector {
 			long start = System.currentTimeMillis();
 			List prods = (List) getProducts(doc);
 			long elapsed = (System.currentTimeMillis() - start) / 1000;
-			logger.debug("Got products in: " + elapsed + "s ");
+			logger.debug("Got " + ((prods == null) ? 0 : prods.size()) +  " products in: " + elapsed + "s ");
 
 			if (prods != null) {
 				if (MAX_RESULTS_NUM != -1 && results.size() + prods.size() > MAX_RESULTS_NUM) {
@@ -202,10 +202,6 @@ public abstract class Selector {
 					return results;
 				}
 				results.addAll(prods);
-
-				logger.debug("Products number: " + prods.size());
-			} else {
-				logger.debug("Products number: 0");
 			}
 
 			List<URL> nexts = getNextPages(doc);

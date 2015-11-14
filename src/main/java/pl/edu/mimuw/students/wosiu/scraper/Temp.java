@@ -3,6 +3,7 @@ package pl.edu.mimuw.students.wosiu.scraper;
 import org.apache.log4j.BasicConfigurator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.*;
 
 import java.io.BufferedReader;
@@ -10,7 +11,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
+import java.net.Proxy;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
+
+import org.openqa.selenium.*;
+import org.openqa.selenium.firefox.FirefoxDriver;
 
 
 public class Temp {
@@ -33,9 +40,21 @@ public class Temp {
 	}
 
 
-
-
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
+		List<String>asd = Arrays.asList("asd ", " d ", "as c s");
+		Object a = asd.stream().map(String::trim).collect(Collectors.toList());
+		System.out.println(a.toString());
+//		WebDriver driver = new FirefoxDriver();
+//		driver.get("http://www.csv.lv/search?q=xbox+one");
+//		System.out.println(driver.getPageSource());
+//		driver.quit();
+//		FirefoxDriver driver = new FirefoxDriver();
+//		driver.manage().timeouts().implicitlyWait(1, TimeUnit.SECONDS);
+//		driver.navigate().to("http://testing-ground.scraping.pro/captcha");
+
+	}
+
+	public static void main3(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		BasicConfigurator.configure();
 		String url =
 				//"http://www.buscape.com.br/xbox+one";

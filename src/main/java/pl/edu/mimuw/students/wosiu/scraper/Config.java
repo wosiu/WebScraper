@@ -12,17 +12,37 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 
 
 public class Config {
 
 	private static final Logger logger = Logger.getLogger(Config.class);
 
-	private List<Selector> selectors;
+	private List<DELabProductSelector> selectors;
 	private List<String> userAgents;
 	private List<String> products;
 
 	private String outputPath;
+
+	public boolean isCollectProxy() {
+		return collectProxy;
+	}
+
+	public void setCollectProxy(boolean collectProxy) {
+		this.collectProxy = collectProxy;
+	}
+
+	public boolean isRedirectShopLink() {
+		return redirectShopLink;
+	}
+
+	public void setRedirectShopLink(boolean redirectShopLink) {
+		this.redirectShopLink = redirectShopLink;
+	}
+
+	private boolean collectProxy = true;
+	private boolean redirectShopLink = true;
 
 	private void init() {
 		selectors = new LinkedList<>();
@@ -35,7 +55,7 @@ public class Config {
 	}
 
 
-	public List<Selector> getSelectors() {
+	public List<DELabProductSelector> getSelectors() {
 		return selectors;
 	}
 
@@ -93,13 +113,29 @@ public class Config {
 		check(userAgents, "userAgents", filePath);
 		this.outputPath = (String) jsonObject.get("out");
 
+
+		Boolean collectProxy = (Boolean) jsonObject.get("collectProxy");
+		if (collectProxy != null) {
+			this.collectProxy = collectProxy;
+		}
+		logger.info("Colllect proxy servers: " + this.collectProxy);
+
+		Boolean redirectShopLink = (Boolean) jsonObject.get("redirectShopLink");
+		if (redirectShopLink != null) {
+			this.redirectShopLink = redirectShopLink;
+		}
+		logger.info("Redirect shop link: " + this.redirectShopLink);
+
+
 		// create selectors
 		for (Object o : selectors) {
 			String str = (String) o;
 			Class<?> clazz = null;
 			try {
 				clazz = Class.forName("pl.edu.mimuw.students.wosiu.scraper.selectors." + str);
-				Selector sel = (Selector) clazz.newInstance();
+				DELabProductSelector sel = (DELabProductSelector) clazz.newInstance();
+				sel.setCollectProxy(this.collectProxy);
+				sel.setRedirectShopLink(this.redirectShopLink);
 				this.selectors.add(sel);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				logger.debug(e.toString());

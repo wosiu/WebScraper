@@ -1,13 +1,17 @@
 package pl.edu.mimuw.students.wosiu.scraper;
 
 import com.opencsv.CSVWriter;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.*;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class Executor {
 
@@ -72,7 +76,10 @@ public class Executor {
 				"Proxy", "Product shop URL", "Search engine result URL", "User agent"};
 		writer.writeNext(CSVheader);
 
-		logger.info("Scraping for " + conf.getSelectors().size() + " selectors.");
+		int selectorsNum = conf.getSelectors().size();
+		int productsNum = conf.getProducts().size();
+
+		logger.info("Scraping for " + selectorsNum + " selectors.");
 		for (String userAgent : conf.getUserAgents()) {
 			for (String product : conf.getProducts()) {
 				for (Selector selector : conf.getSelectors()) {
@@ -106,8 +113,9 @@ public class Executor {
 			logger.error(e);
 		}
 		long elapsed = (System.currentTimeMillis() - start) / 1000 / 60;
-		logger.info("Total time: " + elapsed + "min . Wrote: " + recordCounter + " records.");
-
+		logger.info("total time:\trecords:\tcountries\tproducts\tproxy\tredirect" );
+		logger.info(StringUtils.join(new Object[]{elapsed, recordCounter, selectorsNum, productsNum, conf
+				.isCollectProxy(), conf.isRedirectShopLink()}, "\t"));
 	}
 
 
@@ -121,10 +129,11 @@ public class Executor {
 			"Product query", "Product name", "Country", "Search engine", "Price", "Shop name",
 				"Product shop URL", "Search engine result URL", "Proxy", "User agent"
 			 */
-			String[] record = new String[] {
-					productName, res.getProduct(), res.getCountry(), res.getSearcher(), res.getPrice(),
-					res.getShop(), res.getProxy(), res.getShopURL(), url.toString(), userAgent
-			};
+			String[] record = Arrays.asList(
+					productName, res.getProduct(), res.getCountry(), res.getSearcher(), res.getPrice(), res.getShop(),
+					res.getProxy(), res.getShopURL(), url.toString(), userAgent).
+						stream().map(String::trim).collect(Collectors.toList()).toArray(new String[]{});
+
 			writer.writeNext(record);
 			records++;
 		}

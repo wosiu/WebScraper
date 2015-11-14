@@ -13,17 +13,20 @@ public class DELabProductsExecutor extends Executor {
 
 	// private CSV builder //todo
 
+	private static final String DEFAULT_CONFIG = "/home/m/scraper/config_full.json";
+
 	public static void main(String[] args) {
 		Executor exe = new Executor();
-		if (args.length != 1) {
-			logger.error("Argument missing - add config file path.");
-			//return; //TODO
-		}
-		//String configPath = args[0];
-		String configPath = "/home/m/scraper/config.json";
-		exe.run(configPath);
+		String configPath;
 
-		// TODO create CSV
+		if (args.length != 1) {
+			logger.warn("Argument missing - add config file path. Set default: " + DEFAULT_CONFIG);
+			configPath = DEFAULT_CONFIG;
+		} else {
+			configPath = args[0];
+		}
+
+		exe.run(configPath);
 	}
 
 

@@ -16,6 +16,18 @@ public abstract class DELabProductSelector extends Selector {
 		this.collectProxy = collectProxy;
 	}
 
+	public boolean isCollectProxy() {
+		return collectProxy;
+	}
+
+	public boolean isRedirectShopLink() {
+		return redirectShopLink;
+	}
+
+	public void setRedirectShopLink(boolean redirectShopLink) {
+		this.redirectShopLink = redirectShopLink;
+	}
+
 	private boolean collectProxy = false;
 	private boolean redirectShopLink = false;
 
