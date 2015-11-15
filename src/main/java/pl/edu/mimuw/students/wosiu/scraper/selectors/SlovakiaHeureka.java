@@ -18,45 +18,35 @@ import java.util.List;
 public class SlovakiaHeureka extends DELabProductSelector {
 
 	public SlovakiaHeureka() throws ConnectionException {
-		super("Slovakia", "http://heureka.sk/");
+		super("Slovakia", "http://www.heureka.sk/");
 	}
-
-	// rows in search result (there are mixed: links to shops and link to oferts list within keinos)
-	private final String PRODUCTS_ROW_QUERY = "table#search_results > tbody > tr > td > a[href].go-to-shop";
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		product = Utils.urlEncodeSpecial(product, '~', '"', '<', '>');
-		String target = getSourceURL().toString() + "lt/search?search_query=" + product;
+		String target = getSourceURL().toString() + "?h%5Bfraze%5D=" + product;
 		URL url = Utils.stringToURL(target);
 		return url;
 	}
-
-	private final String SHOP_NAME_PREFIX = "Pardavėjas: ";
 
 	@Override
 	public List<ProductResult> getProducts(Document document) {
 		List<ProductResult> results = new ArrayList<>();
 
-		document.setBaseUri(getSourceURL().toString());
-
 		// offerts view:
-		for (Element element : document.select("table.compare > tbody > tr.price-row")) {
+		for (Element element : document.select("div.shopspr div.shoppr")) {
 			ProductResult result = new ProductResult();
 
-			Element a = element.select("td:eq(2) > a[href]").first();
+			result.setPrice(element.select("div.pr > p").first().text());
 
-			String price = a.select("span.price").first().ownText();
-			result.setPrice(price);
-
-			String shopname = element.select("td:eq(0) img[alt]").first().attr("alt");
-			result.setShop(shopname);
+			Element a = element.select("div.buy > p:eq(1) > a[href]").first();
+			result.setShop(a.text());
 
 			String link = a.attr("abs:href");
 			result.setShopURL(followUrl(link).toString());
 
-			String prod = a.select("span.info > strong").text();
-			result.setProduct(prod);
+			result.setProduct(element.select("div.desc > p.js-desc-paragraph").first().text());
+
 			result.setCountry(getCountry());
 			result.setProxy(getLastUsedProxy());
 			result.setSearcher(getSourceURL().toString());
@@ -65,27 +55,18 @@ public class SlovakiaHeureka extends DELabProductSelector {
 		}
 
 		// products view
-		for (Element element : document.select(PRODUCTS_ROW_QUERY + "[onclick]")) {
+		for (Element element : document.select("div#fulltext > div.product")) {
 			ProductResult result = new ProductResult();
 
-			Element mix = element.select("span.price").first();
-			String price = mix.ownText();
-			result.setPrice(price);
+			result.setPrice(element.select("p.price").first().text());
 
-			String shopname = mix.select("span.compare-other-count").first().text();
-			if (shopname.length() <= SHOP_NAME_PREFIX.length()) {
-				logger.debug("Skip element - incorrect shop name");
-				continue;
-			}
+			result.setShop(element.select("p.shop-name").first().text());
 
-			shopname = shopname.substring(SHOP_NAME_PREFIX.length());
-			result.setShop(shopname);
-
-			String link = element.attr("abs:href");
+			Element a = element.select("div.desc > h2 > a[href]").first();
+			String link = a.attr("abs:href");
 			result.setShopURL(followUrl(link).toString());
 
-			String prod = element.select("span.info > strong").text();
-			result.setProduct(prod);
+			result.setProduct(a.text());
 			result.setCountry(getCountry());
 			result.setProxy(getLastUsedProxy());
 			result.setSearcher(getSourceURL().toString());
@@ -104,29 +85,15 @@ public class SlovakiaHeureka extends DELabProductSelector {
 	 */
 	@Override
 	public List<URL> getNextPages(Document document) {
+		// TODO
+
 		List<URL> urls = new ArrayList<>();
 
-		// Collect rows with links to comparing offerts links
-		Elements elements = document.select(PRODUCTS_ROW_QUERY + ":not([onclick])");
-
-		for (Element element : elements) {
-			String str = element.attr("abs:href");
+		for (Element element : document.select("div#search > div.product > div.wherebuy")) {
+			String str = element.select("a[href]").first().attr("abs:href");
 			try {
-				urls.add(Utils.stringToURL(str));
+				urls.add(Utils.stringToURL(str + "?expand=1"));
 			} catch (ConnectionException e) {
-			}
-		}
-
-		// Pagination
-		final int MAX_PAGE = 7;
-		Element next = document.select("a[href].next").first();
-		if (next != null) {
-			String nextStr = next.attr("href");
-			if (!nextStr.contains("page_nr=" + MAX_PAGE)) {
-				try {
-					urls.add(Utils.stringToURL(nextStr));
-				} catch (ConnectionException e) {
-				}
 			}
 		}
 

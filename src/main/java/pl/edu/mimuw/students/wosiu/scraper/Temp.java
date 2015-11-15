@@ -3,6 +3,7 @@ package pl.edu.mimuw.students.wosiu.scraper;
 import org.apache.log4j.BasicConfigurator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.*;
 
 import java.io.BufferedReader;
@@ -18,23 +19,8 @@ public class Temp {
 	private static final List<Character> SPECIAL = Arrays.asList('"','*','>');
 
 
-	private static String convert(String str) {
-		StringBuilder out = new StringBuilder();
-		for (char c : str.toCharArray()) {
-			if (SPECIAL.contains(c)) {
-				out.append(c);
-			} else try {
-				out.append(URLEncoder.encode("" + c, "UTF-8"));
-			} catch (UnsupportedEncodingException e) {
-				// todo logger
-				out.append(c);
-			}
-		}
-		return out.toString();
-	}
 
-
-	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
+	public static void main2(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		System.out.println(Utils.urlEncode("Saint-Émilion Grand Cru 2009 !@#$%^&*() +-=`~;:'\"<,>./?|\\ ąśćłóœ"));
 //		WebDriver driver = new FirefoxDriver();
 //		driver.get("http://www.csv.lv/search?q=xbox+one");
@@ -46,20 +32,18 @@ public class Temp {
 
 	}
 
-	public static void main3(String[] args) throws IOException, URISyntaxException, ConnectionException {
+	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		BasicConfigurator.configure();
 		String url =
-				//"http://www.buscape.com.br/xbox+one";
-				//"http://www.bestprice.gr/search?refqid=34D6eM2uR3I_839ed&q=xbox+one";
-				//"http://www.bestprice.gr/search?q=Fujifilm+X+T10+body";
-				//"http://www.bestprice.gr/search?q=xbox+one";
-//				"http://www.preisvergleich.de/search/result/query/xbox+one/";
-				"http://www.preisvergleich.de/produkt/Microsoft-Xbox-One-500GB/33405853-8541/";
-		Selector selector = new GermanyPreisvergleich();
+				"http://www.heureka.sk/?h%5Bfraze%5D=U2%2C+%27Songs+of+Innocence%27";
+//				"http://herne-konzoly.heureka.sk/microsoft-xbox-one-500gb-without-kinect?expand=1";
+		Selector selector = new SlovakiaHeureka();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
+		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);
+
 		System.out.println(selector.getNextPages(document));
-		System.out.println(selector.getProducts(document));
+		System.out.println(res);
 //		System.out.println(selector.getNextPages(document));
 	}
 
@@ -94,7 +78,7 @@ public class Temp {
 		}
 		String str;
 		Document document = Jsoup.parse(tmp.toString());
-		System.out.println(document);
+		System.out.println(document.select("div.shopspr div.shoppr").size());
 		uc.disconnect();
 
 
