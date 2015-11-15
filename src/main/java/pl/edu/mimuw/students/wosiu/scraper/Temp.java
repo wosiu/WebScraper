@@ -36,15 +36,17 @@ public class Temp {
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		BasicConfigurator.configure();
 		String url =
-				"http://www.beslist.nl/products/r/how+to+train+your+dragon+2/";
+				"http://www.buscape.com.br/proc_unico?id=6058&kw=xbox+one";
 //				"http://www.prisjakt.nu/search.php?s=U2%2C%20%27Songs%20of%20Innocence%27#t-product";
 //				"http://herne-konzoly.heureka.sk/microsoft-xbox-one-500gb-without-kinect?expand=1";
-		Selector selector = new NetherlandsBeslist();
+		Selector selector = new PortugalBuscape();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
 		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);
-
-		System.out.println(selector.getNextPages(document));
+		List pages = selector.getNextPages(document);
+		System.out.println("pages: " + pages.size());
+		System.out.println(pages.toString().replaceAll(", ", "\n"));
+		System.out.println("results: " + res.size());
 		System.out.println(res);
 //		System.out.println(selector.getNextPages(document));
 	}

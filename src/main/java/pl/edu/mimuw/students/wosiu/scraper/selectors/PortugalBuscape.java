@@ -101,7 +101,8 @@ public class PortugalBuscape extends DELabProductSelector {
 		List<URL> urls = new ArrayList<>();
 
 		for (Element element :
-				document.select("ul.bp-product-list > li.unique-product > div.actions > a[href]:not(.track_checkout)")) {
+				document.select("ul.bp-product-list > li.product > div.details:not(.product-unavailable) > div" +
+						".description > a[href]:not(.track_checkout)")) {
 			String str = element.attr("abs:href");
 			try {
 				urls.add(Utils.stringToURL(str));
