@@ -94,11 +94,15 @@ public class NetherlandsBeslist extends DELabProductSelector {
         product.setPrice(getPrice(element));
         product.setSearcher(getSourceURL().toString());
         if (shopURL != null) {
-            product.setShopURL(shopURL.toString());
-        }
+            product.setShopURL(shopURL.toString()); //TODO?
+        } else {
+			product.setShopURL(UNKNOWN);
+		}
         product.setShop(getShopName(element));
         product.setProduct(title);
         product.setTime(date.getTime());
+		product.setProxy(getLastUsedProxy());
+
         return product;
     }
 
