@@ -45,10 +45,12 @@ public class GreeceBestPrice extends DELabProductSelector {
 		document.setBaseUri(getSourceURL().toString());
 		final List<URL> urls = new LinkedList<>();
 
-		// TO FIX - takes too much, e.g. http://www.bestprice.gr/search?q=oxford+wordpower
+		// Note there are 2 products view:
+		// http://www.bestprice.gr/search?q=oxford+wordpower
+		// http://www.bestprice.gr/search?refqid=34EynSo_mr5_ba736&q=xbox+one
 		Elements elements = document.select("div#results-main > table.products > tbody > tr > td > div.info > " +
-				"p.price" +
-				" > a[href]:not(.tomer)");
+				"p.stores" +
+				" > a[href]:not(.tomer):has(strong)");
 
 		for (Element element : elements) {
 			final String href = element.attr("abs:href");
@@ -88,19 +90,21 @@ public class GreeceBestPrice extends DELabProductSelector {
 			products.add(product);
 		}
 
-		// Product view (secend one, check e.g. 'oxford wordpower')
-//        select = document.select("div:not(.full).aqua.clr table.products.old-product-matrix.product-matrix" +
-//				".results-global td.one-merchant");
-		Elements elements = document.select("div#results-main > table.products > tbody > tr > td:has" +
-				"(div.info > p.price> a[href].tomer)");
+		// Product view
+		// Note there are 2 kinds of product view:
+		// http://www.bestprice.gr/search?q=oxford+wordpower
+		// http://www.bestprice.gr/search?refqid=34EynSo_mr5_ba736&q=xbox+one
+		// takes results within both if any
+		Elements elements = document.select("div#results-main > table.products > tbody > tr > td" +
+		":has(p.stores > a[href]:not(:has(strong))");
 
         for (Element element : elements) {
             ProductResult product = new ProductResult();
 
             product.setCountry(getCountry());
-            product.setPrice(element.select("div.info p.price a.tomer").first().text());
+            product.setPrice(element.select("div.info p.price a").first().text());
             product.setSearcher(getSourceURL().toString());
-            String href = element.select("div.info p.price a.tomer").first().attr("abs:href");
+            String href = element.select("div.info p.price a[href]").first().attr("abs:href");
             product.setShopURL(followUrl(href).toString());
             product.setShop(element.select("div.info p.stores.clr").first().text());
             product.setProduct(element.select("div.img img[alt]").first().attr("alt"));
