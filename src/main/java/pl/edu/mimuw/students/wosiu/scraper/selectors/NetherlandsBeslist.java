@@ -8,6 +8,8 @@ import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -37,6 +39,11 @@ public class NetherlandsBeslist extends DELabProductSelector {
         document.setBaseUri(getSourceURL().toString());
         final List<URL> urls = new LinkedList<>();
 
+        Elements select = document.select("p.main__title");
+        if (!select.isEmpty() && select.first().text().equals("Alleen gerelateerde resultaten gevonden")) {
+            return urls;
+        }
+
         final Elements elements = document.select("div[data-catid]");
         for (Element element : elements) {
             try {
@@ -55,14 +62,18 @@ public class NetherlandsBeslist extends DELabProductSelector {
         document.setBaseUri(getSourceURL().toString());
         List<ProductResult> products = new LinkedList<>();
 
+        Elements select = document.select("p.main__title");
+        if (!select.isEmpty() && select.first().text().equals("Alleen gerelateerde resultaten gevonden")) {
+            return products;
+        }
         if (!document.toString().contains("We hebben overal gezocht maar we kunnen")) {
             Elements elements = document.select("div.shoplist__block.showmyass");
             String title = "";
-            try {
-                title = document.select("h1.detailpage__producttitle").first().text();
-            } catch (NullPointerException npe) {
-                npe.printStackTrace();
+            select = document.select("h1.detailpage__producttitle");
+            if (!select.isEmpty()) {
+                title = select.first().text();
             }
+
             Date date = new Date();
             for (Element element : elements) {
                 try {
@@ -101,5 +112,16 @@ public class NetherlandsBeslist extends DELabProductSelector {
 
     private URL getShopURL(Element element) {
         return null;
+    }
+
+    @Override
+    public Document read(HttpURLConnection connection) throws IOException {
+        Document doc = super.read(connection);
+
+        if (!doc.select("div.g-recaptcha").isEmpty()) {
+            throw new IOException("captcha occured");
+        }
+
+        return doc;
     }
 }
