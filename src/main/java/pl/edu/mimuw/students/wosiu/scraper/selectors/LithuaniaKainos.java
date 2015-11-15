@@ -21,7 +21,7 @@ import java.util.List;
 public class LithuaniaKainos extends DELabProductSelector {
 
 	public LithuaniaKainos() throws ConnectionException {
-		super("Lithuania", "http://kainos.lt/");
+		super("Lithuania", "http://www.kainos.lt/");
 	}
 
 	// rows in search result (there are mixed: links to shops and link to oferts list within keinos)
