@@ -44,13 +44,13 @@ public class NetherlandsBeslist extends DELabProductSelector {
             return urls;
         }
 
-        final Elements elements = document.select("div[data-catid]");
+        final Elements elements = document.select("div[data-catid] a[href]:not([href=javascript:void(0)]):eq(0)");
         for (Element element : elements) {
+            String href = element.attr("abs:href");
             try {
-                final String href = element.select("a[href]").first().attr("abs:href");
                 urls.add(new URL(href));
             } catch (MalformedURLException e) {
-                logger.warn(e.getMessage());
+                logger.warn("Href error: " + href + ": " + e.toString());
             }
         }
 
