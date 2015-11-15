@@ -58,7 +58,7 @@ public class ProxyFinder {
 			String country = proxyW.getCountry();
 			Set<Proxy> set = proxyMap.get(country);
 			if (set == null) {
-				set = new HashSet<>();
+				set = new LinkedHashSet();
 				proxyMap.put(country, set);
 			}
 			set.add(proxyW.getProxy());

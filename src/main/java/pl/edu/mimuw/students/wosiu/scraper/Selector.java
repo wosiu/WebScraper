@@ -84,7 +84,7 @@ public abstract class Selector {
 
 		if (lastUsedProxy != null) {
 			try {
-				uc =  connectByProxy(userAgent, targetURL, lastUsedProxy);
+				uc = connectByProxy(userAgent, targetURL, lastUsedProxy);
 				return read(uc);
 			} catch (IOException e) {
 				logger.warn("Cannot use last used proxy: " + lastUsedProxy);
@@ -92,14 +92,14 @@ public abstract class Selector {
 			}
 		}
 
-
 		if (proxies != null) {
 			for (Proxy proxy : proxies) {
 				// Try to download via proxy. If failed try next one.
 				try {
 					uc = connectByProxy(userAgent, targetURL, proxy);
+					Document doc = read(uc);
 					lastUsedProxy = proxy;
-					return read(uc);
+					return doc;
 				} catch (IOException e) {
 					logger.warn("Cannot connect to: " + targetURL + ", using proxy server: " + proxy + ". Trying next " +
 							"proxy server..");
@@ -109,13 +109,16 @@ public abstract class Selector {
 			}
 		}
 
+		lastUsedProxy = null;
+
 		// if all proxies failed try to download directly
 		try {
 			logger.info("Connecting directly (from local IP) to: " + targetURL);
 			uc = (HttpURLConnection) targetURL.openConnection();
 			uc.setRequestProperty("User-Agent", userAgent);
 			uc.connect();
-			return read(uc);
+			Document doc = read(uc);
+			return doc;
 		} catch (IOException e) {
 			logger.error("Cannot connect directly to: " + targetURL);
 			logger.error(e.toString());
@@ -194,7 +197,7 @@ public abstract class Selector {
 			long start = System.currentTimeMillis();
 			List prods = (List) getProducts(doc);
 			long elapsed = (System.currentTimeMillis() - start) / 1000;
-			logger.debug("Got " + ((prods == null) ? 0 : prods.size()) +  " products in: " + elapsed + "s ");
+			logger.debug("Got " + ((prods == null) ? 0 : prods.size()) + " products in: " + elapsed + "s ");
 
 			if (prods != null) {
 				if (MAX_RESULTS_NUM != -1 && results.size() + prods.size() > MAX_RESULTS_NUM) {
