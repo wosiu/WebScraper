@@ -31,7 +31,7 @@ public class LithuaniaKainos extends DELabProductSelector {
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		product = Utils.urlEncodeSpecial(product, '~', '"', '<', '>');
 
-		String target = getSourceURL().toString() + "lt/search?search_query=" + product;
+		String target = getSourceURL().toString() + "lt/search?search_query=" + product + "&submit_search=Ieškoti";
 		URL url = Utils.stringToURL(target);
 		return url;
 	}
