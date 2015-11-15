@@ -4,14 +4,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -25,7 +23,7 @@ public abstract class PricespySelector extends DELabProductSelector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		product = Utils.urlEncode(product);
+		product = Utils.urlEncode(product, '(', ')', '~', '\'').replaceAll("\\+", "%20");
 
 		String target = getSourceURL().toString() + "search.php?s=" + product + "#t-product";
 		URL url = Utils.stringToURL(target);

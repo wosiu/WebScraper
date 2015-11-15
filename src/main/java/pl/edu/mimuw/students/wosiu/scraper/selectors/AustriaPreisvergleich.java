@@ -24,7 +24,7 @@ public class AustriaPreisvergleich extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		String encoded = getSourceURL() + "tag/?tag=" +
-				Utils.urlEncode(product.toLowerCase().trim()).replaceAll(" ", "+");
+				Utils.urlEncodeSpecial(product, '~', '"', '<', '>');
 		return Utils.stringToURL(encoded);
 	}
 

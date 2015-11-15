@@ -28,9 +28,7 @@ public abstract class YellowSelector extends DELabProductSelector {
     @Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
         // change diacritics
-        product = Utils.normalize(product);
-        // replace ' ' with '+'
-        product = Utils.urlEncode(product);
+        product = Utils.urlEncodeSpecial(product, '~', '"', '<', '>');
 
         String target = getSourceURL() + targetInfix + "?q=" + product;
         URL url = Utils.stringToURL(target);

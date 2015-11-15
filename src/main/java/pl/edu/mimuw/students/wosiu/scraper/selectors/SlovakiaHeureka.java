@@ -4,24 +4,21 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
  * @author w
  */
-public class LithuaniaKainos extends DELabProductSelector {
+public class SlovakiaHeureka extends DELabProductSelector {
 
-	public LithuaniaKainos() throws ConnectionException {
-		super("Lithuania", "http://kainos.lt/");
+	public SlovakiaHeureka() throws ConnectionException {
+		super("Slovakia", "http://heureka.sk/");
 	}
 
 	// rows in search result (there are mixed: links to shops and link to oferts list within keinos)
@@ -30,7 +27,6 @@ public class LithuaniaKainos extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		product = Utils.urlEncodeSpecial(product, '~', '"', '<', '>');
-
 		String target = getSourceURL().toString() + "lt/search?search_query=" + product;
 		URL url = Utils.stringToURL(target);
 		return url;

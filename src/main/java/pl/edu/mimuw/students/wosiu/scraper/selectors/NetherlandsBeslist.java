@@ -4,7 +4,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
@@ -29,7 +28,7 @@ public class NetherlandsBeslist extends DELabProductSelector {
     @Override
     public URL prepareTargetUrl(String product) throws ConnectionException {
         String encoded = getSourceURL() + "products/r/" +
-                Utils.urlEncode(product.toLowerCase().trim()).replaceAll(" ", "+") + "/";
+                Utils.urlStripEncode(product.toLowerCase().trim()).replaceAll(" ", "+") + "/";
         return Utils.stringToURL(encoded);
     }
 

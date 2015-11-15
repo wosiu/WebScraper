@@ -3,7 +3,6 @@ package pl.edu.mimuw.students.wosiu.scraper;
 import org.apache.log4j.BasicConfigurator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.openqa.selenium.htmlunit.HtmlUnitDriver;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.*;
 
 import java.io.BufferedReader;
@@ -13,11 +12,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.net.Proxy;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.stream.Collectors;
-
-import org.openqa.selenium.*;
-import org.openqa.selenium.firefox.FirefoxDriver;
 
 
 public class Temp {
@@ -41,9 +35,7 @@ public class Temp {
 
 
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
-		List<String>asd = Arrays.asList("asd ", " d ", "as c s");
-		Object a = asd.stream().map(String::trim).collect(Collectors.toList());
-		System.out.println(a.toString());
+		System.out.println(Utils.urlEncode("Saint-Émilion Grand Cru 2009 !@#$%^&*() +-=`~;:'\"<,>./?|\\ ąśćłóœ"));
 //		WebDriver driver = new FirefoxDriver();
 //		driver.get("http://www.csv.lv/search?q=xbox+one");
 //		System.out.println(driver.getPageSource());
@@ -71,14 +63,14 @@ public class Temp {
 //		System.out.println(selector.getNextPages(document));
 	}
 
-	public static void main2(String[] args) throws IOException, URISyntaxException, ConnectionException {
+	public static void main1(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		///Jsoup.connect(uri).userAgent(userAgent).get()
 		//Jsoup.connect(uri).get()
 
 		Selector selector = new HungaryArukereso();
 
 		String base = "";
-		base = "http://pricespy.ie/product.php?p=2661725";
+		base = "http://herne-konzoly.heureka.sk/microsoft-xbox-one-500gb-without-kinect?expand=1";
 		URI uri = new URI(base);
 		URL url = uri.toURL();
 
@@ -102,6 +94,7 @@ public class Temp {
 		}
 		String str;
 		Document document = Jsoup.parse(tmp.toString());
+		System.out.println(document);
 		uc.disconnect();
 
 

@@ -26,7 +26,7 @@ public class BelgiumKieskeurig extends DELabProductSelector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		product = Utils.urlEncode(product);
+		product = Utils.urlEncodeSpecial(product, '~', '<', '>');
 
 		String target = getSourceURL().toString() + "search?q=" + product;
 		URL url = Utils.stringToURL(target);

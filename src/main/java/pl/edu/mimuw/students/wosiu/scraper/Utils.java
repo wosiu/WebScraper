@@ -1,11 +1,12 @@
 package pl.edu.mimuw.students.wosiu.scraper;
 
-import org.apache.log4j.Logger;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.regex.Pattern;
 
 public class Utils {
 
@@ -88,42 +89,90 @@ public class Utils {
 	}
 
 	public static String stripNonEnglish(String in) {
-		return in.replaceAll("[^\\w\\s]","").replaceAll("\\s+", " ").trim();
+		return in.replaceAll("[^\\w\\s]", "").replaceAll("\\s+", " ").trim();
 	}
 
 	// TODO tests
-	public static String normalize(String in) {
+	public static String stripAccents(String in) {
 		return org.apache.commons.lang3.StringUtils.stripAccents(in);
 	}
 
-	// TODO tests
-	public static String urlEncode(String in) {
-		in = normalize(in.trim());
-		try {
-			in = URLEncoder.encode(in, "UTF-8");
-		} catch (UnsupportedEncodingException e) {}
+	public static String urlEncodeSpecial(String in, Character... valid) {
+		in = in.trim();
+		String patternToMatch = "[\\!\"'#$%&()+,/:;<=>?@[]^_{|}`~]+ "; //.-* are ok for URLEncode.encode UTF8
+		StringBuilder builder = new StringBuilder();
+		List<Character>ok = Arrays.asList(valid);
 
+		for (Character c : in.toCharArray()) {
+			if (ok.contains(c)) {
+				builder.append(c);
+			} else if (patternToMatch.indexOf(c) == -1) {
+				builder.append(c);
+			} else {
+				try {
+					builder.append(URLEncoder.encode(c.toString(), "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					builder.append(c);
+				}
+			}
+		}
+		return builder.toString();
+	}
+
+	// TODO tests
+	public static String urlStripEncode(String in) {
+		in = stripAccents(in.trim());
+		in = urlEncode(in);
 		return in;
 	}
 
-	/*****************************************************************
-	 *   Licensed to the Apache Software Foundation (ASF) under one
-	 *  or more contributor license agreements.  See the NOTICE file
-	 *  distributed with this work for additional information
-	 *  regarding copyright ownership.  The ASF licenses this file
-	 *  to you under the Apache License, Version 2.0 (the
-	 *  "License"); you may not use this file except in compliance
-	 *  with the License.  You may obtain a copy of the License at
-	 *
-	 *    http://www.apache.org/licenses/LICENSE-2.0
-	 *
-	 *  Unless required by applicable law or agreed to in writing,
-	 *  software distributed under the License is distributed on an
-	 *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
-	 *  KIND, either express or implied.  See the License for the
-	 *  specific language governing permissions and limitations
-	 *  under the License.
-	 ****************************************************************/
+	// TODO tests
+	public static String urlEncode(String in, Character... valid) {
+		in = in.trim();
+
+		if (valid.length == 0) {
+			try {
+				URLEncoder.encode(in, "UTF-8");
+			} catch (UnsupportedEncodingException e) {
+				return in;
+			}
+		}
+
+		StringBuilder builder = new StringBuilder();
+		List<Character>ok = Arrays.asList(valid);
+
+		for (Character c : in.toCharArray()) {
+			if (ok.contains(c)) {
+				builder.append(c);
+			} else {
+				try {
+					builder.append(URLEncoder.encode(c.toString(), "UTF-8"));
+				} catch (UnsupportedEncodingException e) {
+					builder.append(c);
+				}
+			}
+		}
+		return builder.toString();
+	}
+
+		/*****************************************************************
+		 *   Licensed to the Apache Software Foundation (ASF) under one
+		 *  or more contributor license agreements.  See the NOTICE file
+		 *  distributed with this work for additional information
+		 *  regarding copyright ownership.  The ASF licenses this file
+		 *  to you under the Apache License, Version 2.0 (the
+		 *  "License"); you may not use this file except in compliance
+		 *  with the License.  You may obtain a copy of the License at
+		 *
+		 *    http://www.apache.org/licenses/LICENSE-2.0
+		 *
+		 *  Unless required by applicable law or agreed to in writing,
+		 *  software distributed under the License is distributed on an
+		 *  "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+		 *  KIND, either express or implied.  See the License for the
+		 *  specific language governing permissions and limitations
+		 *  under the License.
+		 ****************************************************************/
 
 
 	/**
@@ -134,24 +183,21 @@ public class Utils {
 	 * <a href="http://en.wikipedia.org/wiki/Rot-13">ROT13</a>
 	 * for more information on this topic.
 	 *
-	 * @since 3.0
 	 * @author Michael Gentry
+	 * @since 3.0
 	 */
-	public static class Rot47PasswordEncoder
-	{
+	public static class Rot47PasswordEncoder {
 		/* (non-Javadoc)
 		   * @see org.apache.cayenne.conf.PasswordEncoding#decodePassword(java.lang.String, java.lang.String)
 		   */
-		public static String decodePassword(String encodedPassword, String key)
-		{
+		public static String decodePassword(String encodedPassword, String key) {
 			return rotate(encodedPassword);
 		}
 
 		/* (non-Javadoc)
 		   * @see org.apache.cayenne.conf.PasswordEncoding#encodePassword(java.lang.String, java.lang.String)
 		   */
-		public static String encodePassword(String normalPassword, String key)
-		{
+		public static String encodePassword(String normalPassword, String key) {
 			return rotate(normalPassword);
 		}
 
@@ -162,23 +208,20 @@ public class Utils {
 		 * information (there is a subsection for ROT-47).
 		 * <p>
 		 * A Unix command to perform a ROT-47 cipher is:
-		 *   <pre>tr '!-~' 'P-~!-O'</pre>
+		 * <pre>tr '!-~' 'P-~!-O'</pre>
 		 *
 		 * @param value The text to be rotated.
 		 * @return The rotated text.
 		 */
-		public static String rotate(String value)
-		{
+		public static String rotate(String value) {
 			int length = value.length();
 			StringBuilder result = new StringBuilder();
 
-			for (int i = 0; i < length; i++)
-			{
+			for (int i = 0; i < length; i++) {
 				char c = value.charAt(i);
 
 				// Process letters, numbers, and symbols -- ignore spaces.
-				if (c != ' ')
-				{
+				if (c != ' ') {
 					// Add 47 (it is ROT-47, after all).
 					c += 47;
 

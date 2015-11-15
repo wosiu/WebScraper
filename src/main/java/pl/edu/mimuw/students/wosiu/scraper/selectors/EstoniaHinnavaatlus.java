@@ -28,7 +28,7 @@ public class EstoniaHinnavaatlus extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		final String encoded = getSourceURL() + "/search/?Type=products&Query=" +
-				Utils.urlEncode(product.toLowerCase()).trim().replaceAll(" ", "+");
+				Utils.urlEncodeSpecial(product, '~', '"', '<', '>');
 		return Utils.stringToURL(encoded);
 	}
 

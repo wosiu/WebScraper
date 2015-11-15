@@ -28,8 +28,6 @@ allvect = c(
 )
 
 
-
-data <- data_proxy
 countries <- data %>% select(Country) %>% group_by(Country) %>% summarise(n=n()) %>% arrange(Country)
 
 products <- data %>% select(Country, Product.query) %>% group_by(Country, Product.query) %>% summarise(n=n()) %>% arrange(Country)

@@ -34,7 +34,7 @@ public class FranceIdealo extends DELabProductSelector {
 	public URL prepareTargetUrl(String product) throws ConnectionException {
         view1Processed = false; //HACK
 		String encoded = getSourceURL() + "prechcat.html?q=" +
-				Utils.urlEncode(product.toLowerCase().trim()).replaceAll(" ", "+");
+				Utils.urlEncodeSpecial(product, '~', '"', '<', '>');
 		return Utils.stringToURL(encoded);
 	}
 

@@ -3,15 +3,12 @@ package pl.edu.mimuw.students.wosiu.scraper.selectors;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 
 /**
@@ -26,7 +23,7 @@ public class PortugalBuscape extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		// remove special chars from product
-		product = Utils.normalize(product);
+		product = Utils.stripAccents(product);
 		product = Utils.stripNonEnglish(product);
 		product = product.replaceAll(" ", "+");
 

@@ -29,8 +29,9 @@ public class FinlandiaHinta extends DELabProductSelector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
+		// TODO encode fix?
 		final String encoded = getSourceURL() + "/haku?q=" +
-				Utils.urlEncode(product.toLowerCase().trim().replaceAll(" ", "+"));
+				Utils.urlStripEncode(product.toLowerCase().trim().replaceAll(" ", "+"));
 		return Utils.stringToURL(encoded);
 	}
 

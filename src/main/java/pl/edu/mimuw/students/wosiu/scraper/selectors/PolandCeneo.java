@@ -30,7 +30,7 @@ public class PolandCeneo extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		String encoded = getSourceURL() + ";szukaj-"
-				+ Utils.urlEncode(product.toLowerCase().trim()).replaceAll(" ", "+");
+				+ Utils.urlEncodeSpecial(product, '!', '(', ')', '-');
 		return Utils.stringToURL(encoded);
 	}
 

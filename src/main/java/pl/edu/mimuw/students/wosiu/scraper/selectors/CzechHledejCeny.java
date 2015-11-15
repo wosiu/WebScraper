@@ -30,12 +30,12 @@ public class CzechHledejCeny extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		// change diacritics
-		product = Utils.normalize(product);
+		product = Utils.stripAccents(product);
 		product = product.toLowerCase();
 		// remove !@#$... etc
 		product = Utils.stripNonEnglish(product);
 		// replace ' ' with '+'
-		product = Utils.urlEncode(product);
+		product = product.replaceAll(" ", "+");
 
 		String target = getSourceURL() + "?s=" + product;
 		URL url = Utils.stringToURL(target);

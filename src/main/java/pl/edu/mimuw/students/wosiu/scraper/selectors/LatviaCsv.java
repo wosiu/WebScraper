@@ -4,9 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import org.json.simple.JSONObject;
 import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
@@ -35,12 +33,12 @@ public class LatviaCsv extends DELabProductSelector {
 	public URL prepareTargetUrl(String product) throws ConnectionException {
         getNextPages = false;
         // change diacritics
-        product = Utils.normalize(product);
+        product = Utils.stripAccents(product);
         product = product.toLowerCase();
         // remove !@#$... etc
         product = Utils.stripNonEnglish(product);
         // replace ' ' with '+'
-		product = Utils.urlEncode(product);
+		product = Utils.urlStripEncode(product);
 
         targetUrl = getSourceURL() + "api/json/?q=" + product;
         URL url = Utils.stringToURL(targetUrl);

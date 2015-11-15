@@ -24,31 +24,15 @@ import java.util.List;
  */
 public abstract class OrangeSelector extends DELabProductSelector {
 
-	private static final List<Character> SPECIAL = Arrays.asList('"','*','>');
 
 	public OrangeSelector(String country, String source) throws ConnectionException {
 		super(country, source);
 	}
 
-	private String convert(String str) {
-		StringBuilder out = new StringBuilder();
-		for (char c : str.toCharArray()) {
-			if (SPECIAL.contains(c)) {
-				out.append(c);
-			} else try {
-				out.append(URLEncoder.encode("" + c, "UTF-8"));
-			} catch (UnsupportedEncodingException e) {
-				logger.error(e);
-				out.append(c);
-			}
-		}
-		return out.toString();
-	}
-
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		String target = getSourceURL().toString() + "CategorySearch.php?st=" +
-				convert(product.trim());
+				Utils.urlEncodeSpecial(product, '"','*','>');
 		URL url = Utils.stringToURL(target);
 		return url;
 	}

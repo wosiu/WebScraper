@@ -28,7 +28,7 @@ public class GreeceBestPrice extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 
-		product = Utils.urlEncode(product);
+		product = Utils.urlEncodeSpecial(product);
 
 		String target = getSourceURL() + "search?q=" + product;
 		URL url = Utils.stringToURL(target);

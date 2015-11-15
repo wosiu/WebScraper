@@ -28,7 +28,7 @@ public abstract class KelkooSelector extends DELabProductSelector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		product = Utils.urlEncode(product);
+		product = Utils.urlEncodeSpecial(product, ' ', '"', '<', '>').replaceAll(" ", "-");
 
 		String target = getSourceURL().toString() + "ctl/do/search?siteSearchQuery=" + product;
 		URL url = Utils.stringToURL(target);
