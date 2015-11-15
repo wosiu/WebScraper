@@ -45,8 +45,10 @@ public class GreeceBestPrice extends DELabProductSelector {
 		document.setBaseUri(getSourceURL().toString());
 		final List<URL> urls = new LinkedList<>();
 
-		Elements elements = document.select("div#results-main > table.products > tbody > tr > td > div.info > p.price" +
-				" > a[href]");
+		// TO FIX - takes too much, e.g. http://www.bestprice.gr/search?q=oxford+wordpower
+		Elements elements = document.select("div#results-main > table.products > tbody > tr > td > div.info > " +
+				"p.price" +
+				" > a[href]:not(.tomer)");
 
 		for (Element element : elements) {
 			final String href = element.attr("abs:href");
@@ -86,9 +88,13 @@ public class GreeceBestPrice extends DELabProductSelector {
 			products.add(product);
 		}
 
-        select = document.select("div:not(.full).aqua.clr table.products.old-product-matrix.product-matrix.results-global td.one-merchant");
+		// Product view (secend one, check e.g. 'oxford wordpower')
+//        select = document.select("div:not(.full).aqua.clr table.products.old-product-matrix.product-matrix" +
+//				".results-global td.one-merchant");
+		Elements elements = document.select("div#results-main > table.products > tbody > tr > td:has" +
+				"(div.info > p.price> a[href].tomer)");
 
-        for (Element element : select) {
+        for (Element element : elements) {
             ProductResult product = new ProductResult();
 
             product.setCountry(getCountry());
