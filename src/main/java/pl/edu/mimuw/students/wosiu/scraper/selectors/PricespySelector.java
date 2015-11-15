@@ -37,6 +37,7 @@ public abstract class PricespySelector extends DELabProductSelector {
 
 		document.setBaseUri(getSourceURL().toString());
 
+		// Offer view
 		// non-featured when record inactive
 		for (Element element : document.select("table#prislista tbody > tr:not(.non-featured)")) {
 			ProductResult result = new ProductResult();
@@ -60,6 +61,38 @@ public abstract class PricespySelector extends DELabProductSelector {
 			results.add(result);
 		}
 
+		// Product view
+		Elements elements = document.select("div#raw tr:has(td:eq(0) > a[href])");
+
+		for (Element element : elements) {
+			ProductResult result = new ProductResult();
+
+			result.setPrice(element.select("span.price").first().text());
+
+			Element a = element.select("td:eq(0) > a[href]").first();
+			String link = a.attr("abs:href");
+			String redirected = followUrl(link).toString();
+
+			result.setShopURL(redirected);
+
+			// there is no shop name in structure
+			String host = getSourceURL().getHost();
+			if (redirected.contains(host)) {
+				result.setShop(UNKNOWN);
+			} else {
+				result.setShop(host);
+			}
+
+
+			String prod = a.data();
+			result.setProduct(prod);
+			result.setCountry(getCountry());
+			result.setProxy(getLastUsedProxy());
+			result.setSearcher(getSourceURL().toString());
+
+			results.add(result);
+		}
+
 		return results;
 	}
 
@@ -75,16 +108,32 @@ public abstract class PricespySelector extends DELabProductSelector {
 		document.setBaseUri(getSourceURL().toString());
 
 		final int MAX_PRODUCTS = 12;
-		Elements elements = document.select("table#table_produktlista > tbody > tr:lt( " + MAX_PRODUCTS + ") > td > " +
-				"a[href].price");
 
-		for (Element element : elements) {
+		// Product
+		Elements elementsProducts = document.select("div#product table#table_produktlista > tbody > tr:lt( " +
+				MAX_PRODUCTS + ") > td > a[href].price");
+
+		for (Element element : elementsProducts) {
 			String str = element.attr("abs:href");
 			try {
 				urls.add(Utils.stringToURL(str));
 			} catch (ConnectionException e) {
 			}
 		}
+
+		// Books
+		Elements elementsBooks = document.select("div#book table#table_book_list > tbody > tr:lt( " +
+				MAX_PRODUCTS + ") > td:eq(1) a[href]");
+
+		for (Element element : elementsBooks) {
+			String str = element.attr("abs:href");
+			try {
+				urls.add(Utils.stringToURL(str));
+			} catch (ConnectionException e) {
+			}
+		}
+
+
 		logger.debug("Collected " + urls.size() + " urls to visit");
 		return urls;
 	}

@@ -23,6 +23,9 @@ public abstract class DELabProductSelector extends Selector {
 
 	private boolean redirectShopLink = false;
 
+	// value to set unknown field
+	public static final String UNKNOWN = "NULL";
+
 	public DELabProductSelector(String country, String source) throws ConnectionException {
 		super();
 		setCountry(country);

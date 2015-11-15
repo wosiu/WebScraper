@@ -36,9 +36,10 @@ public class Temp {
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		BasicConfigurator.configure();
 		String url =
-				"http://proxygaz.com/country/united-kingdom-proxy/";
+				"http://www.prisjakt.nu/search.php?s=oxford%20wordpower#t-product";
+//				"http://www.prisjakt.nu/search.php?s=U2%2C%20%27Songs%20of%20Innocence%27#t-product";
 //				"http://herne-konzoly.heureka.sk/microsoft-xbox-one-500gb-without-kinect?expand=1";
-		Selector selector = new Proxygaz("United Kingdom");
+		Selector selector = new SwedenPrisjakt();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
 		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);
