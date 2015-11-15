@@ -5,6 +5,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.*;
+import pl.edu.mimuw.students.wosiu.scraper.selectors.proxy.Proxygaz;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -35,9 +36,9 @@ public class Temp {
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		BasicConfigurator.configure();
 		String url =
-				"http://www.heureka.sk/?h%5Bfraze%5D=U2%2C+%27Songs+of+Innocence%27";
+				"http://proxygaz.com/country/united-kingdom-proxy/";
 //				"http://herne-konzoly.heureka.sk/microsoft-xbox-one-500gb-without-kinect?expand=1";
-		Selector selector = new SlovakiaHeureka();
+		Selector selector = new Proxygaz("United Kingdom");
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
 		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);

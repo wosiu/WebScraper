@@ -9,12 +9,16 @@ import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 
 import java.net.URL;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
+import java.util.ListIterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Gatherproxy extends Selector {
+public class Proxygaz extends Selector {
 
+	private String country;
 	private static final String IPADDRESS_PATTERN =
 			"((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?))";
 
@@ -49,24 +53,16 @@ public class Gatherproxy extends Selector {
 	private static final Pattern pattern = Pattern.compile(PATTERN_STR);
 
 	private String prepareCountryName(String country) {
-		return (country == null) ? country : country.replaceAll(" ", "%20");
+		return (country == null) ? country : country.toLowerCase().replaceAll(" ", "-");
 	}
 
-	public Gatherproxy(String country) {
+	public Proxygaz(String country) {
 		super();
+		this.country = country;
 
 		country = prepareCountryName(country);
 		try {
-			setSource("http://www.gatherproxy.com/proxylist/country/?c=" + country);
-		} catch (ConnectionException e) {
-			logger.error(e.toString());
-		}
-	}
-
-	public Gatherproxy() {
-		super();
-		try {
-			setSource("http://www.gatherproxy.com/");
+			setSource("http://proxygaz.com/country/" + country + "-proxy/");
 		} catch (ConnectionException e) {
 			logger.error(e.toString());
 		}
@@ -75,36 +71,32 @@ public class Gatherproxy extends Selector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		product = prepareCountryName(product);
-		String productURL = getSourceURL() + "proxylist/country/?c=" + product;
+		String productURL = getSourceURL() + "country/" + product + "-proxy/";
 		return Utils.stringToURL(productURL);
 	}
+
+	private static final int SCRIPT_PREF_SIZE = "document.write(Base64.decode(\"".length();
+	private static final int SCRIPT_SUF_SIZE = "\"))".length();
 
 	@Override
 	public List<ProxyWrapper> getProducts(Document document) {
 
-		Element table = document.select("tbody").first();
-		Elements rows = table.select("script");
-		List<ProxyWrapper> res = new ArrayList<>(rows.size());
+		List<ProxyWrapper> res = new ArrayList<>();
 
-		ListIterator it = rows.listIterator();
-		while (it.hasNext()) {
-			Element e = (Element) it.next();
-			String inner = e.data().trim();
-			Matcher matcher = pattern.matcher(inner);
+		for (Element element : document.select("tbody > tr.plbc_bloc_proxy_tr")) {
+			ProxyWrapper pw = new ProxyWrapper();
 
-			if (matcher.find()) {
-				String country = matcher.group(3);
-				String ip = matcher.group(5);
-				String portHex = matcher.group(9);
-				int portDec = Integer.parseInt(portHex, 16);
-				ProxyWrapper pw = new ProxyWrapper();
-				pw.setHTTPProxy(ip, portDec);
-				pw.setCountry(country);
-				res.add(pw);
-			} else {
-				logger.warn("Cannot match proxy from: " + inner);
-				continue;
-			}
+			pw.setCountry(this.country);
+			String coded = element.select("td.plbc_bloc_proxy_td_ip > script").first().dataNodes().get(0).getWholeData();
+			coded = coded.substring(SCRIPT_PREF_SIZE, coded.length() - SCRIPT_SUF_SIZE);
+			String ip = new String(Base64.getDecoder().decode(coded));
+			String portstr = element.select("td.plbc_bloc_proxy_td_port").first().text();
+
+			int port = Integer.parseInt(portstr);
+
+			pw.setHTTPProxy(ip, port);
+
+			res.add(pw);
 		}
 
 		return res;

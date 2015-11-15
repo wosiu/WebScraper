@@ -5,6 +5,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.proxy.Gatherproxy;
+import pl.edu.mimuw.students.wosiu.scraper.selectors.proxy.Proxygaz;
 
 import java.net.MalformedURLException;
 import java.net.URL;
@@ -33,6 +34,7 @@ public abstract class DELabProductSelector extends Selector {
 			return;
 		}
 		ProxyFinder.getInstance().addProxySelector(new Gatherproxy(getCountry()));
+		ProxyFinder.getInstance().addProxySelector(new Proxygaz(getCountry()));
 		Collection proxies = ProxyFinder.getInstance().getProxies(getCountry());
 		if (proxies == null || proxies.isEmpty()) {
 			logger.info(getCountry() + ": No proxy in ProxyFinder");

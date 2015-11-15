@@ -152,8 +152,8 @@ public class Executor {
 
 	public void appendEmpty(CSVWriter writer, String productName, Selector selector, String userAgent, URL url) {
 			String proxy = (selector.getLastUsedProxy() == null) ? "LOCAL" : selector.getLastUsedProxy().toString();
-			String[] record = Arrays.asList(selector.getCountry(), productName, url.toString(), proxy, userAgent).
-					stream().map(String::trim).collect(Collectors.toList()).toArray(new String[]{});
+			String[] record = Arrays.asList(selector.getCountry(), selector.getSourceURL().toString(), productName, url.toString
+					(), proxy, userAgent).stream().map(String::trim).collect(Collectors.toList()).toArray(new String[]{});
 
 		writer.writeNext(record);
 		try {
