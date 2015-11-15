@@ -62,35 +62,47 @@ public abstract class PricespySelector extends DELabProductSelector {
 		}
 
 		// Product view
-		Elements elements = document.select("div#raw tr:has(td:eq(0) > a[href])");
 
-		for (Element element : elements) {
-			ProductResult result = new ProductResult();
+		// Note there are tabs represented by divs: #product, #brand_categegory, #raw, ...
+		// Sometimes there are some:
+		// 1.: http://pricespy.ie/search.php?s=xbox%20one#t-product  we do not collect results from here
+		// ..sometimes only one:
+		// 2.: http://pricespy.ie/search.php?s=Songs%20of%20Innocence%20-%20U2%20  we collect results
+		// we want to collect from such product view only if there are no product tab. We take "uncategorised prices"
+		// (div#raw)
 
-			result.setPrice(element.select("span.price").first().text());
+		if ( document.select("div#search_results_page > ul:eq(0) > li > a[href]#tab-product").isEmpty() ) {
+			Elements elements = document.select("div#raw tr:has(td:eq(0) > a[href])");
 
-			Element a = element.select("td:eq(0) > a[href]").first();
-			String link = a.attr("abs:href");
-			String redirected = followUrl(link).toString();
+			for (Element element : elements) {
+				ProductResult result = new ProductResult();
 
-			result.setShopURL(redirected);
+				result.setPrice(element.select("span.price").first().text());
 
-			// there is no shop name in structure
-			String host = getSourceURL().getHost();
-			if (redirected.contains(host)) {
-				result.setShop(UNKNOWN);
-			} else {
-				result.setShop(host);
+				Element a = element.select("td:eq(0) > a[href]").first();
+				String link = a.attr("abs:href");
+				String redirected = followUrl(link).toString();
+
+				result.setShopURL(redirected);
+
+				// there is no shop name in structure
+				String host = getSourceURL().getHost();
+				String domain = host.replaceAll("http://", "").replaceAll("www\\.", "");
+				if (redirected.contains(domain)) {
+					result.setShop(UNKNOWN);
+				} else {
+					result.setShop(host);
+				}
+
+
+				String prod = a.text();
+				result.setProduct(prod);
+				result.setCountry(getCountry());
+				result.setProxy(getLastUsedProxy());
+				result.setSearcher(getSourceURL().toString());
+
+				results.add(result);
 			}
-
-
-			String prod = a.data();
-			result.setProduct(prod);
-			result.setCountry(getCountry());
-			result.setProxy(getLastUsedProxy());
-			result.setSearcher(getSourceURL().toString());
-
-			results.add(result);
 		}
 
 		return results;
