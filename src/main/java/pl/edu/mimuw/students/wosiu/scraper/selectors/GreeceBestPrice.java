@@ -10,7 +10,6 @@ import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -68,11 +67,11 @@ public class GreeceBestPrice extends DELabProductSelector {
 
 		// Offers view
 		// empty rows has 'td' with class 'store' as well but without 'diff' class
-		Elements elementsOffer = document.select("div#content div#prices tbody.physical-products > tr.paid:has(td" +
+        Elements select = document.select("div#content div#prices tbody.physical-products > tr.paid:has(td" +
 				".store" +
 				".diff)");
 
-		for (Element element : elementsOffer) {
+        for (Element element : select) {
 			ProductResult product = new ProductResult();
 
 			product.setCountry(getCountry());
@@ -86,6 +85,23 @@ public class GreeceBestPrice extends DELabProductSelector {
 
 			products.add(product);
 		}
+
+        select = document.select("div:not(.full).aqua.clr table.products.old-product-matrix.product-matrix.results-global td.one-merchant");
+
+        for (Element element : select) {
+            ProductResult product = new ProductResult();
+
+            product.setCountry(getCountry());
+            product.setPrice(element.select("div.info p.price a.tomer").first().text());
+            product.setSearcher(getSourceURL().toString());
+            String href = element.select("div.info p.price a.tomer").first().attr("abs:href");
+            product.setShopURL(followUrl(href).toString());
+            product.setShop(element.select("div.info p.stores.clr").first().text());
+            product.setProduct(element.select("div.img img[alt]").first().attr("alt"));
+            product.setProxy(getLastUsedProxy());
+
+            products.add(product);
+        }
 
 		return products;
 	}
