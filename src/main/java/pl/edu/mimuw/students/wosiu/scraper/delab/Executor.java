@@ -132,7 +132,8 @@ public class Executor {
 			String[] record = Arrays.asList(
 					productName, res.getProduct(), res.getCountry(), res.getSearcher(), res.getPrice(), res.getShop(),
 					res.getProxy(), res.getShopURL(), url.toString(), userAgent).
-					stream().map(String::trim).collect(Collectors.toList()).toArray(new String[]{});
+					stream().map(s -> (s==null) ? "" : s.trim()).collect(Collectors.toList()).
+					toArray(new String[]{});
 
 			writer.writeNext(record);
 			records++;
