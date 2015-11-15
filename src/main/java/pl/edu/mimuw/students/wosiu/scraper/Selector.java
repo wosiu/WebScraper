@@ -211,6 +211,7 @@ public abstract class Selector {
 			if (nexts != null) {
 				urlToVisit.addAll(nexts);
 			}
+			logger.debug("Got " + ((nexts == null) ? 0 : nexts.size()) + " next URLS");
 		}
 		return results;
 	}

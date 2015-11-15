@@ -37,7 +37,7 @@ public abstract class DELabProductSelector extends Selector {
 			return;
 		}
 		ProxyFinder.getInstance().addProxySelector(new Gatherproxy(getCountry()));
-		ProxyFinder.getInstance().addProxySelector(new Proxygaz(getCountry()));
+		//ProxyFinder.getInstance().addProxySelector(new Proxygaz(getCountry()));
 		Collection proxies = ProxyFinder.getInstance().getProxies(getCountry());
 		if (proxies == null || proxies.isEmpty()) {
 			logger.info(getCountry() + ": No proxy in ProxyFinder");
