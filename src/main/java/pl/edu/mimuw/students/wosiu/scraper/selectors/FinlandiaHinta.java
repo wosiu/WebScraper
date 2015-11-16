@@ -59,7 +59,10 @@ public class FinlandiaHinta extends DELabProductSelector {
 
 		Date date = new Date();
 		for (Element element : document.select("tr.hv-table-list-tr.hv--offer-list")) {
-			products.add(buildProductResult(element, date));
+			final ProductResult result = buildProductResult(element, date);
+			if (result.getShopURL() != null && !result.getShopURL().isEmpty()) {
+				products.add(result);
+			}
 		}
 
 		return products;
@@ -84,7 +87,11 @@ public class FinlandiaHinta extends DELabProductSelector {
 	}
 
 	private String getShop(Element element) {
-		return element.select("img.hv-store-logo.hvjs-lazy-image").attr("alt");
+		String res = element.select("img.hv-store-logo.hvjs-lazy-image").attr("alt");
+		if (res == null || res.isEmpty()) {
+			res = element.select("th[scope=row] span[itemprop=seller]").text();
+		}
+		return res;
 	}
 
 	private String getProductName(Element element) {
@@ -97,11 +104,10 @@ public class FinlandiaHinta extends DELabProductSelector {
 
 	private URL getShopURL(Element element) {
 		URL res = null;
-		Element a = element.select("a.hv-button.hv--green.hvjs-tooltip").first();
-		if (a == null) {
-			return null;
+		Elements select = element.select("div.hv--name a[rel=nofollow]");
+		if (!select.isEmpty()) {
+			res = followUrl(select.first().attr("abs:href"));
 		}
-		res = followUrl(a.attr("abs:href"));
 		return res;
 	}
 }

@@ -46,7 +46,10 @@ public class FranceIdealo extends DELabProductSelector {
 		if (!view1Processed) {
 			//logika dla widoku 1 (wystepuja linki do produktow bezposrednio i do list produktow, chcemy tylko
 			//jedna strone unikając zagłębień (sytacje widok 1 -> widok 1 -> widok 2), nie tracimy w ten sposob rekordow
-			final Elements elements = document.select("a.link-composed-2.webtrekk");
+			Elements elements = document.select("a.link-composed-2");
+			if (elements.isEmpty()) {
+				elements = document.select("td.tile.product-tile");
+			}
 			for (Element element : elements) {
 				try {
 					final String href = element.attr("abs:href");
@@ -85,13 +88,22 @@ public class FranceIdealo extends DELabProductSelector {
 
             Date date = new Date();
             for (Element element : elements) {
-                products.add(buildProductResultDirectLink(element, date));
+	            final ProductResult product = buildProductResultDirectLink(element, date);
+	            if (product.getProduct() != null && !product.getProduct().isEmpty()) {
+		            products.add(product);
+	            }
 			}
 
 			//logika dla pobierania dla widoku 2
             elements = document.select("table.list.modular tr[data-offer-id]");
+			if (elements.isEmpty()) {
+				elements = document.select("table.list.modular tbody tr");
+			}
 			for (Element element : elements) {
-                products.add(buildProductResult(element, date));
+                ProductResult product = buildProductResult(element, date);
+				if (product.getProduct() != null && !product.getProduct().isEmpty()) {
+					products.add(product);
+				}
 			}
 		}
 
