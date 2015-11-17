@@ -33,13 +33,11 @@ public class Temp {
 
 	}
 
-	public static void main3(String[] args) throws IOException, URISyntaxException, ConnectionException {
+	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		BasicConfigurator.configure();
 		String url =
-				"http://www.bestprice.gr/search?q=oxford+wordpower";
-//				"http://www.prisjakt.nu/search.php?s=U2%2C%20%27Songs%20of%20Innocence%27#t-product";
-//				"http://herne-konzoly.heureka.sk/microsoft-xbox-one-500gb-without-kinect?expand=1";
-		Selector selector = new GreeceBestPrice();
+				"http://www.idealo.fr/type/9780194323406.html?q=oxford+wordpower";
+		Selector selector = new FranceIdealo();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
 		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);
@@ -47,7 +45,7 @@ public class Temp {
 		System.out.println("pages: " + pages.size());
 		System.out.println(pages.toString().replaceAll(", ", "\n"));
 		System.out.println("results: " + res.size());
-		System.out.println(res);
+		System.out.println(res.toString().replaceAll("}, ", "}\n"));
 //		System.out.println(selector.getNextPages(document));
 	}
 

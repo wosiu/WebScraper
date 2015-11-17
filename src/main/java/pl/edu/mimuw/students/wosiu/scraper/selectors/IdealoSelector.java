@@ -93,10 +93,10 @@ public class IdealoSelector extends DELabProductSelector {
 
 		Date date = new Date();
 		for (Element element : elements) {
+			System.out.println(element);
+			System.out.println("---------------");
 			final ProductResult product = buildProductResultDirectLink(element, date);
-			if (product.getProduct() != null && !product.getProduct().isEmpty()) {
-				products.add(product);
-			}
+			products.add(product);
 		}
 
 		//logika dla pobierania dla widoku 2
@@ -106,9 +106,7 @@ public class IdealoSelector extends DELabProductSelector {
 		}
 		for (Element element : elements) {
 			ProductResult product = buildProductResult(element, date);
-			if (product.getProduct() != null && !product.getProduct().isEmpty()) {
-				products.add(product);
-			}
+			products.add(product);
 		}
 
 		return products;
@@ -132,7 +130,7 @@ public class IdealoSelector extends DELabProductSelector {
 	}
 
 	private String getShopName(Element element) {
-		String res = "";
+		String res = UNKNOWN;
 		Elements select = element.select("td.rating img[src]");
 		if (!select.isEmpty()) {
 			res = select.first().attr("alt");
@@ -176,11 +174,10 @@ public class IdealoSelector extends DELabProductSelector {
 		final String GET_CONTENTS = "getContents(";
 		final String ENDING = "');/* ]]>";
 		final String ENDING2 = "');\n/* ]]>";
-		String res = "";
+		String res = UNKNOWN;
 		if (shop.contains("Amazon") || shop.contains("amazon-marketplace") || shop.contains("Ebay")) {
 			try {
 				//magia parsowania, miliard przypadków
-				final Element select = element.select("a.offer-title.link-2.webtrekk.wt-prompt").first();
 				final String script = element.select("a.offer-title.link-2.webtrekk.wt-prompt").first().toString();
 				final String cuttedPrefix = script.substring(script.indexOf(GET_CONTENTS) + GET_CONTENTS.length() + 1);
 				int indexEnd = cuttedPrefix.indexOf(ENDING);
