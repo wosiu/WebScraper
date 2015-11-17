@@ -156,12 +156,16 @@ public class IdealoSelector extends DELabProductSelector {
 		product.setPrice(getPriceDirectLink(element));
 		product.setSearcher(getSourceURL().toString());
 		product.setShopURL(shopURL.toString());
-		product.setShop(shopURL.getHost());
+		product.setShop(getShopNameDirectLink(element));
 		product.setProduct(getProductName(element, product.getShop()));
 		product.setTime(date.getTime());
 		product.setProxy(getLastUsedProxy());
 
 		return product;
+	}
+
+	private String getShopNameDirectLink(Element element) {
+		return element.select("td.shop img[src]").attr("alt");
 	}
 
 	private Object getPriceDirectLink(Element element) {
