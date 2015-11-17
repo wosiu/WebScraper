@@ -33,7 +33,7 @@ public class Temp {
 
 	}
 
-	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
+	public static void main3(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		BasicConfigurator.configure();
 		String url =
 				"http://www.bestprice.gr/search?q=oxford+wordpower";
@@ -82,38 +82,8 @@ public class Temp {
 		}
 		String str;
 		Document document = Jsoup.parse(tmp.toString());
-		System.out.println(document.select("div.shopspr div.shoppr").size());
+		System.out.println(document);
 		uc.disconnect();
-
-
-
-
-
-
-
-		/*
-		String nextStrUrl = null;
-		URL res;
-
-		try {
-			Elements elements = document.getElementsByClass("button-orange");
-			Element next = elements.first().select("a").first();
-			nextStrUrl = next.attr("abs:href");
-		} catch (NullPointerException e) {
-			//return null;
-		}
-		System.out.println(nextStrUrl);
-		try {
-			res = Utils.stringToURL(nextStrUrl);
-		} catch (ConnectionException e) {
-			//logger.debug(e.toString());
-			//return null;
-		}*/
-
-
-
-
-
 	}
 
 }
