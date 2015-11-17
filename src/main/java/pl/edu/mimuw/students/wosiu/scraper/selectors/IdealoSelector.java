@@ -93,8 +93,6 @@ public class IdealoSelector extends DELabProductSelector {
 
 		Date date = new Date();
 		for (Element element : elements) {
-			System.out.println(element);
-			System.out.println("---------------");
 			final ProductResult product = buildProductResultDirectLink(element, date);
 			products.add(product);
 		}
