@@ -46,8 +46,8 @@ public abstract class DELabProductSelector extends Selector {
 			addAllProxies(proxies);
 		}
 		//Polish proxy - temporary TODO delete!
-		addProxy("94.42.140.10", 8080);
-		addProxy("95.215.52.150", 8080);
+//		addProxy("94.42.140.10", 8080);
+//		addProxy("95.215.52.150", 8080);
 	}
 
 	protected URL followUrl(String url) {
