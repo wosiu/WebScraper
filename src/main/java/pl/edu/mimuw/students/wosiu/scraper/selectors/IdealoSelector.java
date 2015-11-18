@@ -15,7 +15,6 @@ import java.util.LinkedList;
 import java.util.List;
 
 // TODO comments to english
-// TODO remove catch nullPtr/Exc
 
 /**
  * Algorytm:
