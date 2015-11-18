@@ -36,7 +36,7 @@ public class Temp {
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
 		BasicConfigurator.configure();
 		String url =
-				"http://www.idealo.fr/type/9780194323406.html?q=oxford+wordpower";
+				"http://www.idealo.fr/prix/4594701/microsoft-manette-filaire-xbox-one-pour-windows-noir.html";
 		Selector selector = new FranceIdealo();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 

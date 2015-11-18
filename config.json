@@ -1,9 +1,8 @@
 {
 	"selectors": [
  	 	"FranceIdealo",
-		"SpainIdealo",
 	],
-	"products": ["Fujifilm X T10 body", "oxford wordpower", "xbox one", "Saint-Émilion Grand Cru 2009"],
+	"products": ["xbox one"],
 
 	"userAgents": ["Mozilla/5.0 (Windows NT 6.1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/41.0.2228.0 Safari/537.36"],
 	"out": "data.csv",
