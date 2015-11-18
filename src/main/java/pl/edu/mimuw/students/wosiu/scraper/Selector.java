@@ -14,6 +14,9 @@ public abstract class Selector {
 
 	private static int CONNECTION_TIMEOUT_MS = 4000;
 	private static int READ_TIMEOUT_MS = 10000;
+	private static int LOCAL_CONNECTION_TIMEOUT_MS = 40 * 1000;
+	private static int LOCAL_READ_TIMEOUT_MS = 40 * 1000;
+
 
 	private String country = null;
 	private URL sourceURL = null;
@@ -116,6 +119,8 @@ public abstract class Selector {
 			logger.info("Connecting directly (from local IP) to: " + targetURL);
 			uc = (HttpURLConnection) targetURL.openConnection();
 			uc.setRequestProperty("User-Agent", userAgent);
+			uc.setConnectTimeout(LOCAL_CONNECTION_TIMEOUT_MS);
+			uc.setReadTimeout(LOCAL_READ_TIMEOUT_MS);
 			uc.connect();
 			Document doc = read(uc);
 			return doc;
