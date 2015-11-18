@@ -103,8 +103,10 @@ public class IdealoSelector extends DELabProductSelector {
 			elements = document.select("table.list.modular tbody tr");
 		}
 		for (Element element : elements) {
-			ProductResult product = buildProductResult(element, date);
-			products.add(product);
+			if (element.children().size() == 5) { //eliminating first row
+				ProductResult product = buildProductResult(element, date);
+				products.add(product);
+			}
 		}
 
 		return products;
