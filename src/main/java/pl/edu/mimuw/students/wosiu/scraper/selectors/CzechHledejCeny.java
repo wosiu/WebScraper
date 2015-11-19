@@ -24,7 +24,7 @@ Algorytm:
 public class CzechHledejCeny extends DELabProductSelector {
 
 	public CzechHledejCeny() throws ConnectionException {
-		super("Czech Republic", "http://hledejceny.cz/");
+		super("Czech Republic", "http://www.hledejceny.cz/");
 	}
 
 	@Override

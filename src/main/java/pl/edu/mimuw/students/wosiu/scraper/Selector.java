@@ -70,75 +70,129 @@ public abstract class Selector {
 
 	public abstract List<URL> getNextPages(Document document);
 
-	public HttpURLConnection connectByProxy(String userAgent, URL targetURL, Proxy proxy) throws IOException {
-		long start = System.currentTimeMillis();
-		HttpURLConnection uc = (HttpURLConnection) targetURL.openConnection(proxy);
-		uc.setRequestProperty("User-Agent", userAgent);
-		uc.setConnectTimeout(CONNECTION_TIMEOUT_MS);
-		uc.setReadTimeout(READ_TIMEOUT_MS);
-		uc.connect();
-		long elapsed = (System.currentTimeMillis() - start) / 1000;
-		logger.debug("Connected in: " + elapsed + "s to: " + targetURL + " using proxy: " + proxy);
-		return uc;
+
+	/**
+	 * @return true if network has been down, false if everything with network is ok.
+	 */
+	public boolean waitForNetwork() throws InterruptedException {
+		boolean ret = false;
+		boolean netAccess = false;
+		for (int ms = 1000; ; ms = Math.min(ms + 1000, 20000)) {
+
+			try {
+				Socket socket = new Socket("www.google.com", 80);
+				netAccess = socket.isConnected();
+				socket.close();
+			} catch (IOException e) {
+				ret = true;
+				netAccess = false;
+			}
+
+			if (netAccess) {
+				return ret;
+			}
+
+			logger.info("Waiting for network " + ms + " ms");
+			Thread.sleep(ms);
+		}
 	}
 
-	public Document download(String userAgent, URL targetURL) throws ConnectionException {
+	/**
+	 * Download `targetURL` regarding only connection wrapper given as argument
+	 * @param targetURL
+	 * @param cw
+	 * @return
+	 * @throws ConnectionException
+	 */
+	public Document download(URL targetURL, ConnectionWrapper cw) throws ConnectionException {
+		final String connectionInfoMsg = "url: " + targetURL.toString() + ", " + cw.toString();
 		HttpURLConnection uc = null;
 
-		if (lastUsedProxy != null) {
-			try {
-				uc = connectByProxy(userAgent, targetURL, lastUsedProxy);
-				return read(uc);
-			} catch(java.net.SocketTimeoutException e) {
-				// read / connect timeout
-				logger.info("Cannot use last used proxy: " + lastUsedProxy);
-				logger.debug(e.toString());
-			} catch(java.net.ConnectException | java.net.UnknownHostException e) {
-				// TODO połączenie padło albo coś podobnego
+		try {
+			do {
+				try {
+					long start = System.currentTimeMillis();
+					uc = cw.connect(targetURL);
+					long elapsed = (System.currentTimeMillis() - start) / 1000;
+					logger.debug("Connected in: " + elapsed + "s to: " + targetURL + ", " + cw);
 
-			} catch (IOException e) {
-				logger.warn("Cannot use last used proxy: " + lastUsedProxy);
-				logger.debug(e.toString());
+					Document doc = read(uc);
+					return doc;
+
+				} catch (ConnectException | UnknownHostException e) {
+					// common reasons:
+					// ConnectException: Połączenie odrzucone, Sieć jest niedostępna
+					// UnknownHostException: `host`
+					logger.info(connectionInfoMsg);
+					logger.info("Reconnecting...");
+					continue;
+				} catch (SocketTimeoutException | SocketException e) {
+					// common reasons:
+					// SocketTimeoutException: Read timed out / connect timed out
+					// SocketException: Connection reset / Unexpected end of file from server
+					logger.warn(connectionInfoMsg);
+					logger.warn(e.toString());
+					break;
+				} catch (IOException e) {
+					logger.error(connectionInfoMsg);
+					logger.error(e.toString());
+					break;
+				} finally {
+					if (uc != null) {
+						uc.disconnect();
+					}
+				}
+			} while (waitForNetwork());
+			
+		} catch (InterruptedException e) {
+			logger.error("Cannot sleep thread while waiting for reconnect");
+		}
+
+		return null;
+	}
+
+
+	public Document download(String userAgent, URL targetURL) throws ConnectionException {
+		Document document = null;
+		ConnectionWrapper cw = new ConnectionWrapper();
+		cw.setUserAgent(userAgent);
+		cw.setConnectionTimeoutMs(CONNECTION_TIMEOUT_MS);
+		cw.setReadTimeoutMs(READ_TIMEOUT_MS);
+
+		if (lastUsedProxy != null) {
+			cw.setProxy(lastUsedProxy);
+			document = download(targetURL, cw);
+			if (document != null) {
+				return document;
 			}
+			logger.warn("Cannot use last used proxy: " + lastUsedProxy);
 		}
 
 		if (proxies != null) {
 			for (Proxy proxy : proxies) {
-				// Try to download via proxy. If failed try next one.
-				try {
-					uc = connectByProxy(userAgent, targetURL, proxy);
-					Document doc = read(uc);
+				cw.setProxy(proxy);
+				document = download(targetURL, cw);
+				if (document != null) {
 					lastUsedProxy = proxy;
-					return doc;
-				} catch (IOException e) {
-					logger.warn("Cannot connect to: " + targetURL + ", using proxy server: " + proxy + ". Trying next " +
-							"proxy server..");
-					logger.debug(e.toString());
-					continue;
+					return document;
 				}
+				logger.warn("Trying next proxy server..");
 			}
 		}
 
 		lastUsedProxy = null;
 
 		// if all proxies failed try to download directly
-		try {
-			logger.info("Connecting directly (from local IP) to: " + targetURL);
-			uc = (HttpURLConnection) targetURL.openConnection();
-			uc.setRequestProperty("User-Agent", userAgent);
-			uc.setConnectTimeout(LOCAL_CONNECTION_TIMEOUT_MS);
-			uc.setReadTimeout(LOCAL_READ_TIMEOUT_MS);
-			uc.connect();
-			Document doc = read(uc);
-			return doc;
-		} catch (IOException e) {
-			logger.error("Cannot connect directly to: " + targetURL);
-			logger.error(e.toString());
+		logger.info("Connecting directly (from local IP) to: " + targetURL);
+		cw.setProxy(null);
+		cw.setConnectionTimeoutMs(LOCAL_CONNECTION_TIMEOUT_MS);
+		cw.setReadTimeoutMs(LOCAL_READ_TIMEOUT_MS);
+		document = download(targetURL, cw);
+		if (document != null) {
+			return document;
 		}
 
-		if (uc != null) {
-			uc.disconnect();
-		}
+		logger.error("Cannot connect directly to: " + targetURL);
 		throw new ConnectionException("Cannot connect to: " + targetURL + ", userAgent: " + userAgent);
 	}
 
@@ -227,5 +281,4 @@ public abstract class Selector {
 		}
 		return results;
 	}
-
 }
