@@ -12,13 +12,14 @@ import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.*;
 
 /**
  * Algorytm:
- * 1. Z widoku pierwszego wybieramy pierwszą wyszukaną pozycję, przechodzimy do widoku 2.
+ * 1. Z widoku pierwszego wybieramy liste
  * 2. Pobieramy wszystkie pozycje z widoku 2.
  */
 public class PolandCeneo extends DELabProductSelector {
@@ -36,29 +37,26 @@ public class PolandCeneo extends DELabProductSelector {
 
 	@Override
 	public List<URL> getNextPages(Document document) {
-		return null;
-	}
-
-	@Override
-	public Document download(String userAgent, URL targetURL) throws ConnectionException {
-		final Document doc = super.download(userAgent, targetURL);
-		if (doc.toString().contains("Niestety nic nie znaleziono")) {
-			logger.warn("Nie znaleziono produktu w PolandCeneo");
-			return null;
-		} else {
-			String atr = doc.select("div[data-pid]").first()
-					.getElementsByClass("btn-compare-outer")
-					.select("a[href]")
-					.get(0).attr("href");
-			return super.download(userAgent, Utils.stringToURL(getSourceURL().toString() + atr));
+        document.setBaseUri(getSourceURL().toString());
+        List<URL> urls = new LinkedList<>();
+        final Elements select = document.select("div[data-pid] div.cat-prod-row-desc strong a[href]");
+        for (Element element : select) {
+            try {
+                urls.add(new URL(element.attr("abs:href")));
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
 		}
+
+        return urls;
 	}
 
 	@Override
 	public Object getProducts(Document document) {
+        document.setBaseUri(getSourceURL().toString());
 		List<ProductResult> products = new LinkedList<>();
 		if (document != null) {
-			final Elements elements = document
+            Elements elements = document
 					.select("tr[data-offer-price]");
 
 			Date date = new Date();
@@ -67,10 +65,36 @@ public class PolandCeneo extends DELabProductSelector {
 					products.add(buildProductResult(element, date));
 				}
 			}
+
+            //widok "moda"
+
+            elements = document.select("div.grid-item");
+            for (Element element : elements) {
+                final ProductResult product = new ProductResult();
+                product.setCountry(getCountry());
+                product.setPrice(getPriceFashion(element));
+                final Elements select = element.select("strong.grid-item__name a.go-to-shop.js_conv");
+                product.setProduct(select.attr("title"));
+                product.setShopURL(select.attr("abs:href"));
+                product.setSearcher(getSourceURL().toString());
+                String shopName = element.select("a.grid-item__thumb.go-to-shop img.grid-item__store").attr("alt");
+                if (shopName == null || shopName.isEmpty()) {
+                    shopName = "Ceneo";
+                }
+                product.setShop(shopName);
+                product.setTime(date.getTime());
+                product.setProxy(getLastUsedProxy());
+
+                products.add(product);
+            }
 		}
 
 		return products;
 	}
+
+    private String getPriceFashion(Element element) {
+        return element.select("span.grid-item__price[itemprop=lowPrice]").text();
+    }
 
 	private boolean isProperElement(Element element) {
 		return element.select("div.product-name").size() > 0;
@@ -78,13 +102,12 @@ public class PolandCeneo extends DELabProductSelector {
 
 	private ProductResult buildProductResult(Element element, Date date) {
 		final ProductResult product = new ProductResult();
-		URL shopURL = getShopURL(element);
         product.setCountry(getCountry());
 		product.setPrice(getPrice(element));
 		product.setProduct(getProduct(element));
         product.setSearcher(getSourceURL().toString());
-		product.setShopURL(shopURL.toString());
-		product.setShop(shopURL.getHost());
+        product.setShopURL(getShopURL(element).toString());
+        product.setShop(element.select("td.cell-store-logo a.store-logo.go-to-shop img[src]").attr("alt"));
         product.setTime(date.getTime());
 		product.setProxy(getLastUsedProxy());
 
