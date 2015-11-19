@@ -87,6 +87,7 @@ public class Executor {
 		logger.info("Scraping for " + selectorsNum + " selectors.");
 		for (String userAgent : conf.getUserAgents()) {
 			for (String product : conf.getProducts()) {
+				product = product.trim();
 				for (Selector selector : conf.getSelectors()) {
 					URL startUrl = null;
 					try {

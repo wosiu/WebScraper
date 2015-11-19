@@ -89,6 +89,13 @@ public abstract class Selector {
 			try {
 				uc = connectByProxy(userAgent, targetURL, lastUsedProxy);
 				return read(uc);
+			} catch(java.net.SocketTimeoutException e) {
+				// read / connect timeout
+				logger.info("Cannot use last used proxy: " + lastUsedProxy);
+				logger.debug(e.toString());
+			} catch(java.net.ConnectException | java.net.UnknownHostException e) {
+				// TODO połączenie padło albo coś podobnego
+
 			} catch (IOException e) {
 				logger.warn("Cannot use last used proxy: " + lastUsedProxy);
 				logger.debug(e.toString());
