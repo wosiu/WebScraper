@@ -13,7 +13,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 import pl.edu.mimuw.students.wosiu.scraper.ConfigException;
-
+import static java.lang.Math.toIntExact;
 
 public class Config {
 
@@ -43,6 +43,8 @@ public class Config {
 
 	private boolean collectProxy = true;
 	private boolean redirectShopLink = true;
+
+	private int maxResultsNumber = -1; // inf
 
 	private void init() {
 		selectors = new LinkedList<>();
@@ -126,6 +128,14 @@ public class Config {
 		}
 		logger.info("Redirect shop link: " + this.redirectShopLink);
 
+		Long maxResultsNumber = (Long) jsonObject.get("maxResultsNumber");
+		if (maxResultsNumber != null) {
+			this.maxResultsNumber = toIntExact(maxResultsNumber);
+		}
+
+		logger.info("Max results per (selector, product): " +
+				((this.maxResultsNumber == -1) ? "inf" : this.maxResultsNumber) );
+
 
 		// create selectors
 		for (Object o : selectors) {
@@ -138,6 +148,7 @@ public class Config {
 				if (this.collectProxy) {
 					sel.collectProxies();
 				}
+				sel.setMaxResultsNumber(this.maxResultsNumber);
 				this.selectors.add(sel);
 			} catch (ClassNotFoundException | InstantiationException | IllegalAccessException e) {
 				logger.debug(e.toString());

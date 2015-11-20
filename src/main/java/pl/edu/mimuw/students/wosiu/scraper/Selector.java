@@ -22,7 +22,11 @@ public abstract class Selector {
 	private URL sourceURL = null;
 	private List<Proxy> proxies = null;
 	private Proxy lastUsedProxy = null;
-	private int MAX_RESULTS_NUM = -1; // -1 = inf
+	private int maxResultsNumber = -1; // -1 = inf
+
+	public void setMaxResultsNumber(int maxResultsNumber) {
+		this.maxResultsNumber = maxResultsNumber;
+	}
 
 	protected Logger logger;
 
@@ -270,8 +274,10 @@ public abstract class Selector {
 			logger.debug("Got " + ((prods == null) ? 0 : prods.size()) + " products in: " + elapsed + "s ");
 
 			if (prods != null) {
-				if (MAX_RESULTS_NUM != -1 && results.size() + prods.size() > MAX_RESULTS_NUM) {
-					results.addAll(prods.subList(0, MAX_RESULTS_NUM - results.size()));
+				if (maxResultsNumber != -1 && results.size() + prods.size() > maxResultsNumber) {
+					// in case we would like exactly max results number uncomment following:
+					// results.addAll(prods.subList(0, maxResultsNumber - results.size()));
+					results.addAll(prods);
 					return results;
 				}
 				results.addAll(prods);
