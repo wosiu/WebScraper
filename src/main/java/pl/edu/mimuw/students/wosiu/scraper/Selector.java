@@ -16,7 +16,7 @@ public abstract class Selector {
 	private static int READ_TIMEOUT_MS = 10000;
 	private static int LOCAL_CONNECTION_TIMEOUT_MS = 40 * 1000;
 	private static int LOCAL_READ_TIMEOUT_MS = 40 * 1000;
-
+	private static boolean CATCH_NULL_PTR_EXC = true;
 
 	private String country = null;
 	private URL sourceURL = null;
@@ -107,6 +107,7 @@ public abstract class Selector {
 
 	/**
 	 * Download `targetURL` regarding only connection wrapper given as argument
+	 *
 	 * @param targetURL
 	 * @param cw
 	 * @return
@@ -233,6 +234,16 @@ public abstract class Selector {
 		return doc;
 	}
 
+	public void nullPtrExcHandler(NullPointerException e, URL targetURL) {
+		if (CATCH_NULL_PTR_EXC) {
+			logger.error(e.toString());
+			logger.error("Page schema probably changed: " + targetURL);
+			e.getStackTrace();
+		} else {
+			throw e;
+		}
+	}
+
 	/**
 	 * Go thorough pagination list using `getNextPages`, get content of site using `getDoc`
 	 * and collect products using `getProducts`.
@@ -268,8 +279,13 @@ public abstract class Selector {
 					return results;
 				}*/
 			}
+			List prods = null;
 			long start = System.currentTimeMillis();
-			List prods = (List) getProducts(doc);
+			try {
+				prods = (List) getProducts(doc);
+			} catch (NullPointerException e) {
+				nullPtrExcHandler(e, targetURL);
+			}
 			long elapsed = (System.currentTimeMillis() - start) / 1000;
 			logger.debug("Got " + ((prods == null) ? 0 : prods.size()) + " products in: " + elapsed + "s ");
 
@@ -283,7 +299,14 @@ public abstract class Selector {
 				results.addAll(prods);
 			}
 
-			List<URL> nexts = getNextPages(doc);
+			List<URL> nexts = null;
+
+			try {
+				nexts = getNextPages(doc);
+			} catch (NullPointerException e) {
+				nullPtrExcHandler(e, targetURL);
+			}
+
 			if (nexts != null) {
 				urlToVisit.addAll(nexts);
 			}
