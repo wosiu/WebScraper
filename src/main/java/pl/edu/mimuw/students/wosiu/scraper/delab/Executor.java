@@ -6,6 +6,7 @@ import org.apache.log4j.*;
 import pl.edu.mimuw.students.wosiu.scraper.ConfigException;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
+import pl.edu.mimuw.students.wosiu.scraper.Utils;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -101,7 +102,7 @@ public class Executor {
 		logger.info("Scraping for " + selectorsNum + " selectors.");
 		for (String userAgent : conf.getUserAgents()) {
 			for (String product : conf.getProducts()) {
-				product = product.trim();
+				product = Utils.fixSpaces(product);
 				for (Selector selector : conf.getSelectors()) {
 					URL startUrl = null;
 					try {

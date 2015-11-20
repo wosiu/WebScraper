@@ -18,7 +18,7 @@ import java.util.List;
 
 public abstract class YellowSelector extends DELabProductSelector {
 
-    private String targetInfix;
+    final private String targetInfix;
 
     public YellowSelector(String country, String source, String targetInfix) throws ConnectionException {
         super(country, source);
@@ -126,8 +126,14 @@ public abstract class YellowSelector extends DELabProductSelector {
 		Document doc = super.read(connection);
 
 		if (!doc.select("input[name=recaptcha_response_field]").isEmpty()) {
-			throw new IOException("captcha occured");
+			throw new IOException("Captcha occurred");
 		}
+
+        String title = doc.select("title").first().text();
+        if (title.contains("Moved Permanently")) {
+            throw new IOException("Wrong view appeared, title: " + title);
+        }
+
 
 		return doc;
 	}

@@ -98,7 +98,7 @@ public class Utils {
 	}
 
 	public static String urlEncodeSpecial(String in, Character... valid) {
-		in = in.trim();
+		in = fixSpaces(in);
 		String patternToMatch = "[\\!\"'#$%&()+,/:;<=>?@[]^_{|}`~]+ "; //.-* are ok for URLEncode.encode UTF8
 		StringBuilder builder = new StringBuilder();
 		List<Character>ok = Arrays.asList(valid);
@@ -119,16 +119,21 @@ public class Utils {
 		return builder.toString();
 	}
 
+	public static String fixSpaces(String in) {
+		return in.replace((char)160, ' ').replaceAll(" +", " ").trim();
+	}
+
 	// TODO tests
 	public static String urlStripEncode(String in) {
-		in = stripAccents(in.trim());
+		in = fixSpaces(in);
+		in = stripAccents(in);
 		in = urlEncode(in);
 		return in;
 	}
 
 	// TODO tests
 	public static String urlEncode(String in, Character... valid) {
-		in = in.trim();
+		in = fixSpaces(in);
 
 		if (valid.length == 0) {
 			try {
