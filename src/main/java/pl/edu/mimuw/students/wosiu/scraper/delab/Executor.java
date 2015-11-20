@@ -33,6 +33,8 @@ public class Executor {
 		Date activ = sdf.parse("20/12/2015");
 		Date today = new Date();
 
+		logger.info("Version 1.0.0");
+
 		if (activ.before(today)) {
 			logger.error("Trial version expired... Contact author.");
 			return;
