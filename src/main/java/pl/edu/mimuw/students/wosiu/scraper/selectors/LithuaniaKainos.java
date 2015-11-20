@@ -53,7 +53,9 @@ public class LithuaniaKainos extends DELabProductSelector {
 			String price = a.select("span.price").first().ownText();
 			result.setPrice(price);
 
-			String shopname = element.select("td:eq(0) img[alt]").first().attr("alt");
+			// Note cannot take from img[alt] as sometimes it doesn't occur
+			String shopname = element.select("td:eq(0) > a[title].about").first().attr("title");
+			shopname = shopname.replaceAll("Apie pardavėją", "").replaceAll("[„“  ]", "").trim();
 			result.setShop(shopname);
 
 			String link = a.attr("abs:href");

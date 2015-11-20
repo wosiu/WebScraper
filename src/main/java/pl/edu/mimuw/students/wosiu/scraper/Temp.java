@@ -73,9 +73,9 @@ String link = "http://www.skyscanner.pl/transport/loty/waw/lhr/151119/151120/cen
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException, ParseException {
 
 		BasicConfigurator.configure();
-		String url = "http://www.idealo.es/resultados.html?q=Nike+Free+5.0+TR+Fit+4 ";
+		String url = "http://www.kainos.lt/xbox-one-500gb-43-gears-of-war-ultimate-edition-p1798857";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
-		Selector selector = new SpainIdealo();
+		Selector selector = new LithuaniaKainos();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
 		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);
