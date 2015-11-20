@@ -131,19 +131,19 @@ public abstract class Selector {
 					// UnknownHostException: `host`
 					// SocketTimeoutException: Read timed out / connect timed out
 					// SocketException: Connection reset / Unexpected end of file from server / Sieć jest niedostępna
-
+					// IOException: Premature EOF / Server returned HTTP response code: 503, 403
 				} catch (/*ConnectException |*/ UnknownHostException | SocketException e) {
 					logger.info(connectionInfoMsg);
 					logger.info(e.toString());
 					logger.info("Reconnecting...");
 					continue;
-				} catch (SocketTimeoutException e) {
-					logger.warn(connectionInfoMsg);
-					logger.warn(e.toString());
+				} catch (SocketTimeoutException | java.io.FileNotFoundException e) {
+					logger.info(connectionInfoMsg);
+					logger.info(e.toString());
 					break;
 				} catch (IOException e) {
-					logger.error(connectionInfoMsg);
-					logger.error(e.toString());
+					logger.warn(connectionInfoMsg);
+					logger.warn(e.toString());
 					break;
 				} finally {
 					if (uc != null) {
