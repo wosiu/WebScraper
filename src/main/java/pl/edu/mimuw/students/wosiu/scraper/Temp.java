@@ -73,11 +73,12 @@ String link = "http://www.skyscanner.pl/transport/loty/waw/lhr/151119/151120/cen
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException, ParseException {
 
 		BasicConfigurator.configure();
-		String url = "http://www.ceneo.pl/Moda;szukaj-Converse+Chuck+Taylor+All+Star";
+		String url = "http://hry-pro-konzole.hledejceny.cz/nba-2k14-xbox-one/";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
-		Selector selector = new PolandCeneo();
-		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+		Selector selector = new CzechHledejCeny();
 
+
+		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);
 		List pages = selector.getNextPages(document);
 		System.out.println("pages: " + pages.size());

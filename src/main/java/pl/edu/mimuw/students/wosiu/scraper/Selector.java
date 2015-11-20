@@ -185,7 +185,7 @@ public abstract class Selector {
 					lastUsedProxy = proxy;
 					return document;
 				}
-				logger.warn("Trying next proxy server..");
+				logger.info("Trying next proxy server..");
 			}
 		}
 

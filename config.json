@@ -46,6 +46,6 @@
 	"out": "data.csv",
 	"collectProxy" : true,
 	"redirectShopLink": false,
-	"maxResultsNumber": 60
+	"maxResultsNumber": 40
 }
 
