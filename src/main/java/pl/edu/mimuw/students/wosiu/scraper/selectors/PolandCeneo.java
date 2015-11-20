@@ -4,17 +4,12 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
-import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.util.*;
 
 /**
@@ -39,7 +34,7 @@ public class PolandCeneo extends DELabProductSelector {
 	public List<URL> getNextPages(Document document) {
         document.setBaseUri(getSourceURL().toString());
         List<URL> urls = new LinkedList<>();
-        final Elements select = document.select("div[data-pid] div.cat-prod-row-desc strong a[href]");
+        final Elements select = document.select("div[data-pid] div.cat-prod-row-desc strong.cat-prod-row-name a[href]:last-child");
         for (Element element : select) {
             try {
                 urls.add(new URL(element.attr("abs:href")));
@@ -57,8 +52,9 @@ public class PolandCeneo extends DELabProductSelector {
 		List<ProductResult> products = new LinkedList<>();
 		if (document != null) {
             Elements elements = document
-					.select("tr[data-offer-price]");
+					.select("tr.product-offer.js_product-offer");
 
+			//produkty z widoku 2
 			Date date = new Date();
 			for (Element element : elements) {
 				if (isProperElement(element)) {
@@ -75,7 +71,7 @@ public class PolandCeneo extends DELabProductSelector {
                 product.setPrice(getPriceFashion(element));
                 final Elements select = element.select("strong.grid-item__name a.go-to-shop.js_conv");
                 product.setProduct(select.attr("title"));
-                product.setShopURL(select.attr("abs:href"));
+                product.setShopURL(followUrl(select.attr("abs:href")).toString());
                 product.setSearcher(getSourceURL().toString());
                 String shopName = element.select("a.grid-item__thumb.go-to-shop img.grid-item__store").attr("alt");
                 if (shopName == null || shopName.isEmpty()) {
