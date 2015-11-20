@@ -10,7 +10,10 @@ import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.net.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -25,7 +28,16 @@ public class Executor {
 
 	private static final String DEFAULT_CONFIG = "config.json";
 
-	public static void main(String[] args) {
+	public static void main(String[] args) throws ParseException {
+		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+		Date activ = sdf.parse("20/12/2015");
+		Date today = new Date();
+
+		if (activ.before(today)) {
+			logger.error("Trial version expired... Contact author.");
+			return;
+		}
+
 		Executor exe = new Executor();
 		String configPath;
 

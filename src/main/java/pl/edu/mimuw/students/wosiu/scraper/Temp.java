@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.net.Proxy;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
 
 
@@ -68,7 +70,8 @@ String link = "http://www.skyscanner.pl/transport/loty/waw/lhr/151119/151120/cen
 
 	}
 
-	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException {
+	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException, ParseException {
+
 		BasicConfigurator.configure();
 		String url = "http://www.idealo.es/resultados.html?q=Nike+Free+5.0+TR+Fit+4 ";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
