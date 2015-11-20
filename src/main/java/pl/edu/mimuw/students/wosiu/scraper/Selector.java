@@ -77,6 +77,8 @@ public abstract class Selector {
 	public boolean waitForNetwork() throws InterruptedException {
 		boolean ret = false;
 		boolean netAccess = false;
+		long start = System.currentTimeMillis();
+
 		for (int ms = 1000; ; ms = Math.min(ms + 1000, 20000)) {
 
 			try {
@@ -89,10 +91,12 @@ public abstract class Selector {
 			}
 
 			if (netAccess) {
+				long elapsed = (System.currentTimeMillis() - start) / 1000;
+				logger.info("Summary sleep: " + elapsed + " s");
 				return ret;
 			}
 
-			logger.info("Waiting for network " + ms + " ms");
+			logger.info("Waiting for network. Sleep: " + ms + " ms");
 			Thread.sleep(ms);
 		}
 	}
@@ -118,18 +122,18 @@ public abstract class Selector {
 
 					Document doc = read(uc);
 					return doc;
-
-				} catch (ConnectException | UnknownHostException e) {
 					// common reasons:
 					// ConnectException: Połączenie odrzucone, Sieć jest niedostępna
 					// UnknownHostException: `host`
+					// SocketTimeoutException: Read timed out / connect timed out
+					// SocketException: Connection reset / Unexpected end of file from server / Sieć jest niedostępna
+
+				} catch (/*ConnectException |*/ UnknownHostException | SocketException e) {
 					logger.info(connectionInfoMsg);
+					logger.info(e.toString());
 					logger.info("Reconnecting...");
 					continue;
-				} catch (SocketTimeoutException | SocketException e) {
-					// common reasons:
-					// SocketTimeoutException: Read timed out / connect timed out
-					// SocketException: Connection reset / Unexpected end of file from server
+				} catch (SocketTimeoutException e) {
 					logger.warn(connectionInfoMsg);
 					logger.warn(e.toString());
 					break;
@@ -143,7 +147,7 @@ public abstract class Selector {
 					}
 				}
 			} while (waitForNetwork());
-			
+
 		} catch (InterruptedException e) {
 			logger.error("Cannot sleep thread while waiting for reconnect");
 		}
