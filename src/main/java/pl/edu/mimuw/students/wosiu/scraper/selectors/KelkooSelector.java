@@ -9,8 +9,10 @@ import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -89,5 +91,15 @@ public abstract class KelkooSelector extends DELabProductSelector {
 
 		logger.debug("Collected " + urls.size() + " urls to visit");
 		return urls;
+	}
+
+	@Override
+	public Document read(HttpURLConnection connection) throws IOException {
+		Document document = super.read(connection);
+
+		if( document.select("body > response > outcome").text().contains("fail") ) {
+			throw new IOException("Wrong page occured: access denied");
+		}
+		return document;
 	}
 }
