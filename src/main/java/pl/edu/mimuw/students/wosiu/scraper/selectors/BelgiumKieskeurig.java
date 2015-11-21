@@ -1,15 +1,16 @@
 package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.ProxyFinder;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
-import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.*;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -38,6 +39,48 @@ public class BelgiumKieskeurig extends DELabProductSelector {
 	public List<ProductResult> getProducts(Document document) {
 		List<ProductResult> results = new ArrayList<>();
 
+		// Product view
+		for (Element element : document.select("ul#product-listers div.product:not(.visual-listing.js-product):has" +
+				"(div.price)")) {
+			ProductResult result = new ProductResult();
+
+			String price = element.select("div.price > strong").text();
+			result.setPrice(price);
+
+			Element a = element.select("a[href][data-ga]").first();
+			if (a == null) {
+				logger.warn("Check schema parsing for offer view");
+				continue;
+			}
+
+			String shopname = UNKNOWN;
+			try {
+				JSONParser jsonParser = new JSONParser();
+				String json = a.attr("data-ga");
+				JSONObject jsonObject = (JSONObject) jsonParser.parse(json);
+				jsonObject = (JSONObject) jsonObject.get("ecommerce");
+				shopname = (String) jsonObject.get("label");
+			} catch (ParseException e ) {
+				logger.warn("Cannot get shop name");
+				continue;
+			}
+
+			result.setShop(shopname);
+
+			String link = a.attr("abs:href");
+			result.setShopURL(followUrl(link).toString());
+
+			String prod = a.select("span").text();
+			result.setProduct(prod);
+			result.setCountry(getCountry());
+			result.setProxy(getLastUsedProxy());
+			result.setSearcher(getSourceURL().toString());
+
+			results.add(result);
+		}
+
+
+		// Offer view
 		Element prodName = document.select("div.product-detail-container h1[itemprop=name]").first();
 
 		if (prodName == null) {
@@ -82,9 +125,9 @@ public class BelgiumKieskeurig extends DELabProductSelector {
 	@Override
 	public List<URL> getNextPages(Document document) {
 		List<URL> urls = new ArrayList<>();
-		document.setBaseUri(getSourceURL().toString());
 
-		for (Element element : document.select("ul#product-listers div.product:has(div.price > a[href])")) {
+		for (Element element : document.select("ul#product-listers div.product.visual-listing.js-product:has(div" +
+				".price > a[href])")) {
 			String str = element.select("div.product > a[href]").first().attr("abs:href");
 			try {
 				urls.add(Utils.stringToURL(str));

@@ -46,7 +46,7 @@ public class Temp {
 
 		// tak dlugo jak jest paseczek wyszukiwania, nie pobieraj tresci
 
-String link = "http://www.skyscanner.pl/transport/loty/waw/lhr/151119/151120/ceny-biletow-lotniczych-z-warszawa" +
+		String link = "http://www.skyscanner.pl/transport/loty/waw/lhr/151119/151120/ceny-biletow-lotniczych-z-warszawa" +
 		"-okecie-do-londyn-heathrow-w-listopad-2015.html?adults=1&children=0&infants=0&cabinclass=economy&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false#results";
 
 		driver.get(link);
@@ -72,10 +72,10 @@ String link = "http://www.skyscanner.pl/transport/loty/waw/lhr/151119/151120/cen
 
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException, ParseException {
 		BasicConfigurator.configure();
-		String url = "http://www.kelkoo.co.uk/ctl/do/search?siteSearchQuery=xbox-one";
+		String url = "http://www.kieskeurig.be/search?q=Converse+Chuck+Taylor+All+Star";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
-		Selector selector = new UnitedKingdomKelkoo();
-		selector.addProxy("195.50.71.239", 80);
+		Selector selector = new BelgiumKieskeurig();
+		//selector.addProxy("91.183.124.41", 80);
 
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 
