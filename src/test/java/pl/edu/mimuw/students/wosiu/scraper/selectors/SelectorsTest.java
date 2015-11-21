@@ -57,7 +57,6 @@ public class SelectorsTest {
 		//System.out.println(doc.select("div.category-list-body.js_category-list-body.js_search-results a" +
 		//		".grid-item__thumb").size());
 		List products = (List) selector.getProducts(doc);
-		System.out.println(products.size());
 		assertFalse(products.isEmpty()); //TODO exact number
 		productTest(products);
 

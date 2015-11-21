@@ -39,8 +39,13 @@ public class BelgiumKieskeurig extends DELabProductSelector {
 	public List<ProductResult> getProducts(Document document) {
 		List<ProductResult> results = new ArrayList<>();
 
+		// TODO test:
+		// http://www.kieskeurig.be/search?q=Fujifilm+X+T10+body
+		// http://www.kieskeurig.be/search?q=Converse+Chuck+Taylor+All+Star
+		// http://www.kieskeurig.be/systeemcamera/product/2633945-fujifilm-x-t10/prijzen
+
 		// Product view
-		for (Element element : document.select("ul#product-listers div.product:not(.visual-listing.js-product):has" +
+		for (Element element : document.select("ul#product-listers div.product:not(.js-product):has" +
 				"(div.price)")) {
 			ProductResult result = new ProductResult();
 
@@ -126,7 +131,7 @@ public class BelgiumKieskeurig extends DELabProductSelector {
 	public List<URL> getNextPages(Document document) {
 		List<URL> urls = new ArrayList<>();
 
-		for (Element element : document.select("ul#product-listers div.product.visual-listing.js-product:has(div" +
+		for (Element element : document.select("ul#product-listers div.product.js-product:has(div" +
 				".price > a[href])")) {
 			String str = element.select("div.product > a[href]").first().attr("abs:href");
 			try {

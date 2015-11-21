@@ -72,9 +72,9 @@ public class Temp {
 
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException, ParseException {
 		BasicConfigurator.configure();
-		String url = "http://www.buscape.com.br/proc_unico?id=6058&kw=xbox";
+		String url = "http://www.kieskeurig.be/search?q=Fujifilm+X+T10+body";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
-		Selector selector = new PortugalBuscape();
+		Selector selector = new BelgiumKieskeurig();
 		//selector.addProxy("178.33.195.50", 8080);
 
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
