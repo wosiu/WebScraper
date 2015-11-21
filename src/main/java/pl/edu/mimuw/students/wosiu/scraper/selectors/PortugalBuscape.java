@@ -86,6 +86,30 @@ public class PortugalBuscape extends DELabProductSelector {
 			results.add(result);
 		}
 
+		for (Element element : document.select("ul#bp-product-list > li")) {
+			ProductResult result = new ProductResult();
+
+			Element a = element.select("a[href].price").first();
+
+			String price = a.text();
+			result.setPrice(price);
+
+			String shopname = element.select("a.logo.track_checkout > img[alt]").first().attr("alt");
+			result.setShop(shopname);
+
+			String link = a.attr("abs:href");
+			result.setShopURL(followUrl(link).toString());
+
+			String prod = element.select("img[alt].bp_prevent_error").first().attr("alt");
+			result.setProduct(prod);
+
+			result.setCountry(getCountry());
+			result.setProxy(getLastUsedProxy());
+			result.setSearcher(getSourceURL().toString());
+
+			results.add(result);
+		}
+
 		return results;
 	}
 
@@ -100,8 +124,22 @@ public class PortugalBuscape extends DELabProductSelector {
 	public List<URL> getNextPages(Document document) {
 		List<URL> urls = new ArrayList<>();
 
+
+		// three types, e.g. http://www.buscape.com.br/proc_unico?id=3482&kw=oxford+wordpower
+		// + http://www.buscape.com.br/proc_unico?id=6058&kw=xbox+one
 		for (Element element :
-				document.select("ul.bp-product-list > li.product > div.details:not(.product-unavailable) > div" +
+				document.select("ul.bp-product-list:not(#bp-product-list) > li.product > div.details:not(" +
+						".product-unavailable) > div" +
+						".description > a[href]:not(.track_checkout)")) {
+			String str = element.attr("abs:href");
+			try {
+				urls.add(Utils.stringToURL(str));
+			} catch (ConnectionException e) {
+			}
+		}
+
+		for (Element element :
+				document.select("ul.bp-product-list:not(#bp-product-list) > li.product > div" +
 						".description > a[href]:not(.track_checkout)")) {
 			String str = element.attr("abs:href");
 			try {
