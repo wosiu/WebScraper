@@ -8,6 +8,9 @@ import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
+import javax.print.Doc;
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Date;
@@ -158,5 +161,17 @@ public class CzechHledejCeny extends DELabProductSelector {
 
 	private URL getShopURLDirectLink(Element element) {
 		return followUrl(element.getElementsByClass("pricevat").first().child(0).attr("href"));
+	}
+
+	@Override
+	public Document read(HttpURLConnection connection) throws IOException {
+		Document document = super.read(connection);
+
+		if( document.select("body[onload=mainInit()]").isEmpty() ) {
+			Element title = document.select("title").first();
+			String titleStr = (title != null) ? title.text() : "EMPTY";
+			throw new IOException("Wrong page occured, title: " + titleStr);
+		}
+		return document;
 	}
 }
