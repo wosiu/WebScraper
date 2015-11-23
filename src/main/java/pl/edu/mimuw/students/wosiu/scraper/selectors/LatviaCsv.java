@@ -1,9 +1,7 @@
 package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.google.gson.*;
+import com.google.gson.stream.MalformedJsonException;
 import org.jsoup.nodes.Document;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
@@ -67,12 +65,16 @@ public class LatviaCsv extends DELabProductSelector {
     public List<ProductResult> getProducts(Document document) {
         List<ProductResult> products = new LinkedList<>();
 
-        Date date = new Date();
-        JsonParser parser = new JsonParser();
-        JsonArray results = (JsonArray) parser.parse(document.select("body").text()).getAsJsonObject().get("result");
-        for (JsonElement e : results.getAsJsonArray()) {
-            products.add(buildProductResult(e.getAsJsonObject(), date));
-		}
+        try { //
+            Date date = new Date();
+            JsonParser parser = new JsonParser();
+            JsonArray results = (JsonArray) parser.parse(document.select("body").text()).getAsJsonObject().get("result");
+            for (JsonElement e : results.getAsJsonArray()) {
+                products.add(buildProductResult(e.getAsJsonObject(), date));
+            }
+        } catch (JsonSyntaxException mue) { //http://www.csv.lv/api/json/?q=armani+emporio+he+100+ml invalid json
+            mue.printStackTrace();
+        }
 
         return products;
 	}
