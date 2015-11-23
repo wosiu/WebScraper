@@ -23,13 +23,13 @@ public class Executor {
 	private static final Logger logger = Logger.getLogger(Executor.class);
 	private static final String LOG_LEVEL = "debug";
 
-	public Executor() {
-		log4jInit();
-	}
+	public Executor() {}
 
 	private static final String DEFAULT_CONFIG = "config.json";
 
 	public static void main(String[] args) throws ParseException {
+		log4jInit();
+
 		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 		Date activ = sdf.parse("20/12/2015");
 		Date today = new Date();
@@ -58,7 +58,7 @@ public class Executor {
 		}
 	}
 
-	public void log4jInit() {
+	public static void log4jInit() {
 		BasicConfigurator.configure();
 /*
 		// Turn off debugs from spring, etc..
