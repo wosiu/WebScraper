@@ -12,9 +12,7 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 /**
  * Algorytm:
@@ -45,7 +43,13 @@ public class NetherlandsBeslist extends DELabProductSelector {
         }
 
         final Elements elements = document.select("div[data-catid] a[href]:not([href=javascript:void(0)]):eq(0)");
+        Set<String> set = new TreeSet<>();
         for (Element element : elements) {
+            final String index = element.attr("index"); //selecting only "good-matched"
+            if (set.contains(index)) {
+                break;
+            }
+            set.add(index);
             String href = element.attr("abs:href");
             try {
                 urls.add(new URL(href));
@@ -76,15 +80,40 @@ public class NetherlandsBeslist extends DELabProductSelector {
 
             Date date = new Date();
             for (Element element : elements) {
-                try {
-                    products.add(buildProductResult(element, title, date));
-                } catch (NullPointerException e) {
-                    e.printStackTrace();
+                products.add(buildProductResult(element, title, date));
+            }
+
+            select = document.select("div[data-phase=1]");
+
+            Set<String> set = new TreeSet<>();
+            for (Element element : select) { //modals
+                final String index = element.attr("index"); //selecting only "good-matched"
+                if (set.contains(index)) {
+                    break;
                 }
+                set.add(index);
+                products.add(buildProductResultModal(element, date));
             }
         }
 
         return products;
+    }
+
+    private ProductResult buildProductResultModal(Element element, Date date) {
+        final ProductResult product = new ProductResult();
+        product.setCountry(getCountry());
+        product.setPrice(element.select("div.variationA p.browseproduct__price").text() + " " + "EUR");
+        product.setSearcher(getSourceURL().toString());
+        product.setShopURL(UNKNOWN);
+        final Elements select = element.select("div.variationA a.browseproduct__title");
+        if (select != null) {
+            product.setShop(select.attr("hover_text"));
+            product.setProduct(select.attr("title"));
+        }
+        product.setTime(date.getTime());
+        product.setProxy(getLastUsedProxy());
+
+        return product;
     }
 
     private ProductResult buildProductResult(Element element, String title, Date date) {
