@@ -22,7 +22,7 @@ import java.util.List;
 public class EstoniaHinnavaatlus extends DELabProductSelector {
 
 	public EstoniaHinnavaatlus() throws ConnectionException {
-		super("Estonia", "http://hinnavaatlus.ee");
+		super("Estonia", "http://www.hinnavaatlus.ee");
 	}
 
 	@Override
