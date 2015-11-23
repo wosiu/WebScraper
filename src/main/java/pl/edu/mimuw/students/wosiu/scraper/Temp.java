@@ -72,10 +72,10 @@ public class Temp {
 
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException, ParseException {
 		BasicConfigurator.configure();
-		String url = "http://www.pricespy.ie/search.php?s=xbox%20one#t-product";
+		String url = "http://www.beslist.nl/products/r/salomon+icetown/";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
-		Selector selector = new IrelandPricespy();
-		selector.addProxy("52.19.27.164", 80);
+		Selector selector = new NetherlandsBeslist();
+		//selector.addProxy("52.19.27.164", 80);
 
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 //		System.out.println(document);

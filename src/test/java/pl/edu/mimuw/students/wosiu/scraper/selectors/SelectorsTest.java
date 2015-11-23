@@ -2,10 +2,13 @@ package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
+import org.apache.log4j.BasicConfigurator;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
+import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
+import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
@@ -18,6 +21,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+// TODO testNG and categories
 public class SelectorsTest {
 
 	@Test
@@ -79,4 +83,40 @@ public class SelectorsTest {
 			assertFalse(product.getShopURL().isEmpty());
 		}
 	}
+
+
+	class TestCase {
+		Selector selector;
+		String href;
+		Boolean productsIsEmpty = null;
+		Boolean pagesIsEmpty = null;
+
+		TestCase(Selector selector, String href, Boolean productsIsEmpty, Boolean pagesIsEmpty) {
+			this.selector = selector;
+			this.href = href;
+			this.productsIsEmpty = productsIsEmpty;
+			this.pagesIsEmpty = pagesIsEmpty;
+		}
+	}
+
+//	@Test
+	public void testOnline() throws ConnectionException {
+		// log4j
+		BasicConfigurator.configure();
+
+		TestCase[] tests = {
+				new TestCase(new NetherlandsBeslist(), "http://www.beslist.nl/products/r/salomon+icetown/", false, true)
+		};
+
+		for (TestCase test : tests) {
+			Document document = test.selector.download(Utils.USER_AGENT, Utils.stringToURL(test.href));
+			List<ProductResult> res = (List<ProductResult>) test.selector.getProducts(document);
+			List pages = test.selector.getNextPages(document);
+			System.out.println("Testing: '" + test.href + "'");
+			assertEquals(test.productsIsEmpty, res.isEmpty());
+			assertEquals(test.pagesIsEmpty, pages.isEmpty());
+		}
+	}
+
+
 }
