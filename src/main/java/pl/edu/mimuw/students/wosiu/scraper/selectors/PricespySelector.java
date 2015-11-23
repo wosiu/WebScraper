@@ -8,6 +8,8 @@ import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
+import java.io.IOException;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
@@ -148,5 +150,14 @@ public abstract class PricespySelector extends DELabProductSelector {
 
 		logger.debug("Collected " + urls.size() + " urls to visit");
 		return urls;
+	}
+
+	@Override
+	public Document read(HttpURLConnection connection) throws IOException {
+		Document document = super.read(connection);
+		if ("Authentication Required".equals( document.select("head > title").text() )) {
+			throw new IOException("Wrong page occurred, title: Authentication Required");
+		}
+		return document;
 	}
 }
