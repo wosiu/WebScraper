@@ -10,8 +10,10 @@ import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -32,7 +34,7 @@ public abstract class OrangeSelector extends DELabProductSelector {
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
 		String target = getSourceURL().toString() + "CategorySearch.php?st=" +
-				Utils.urlEncodeSpecial(product, '"','*','>');
+				Utils.urlEncodeSpecial(product, '"', '*', '>');
 		URL url = Utils.stringToURL(target);
 		return url;
 	}
@@ -81,20 +83,31 @@ public abstract class OrangeSelector extends DELabProductSelector {
 
 	/**
 	 * Do not paginate. Collect links from first page.
+	 *
 	 * @param document
 	 * @return
 	 */
 	@Override
 	public List<URL> getNextPages(Document document) {
 		Elements elements = document.getElementsByClass("product-box-container");
-		List <URL> urls = new ArrayList<>(elements.size());
-		for ( Element element : document.select("div.image-link-container > a[href].image") ) {
+		List<URL> urls = new ArrayList<>(elements.size());
+		for (Element element : document.select("div.image-link-container > a[href].image")) {
 			String str = element.attr("abs:href");
 			try {
 				urls.add(Utils.stringToURL(str));
-			} catch (ConnectionException e) {}
+			} catch (ConnectionException e) {
+			}
 		}
 		logger.debug("Collected " + urls.size() + " urls to visit");
 		return urls;
+	}
+
+	@Override
+	public Document read(HttpURLConnection connection) throws IOException {
+		Document document = super.read(connection);
+		if (document.select("body").first().children().isEmpty()) {
+			throw new IOException("Empty page occured");
+		}
+		return document;
 	}
 }
