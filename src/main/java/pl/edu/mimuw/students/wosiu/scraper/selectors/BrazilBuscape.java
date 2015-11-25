@@ -14,10 +14,10 @@ import java.util.List;
 /**
  * @author w
  */
-public class PortugalBuscape extends DELabProductSelector {
+public class BrazilBuscape extends DELabProductSelector {
 
-	public PortugalBuscape() throws ConnectionException {
-		super("Portugal", "http://www.buscape.com.br/");
+	public BrazilBuscape() throws ConnectionException {
+		super("Brazil", "http://www.buscape.com.br/");
 	}
 
 	@Override

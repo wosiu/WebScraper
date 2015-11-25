@@ -23,7 +23,7 @@ import java.util.*;
 
 
 public class Temp {
-	private static final List<Character> SPECIAL = Arrays.asList('"','*','>');
+	private static final List<Character> SPECIAL = Arrays.asList('"', '*', '>');
 
 	static void manageCookies(WebDriver driver) {
 		WebDriver.Options options = driver.manage();
@@ -33,7 +33,7 @@ public class Temp {
 	}
 
 
-	public static void main2(String[] args) throws IOException, URISyntaxException, ConnectionException,
+	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException,
 			InterruptedException {
 		/*System.getProperties().put("http.proxySet", "true");
 		System.getProperties().put("http.proxyHost", "111.11.184.51");
@@ -46,21 +46,23 @@ public class Temp {
 
 		// tak dlugo jak jest paseczek wyszukiwania, nie pobieraj tresci
 
-		String link = "http://www.skyscanner.pl/transport/loty/waw/lhr/151119/151120/ceny-biletow-lotniczych-z-warszawa" +
-		"-okecie-do-londyn-heathrow-w-listopad-2015.html?adults=1&children=0&infants=0&cabinclass=economy&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false#results";
+//		String link = "http://www.skyscanner.pl/transport/loty/waw/lhr/151119/151120/ceny-biletow-lotniczych-z-warszawa" +
+//		"-okecie-do-londyn-heathrow-w-listopad-2015.html?adults=1&children=0&infants=0&cabinclass=economy&rtn=1&preferdirects=false&outboundaltsenabled=false&inboundaltsenabled=false#results";
+
+		String link = "http://www.lufthansa.com/online/portal/lh/pl/homepage";
 
 		driver.get(link);
 		System.out.println("Got");
 
-		manageCookies(driver);
+//		manageCookies(driver);
 		// Wyszukiwanie: div.day-searching-message
-		Thread.sleep(20000);
-		System.out.println("wake up");
-		manageCookies(driver);
+		Thread.sleep(5000);
+//		System.out.println("wake up");
+//		manageCookies(driver);
 
 
 		System.out.println(driver.getTitle());
-
+		System.out.println(driver.getPageSource());
 		//driver.quit();
 //		System.out.println(driver.getPageSource());
 //		driver.quit();
@@ -70,7 +72,8 @@ public class Temp {
 
 	}
 
-	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException, ParseException {
+	public static void main3(String[] args) throws IOException, URISyntaxException, ConnectionException,
+			ParseException {
 		BasicConfigurator.configure();
 		String url = "http://www.beslist.nl/products/r/salomon+icetown/";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
@@ -95,9 +98,9 @@ public class Temp {
 		Selector selector = new HungaryArukereso();
 
 		String base = "";
-		base = "http://www.skyscanner.pl/transport/loty/lond/scq/160201/160205/ceny-biletow-lotniczych-z-londyn-do" +
-				"-santiago-de-compostela-w-luty-2016.html?adults=1&children=0&infants=0&cabinclass=economy&rtn=1&preferdirects=true&outboundaltsenabled=false&inboundaltsenabled=false#results";
-				//"http://herne-konzoly.heureka.sk/microsoft-xbox-one-500gb-without-kinect?expand=1";
+//		base = "http://www.skyscanner.pl/transport/loty/lond/scq/160201/160205/ceny-biletow-lotniczych-z-londyn-do" +
+//				"-santiago-de-compostela-w-luty-2016.html?adults=1&children=0&infants=0&cabinclass=economy&rtn=1&preferdirects=true&outboundaltsenabled=false&inboundaltsenabled=false#results";
+		base = "http://www.google.pl/flights/#search;f=SJC;t=EWR,JFK,LGA;d=2015-12-24;r=2015-12-31";
 		URI uri = new URI(base);
 		URL url = uri.toURL();
 
