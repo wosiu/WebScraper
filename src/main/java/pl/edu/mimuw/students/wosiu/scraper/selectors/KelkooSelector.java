@@ -17,6 +17,7 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.List;
 
 /**
@@ -57,8 +58,17 @@ public abstract class KelkooSelector extends DELabProductSelector {
 
 			String prod = element.select("h3.result-title").text();
 			result.setProduct(prod);
+			Element a = element.select("a[href].result-link").first();
+			String link = null;
 
-			String link = element.select("a[href].result-link").first().attr("href");
+			if ("#".equals(a.attr("href"))) {
+				String encoded = a.attr("data-encodedlink");
+				byte[] decoded = Base64.getDecoder().decode(encoded);
+				link = new String(decoded);
+			} else {
+				link = a.attr("abs:href");
+			}
+
 			result.setShopURL(followUrl(link).toString());
 
 			result.setCountry(getCountry());

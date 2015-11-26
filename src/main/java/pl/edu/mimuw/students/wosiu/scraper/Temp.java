@@ -33,7 +33,7 @@ public class Temp {
 	}
 
 
-	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException,
+	public static void main2(String[] args) throws IOException, URISyntaxException, ConnectionException,
 			InterruptedException {
 		/*System.getProperties().put("http.proxySet", "true");
 		System.getProperties().put("http.proxyHost", "111.11.184.51");
@@ -72,14 +72,16 @@ public class Temp {
 
 	}
 
-	public static void main3(String[] args) throws IOException, URISyntaxException, ConnectionException,
+	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException,
 			ParseException {
 		BasicConfigurator.configure();
+		Selector selector = new PortugalKelkoo();
+
 		String url = "http://www.beslist.nl/products/r/salomon+icetown/";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
-		Selector selector = new NetherlandsBeslist();
 		//selector.addProxy("52.19.27.164", 80);
 
+		url = selector.prepareTargetUrl("xbox one").toString();
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 //		System.out.println(document);
 		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);
