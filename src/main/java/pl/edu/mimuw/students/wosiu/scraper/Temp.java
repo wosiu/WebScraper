@@ -177,18 +177,18 @@ public class Temp {
 
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException,
 			ParseException {
-		BasicConfigurator.configure();
+		//BasicConfigurator.configure();
 		Selector selector = new UnitedKingdomPricerunner();
 
 		String url = "http://www.pricerunner.co.uk/cl/52/Game-Consoles#search=xbox+one+500gb";
 		url = "http://www.pricerunner.co.uk/pli/52-2990700/Game-Consoles/Microsoft-Xbox-One-500GB-Compare-Prices";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
+		url = "http://www.pricerunner.co.uk/cl/337/Women-s-Shoes#q=nike+air+force&search=nike+air+force";
 		//selector.addProxy("52.19.27.164", 80);
 
 		//url = selector.prepareTargetUrl("xbox one 500gb").toString();
 		System.out.println(url);
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
-		System.out.println(document);
 		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);
 		List pages = selector.getNextPages(document);
 		System.out.println("pages: " + pages.size());

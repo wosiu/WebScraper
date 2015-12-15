@@ -88,6 +88,11 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
 					logger.debug("Connected and read in: " + elapsed + "s to: " + targetURL + ", " + cw);
 
 					Document doc = Jsoup.parse(page.asXml());
+
+					if (getSourceURL() != null) {
+						doc.setBaseUri(getSourceURL().toString());
+					}
+
 					return doc;
 
 				} catch ( UnknownHostException | SocketException e) {
@@ -151,11 +156,39 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
             results.add(result);
         }
 
+		// product view .../cl/...
+		for (Element element : document.select("div.product-wrapper")) {
+			ProductResult result = new ProductResult();
+
+
+			Element a = element.select("p.price > a[href][retailer-data]").first();
+			String price = a.text();
+			result.setPrice(price);
+
+			String shopname = a.attr("retailer-data");
+			if (shopname != null) {
+				shopname = shopname.replaceAll("\\(.+\\)", "");
+			}
+			result.setShop(shopname);
+
+			String prod = element.select("h3").text();
+			result.setProduct(prod);
+
+			String link = a.attr("abs:href");
+			result.setShopURL(followUrl(link).toString());
+
+			result.setCountry(getCountry());
+			result.setProxy(getLastUsedProxy());
+			result.setSearcher(getSourceURL().toString());
+
+			results.add(result);
+		}
+
         return results;
     }
 
     /**
-     * Do not paginate. Collect links from first page if product name is too generall.
+     * Do not paginate. Collect links from first page if product name is too general.
      *
      * @param document
      * @return

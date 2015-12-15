@@ -119,7 +119,7 @@ public class SelectorsTest {
 	}
 
 	// TODO group: online
-	@Test
+	//@Test
 	public void testPriceRunner() throws ConnectionException {
 		// log4j
 		BasicConfigurator.configure();
@@ -139,6 +139,13 @@ public class SelectorsTest {
 		assertEquals(pages.size(), 3); //can change a bit as search result might change
 
 		url = "http://www.pricerunner.co.uk/pli/52-2990700/Game-Consoles/Microsoft-Xbox-One-500GB-Compare-Prices";
+		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+		res = (List<ProductResult>) selector.getProducts(document);
+		pages = selector.getNextPages(document);
+		assertFalse(res.isEmpty());
+		assertTrue(pages.isEmpty());
+
+		url = "http://www.pricerunner.co.uk/cl/337/Women-s-Shoes#q=nike+air+force&search=nike+air+force";
 		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 		res = (List<ProductResult>) selector.getProducts(document);
 		pages = selector.getNextPages(document);
