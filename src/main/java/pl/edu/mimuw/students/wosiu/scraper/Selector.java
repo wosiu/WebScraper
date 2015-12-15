@@ -12,10 +12,10 @@ import java.util.*;
 
 public abstract class Selector {
 
-	private static int CONNECTION_TIMEOUT_MS = 4000;
-	private static int READ_TIMEOUT_MS = 10000;
-	private static int LOCAL_CONNECTION_TIMEOUT_MS = 40 * 1000;
-	private static int LOCAL_READ_TIMEOUT_MS = 40 * 1000;
+	public final static int CONNECTION_TIMEOUT_MS = 4000;
+	public final static int READ_TIMEOUT_MS = 10000;
+	public final static int LOCAL_CONNECTION_TIMEOUT_MS = 40 * 1000;
+	public final static int LOCAL_READ_TIMEOUT_MS = 40 * 1000;
 	private static boolean CATCH_NULL_PTR_EXC = true;
 
 	private String country = null;

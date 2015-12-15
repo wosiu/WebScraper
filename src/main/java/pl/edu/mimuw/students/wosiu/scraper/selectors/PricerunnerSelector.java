@@ -1,14 +1,13 @@
 package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
 import com.gargoylesoftware.htmlunit.BrowserVersion;
-import com.gargoylesoftware.htmlunit.ProxyConfig;
+import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.WebRequest;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionWrapper;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
@@ -30,6 +29,7 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
 
 	private WebClient webClient = null;
 	private String shopNamePrefix = "";
+	public static final int JAVA_SCRIPT_WAIT_MS = 3000;
 
     public PricerunnerSelector(String country, String source, String shopNamePrefix) throws ConnectionException {
         super(country, source);
@@ -77,6 +77,9 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
 			request.setProxyHost(address.getHostString());
 			request.setProxyPort(address.getPort());
 			logger.info("User agent not used in request. Used default one for this selector.");
+			this.webClient.getOptions().setTimeout(CONNECTION_TIMEOUT_MS + READ_TIMEOUT_MS);
+		} else {
+			this.webClient.getOptions().setTimeout(LOCAL_CONNECTION_TIMEOUT_MS + LOCAL_READ_TIMEOUT_MS);
 		}
 
 		try {
@@ -85,7 +88,7 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
 					long start = System.currentTimeMillis();
 
 					HtmlPage page = webClient.getPage(request);
-					int i = webClient.waitForBackgroundJavaScript(3000);
+					int i = webClient.waitForBackgroundJavaScript(JAVA_SCRIPT_WAIT_MS);
 
 					long elapsed = (System.currentTimeMillis() - start) / 1000;
 					logger.debug("Connected and read in: " + elapsed + "s to: " + targetURL + ", " + cw);
@@ -103,7 +106,7 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
 					logger.info(e.toString());
 					logger.info("Reconnecting...");
 					continue;
-				} catch (SocketTimeoutException | java.io.FileNotFoundException e) {
+				} catch (SocketTimeoutException | java.io.FileNotFoundException | FailingHttpStatusCodeException e) {
 					logger.info(connectionInfoMsg);
 					logger.info(e.toString());
 					break;

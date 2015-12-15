@@ -59,21 +59,18 @@ public class Executor {
 	}
 
 	public static void log4jInit() {
-		BasicConfigurator.configure();
-/*
+		//BasicConfigurator.configure();
+
 		// Turn off debugs from spring, etc..
-		Level levelRoot = Level.toLevel("warn");
-		Logger.getRootLogger().setLevel(levelRoot);
+		Logger.getRootLogger().setLevel(Level.DEBUG);
 
 		ConsoleAppender appender = new ConsoleAppender();
 		appender.setLayout(new PatternLayout("%d | %p %c: %m%n"));
 		appender.activateOptions();
 		Logger.getRootLogger().addAppender(appender);
 
-		// Change above only for our classes
-		Level levelServer = Level.toLevel(LOG_LEVEL);
-		Logger.getLogger("pl.edu.mimuw.students.wosiu").setLevel(levelServer);
-*/
+		Logger.getLogger("com.gargoylesoftware.htmlunit").setLevel(Level.FATAL);
+		Logger.getLogger("org.apache.http").setLevel(Level.FATAL);
 	}
 
 	public CSVWriter createResultWriter(Config conf) throws IOException {
