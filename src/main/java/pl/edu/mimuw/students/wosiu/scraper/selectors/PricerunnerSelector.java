@@ -29,9 +29,12 @@ import java.util.*;
 public abstract class PricerunnerSelector extends DELabProductSelector {
 
 	private WebClient webClient = null;
+	private String shopNamePrefix = "";
 
-    public PricerunnerSelector(String country, String source) throws ConnectionException {
+    public PricerunnerSelector(String country, String source, String shopNamePrefix) throws ConnectionException {
         super(country, source);
+
+		this.shopNamePrefix = shopNamePrefix;
 
 		// if want to set user agent in future change below default browser to something more fancy
 		this.webClient = new WebClient(BrowserVersion.FIREFOX_38);
@@ -118,7 +121,6 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
 		return null;
 	}
 
-	String shopNamePrefix = "Info on ";
 	@Override
     public List<ProductResult> getProducts(Document document) {
         if (!document.select("selection.noexactmatch").isEmpty()) {
@@ -127,8 +129,8 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
         }
         List<ProductResult> results = new ArrayList<>();
 
-		// offert view - .../pli/...
-        for (Element element : document.select("table.price-list > tbody > tr:has(td.price)")) {
+		// offert view - .../pli/... for uk, .../pl/ for sweden
+        for (Element element : document.select("table.price-list > tbody > tr:has(td.price):not(.product-gray)")) {
             ProductResult result = new ProductResult();
 
             String price = element.select("td.price").first().text();
@@ -139,7 +141,6 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
 				shopname = shopname.substring(shopNamePrefix.length());
 			}
 			result.setShop(shopname);
-
 			Element a = element.select("td.about-retailer > h4.p-name > a[href]").first();
 
 			String prod = a.text();

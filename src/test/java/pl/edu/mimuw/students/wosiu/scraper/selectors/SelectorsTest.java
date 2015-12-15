@@ -119,16 +119,19 @@ public class SelectorsTest {
 	}
 
 	// TODO group: online
-	//@Test
+	@Test
 	public void testPriceRunner() throws ConnectionException {
 		// log4j
-		BasicConfigurator.configure();
+		//BasicConfigurator.configure();
 
-		Selector selector = new UnitedKingdomPricerunner();
+		Selector selector;
 		Document document;
 		List<ProductResult> res;
 		List pages;
 		String url;
+
+		// UK
+		selector = new UnitedKingdomPricerunner();
 
 		url = "http://www.pricerunner.co.uk/cl/52/Game-Consoles#q=xbox+one+500gb&search=xbox+one+500gb";
 		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
@@ -145,12 +148,49 @@ public class SelectorsTest {
 		assertFalse(res.isEmpty());
 		assertTrue(pages.isEmpty());
 
-		url = "http://www.pricerunner.co.uk/cl/337/Women-s-Shoes#q=nike+air+force&search=nike+air+force";
+		url = selector.prepareTargetUrl("nike air force").toString();
+		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+		res = (List<ProductResult>) selector.getProducts(document);
+		pages = selector.getNextPages(document);
+		assertFalse(res.isEmpty());
+		assertTrue(pages.isEmpty());
+
+		// Sweden
+		selector = new SwedenPricerunner();
+
+		url = selector.prepareTargetUrl("xbox one 500gb").toString();
+		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+		res = (List<ProductResult>) selector.getProducts(document);
+		pages = selector.getNextPages(document);
+		assertTrue(res.isEmpty());
+		assertFalse(pages.isEmpty());
+		assertEquals(pages.size(), 3); //can change a bit as search result might change
+
+		url = "http://www.pricerunner.se/pl/52-2990700/Spelkonsoler/Microsoft-Xbox-One-500GB-priser";
+		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+		res = (List<ProductResult>) selector.getProducts(document);
+		pages = selector.getNextPages(document);
+		assertFalse(res.isEmpty());
+		assertTrue(pages.isEmpty());
+
+		url = selector.prepareTargetUrl("Nike Air Force").toString();
 		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
 		res = (List<ProductResult>) selector.getProducts(document);
 		pages = selector.getNextPages(document);
 		assertFalse(res.isEmpty());
 		assertTrue(pages.isEmpty());
 	}
+
+	@Test
+	public void testTEMP() throws ConnectionException {
+
+		Selector selector;
+		Document document;
+		List<ProductResult> res;
+		List pages;
+		String url;
+
+	}
+
 
 }
