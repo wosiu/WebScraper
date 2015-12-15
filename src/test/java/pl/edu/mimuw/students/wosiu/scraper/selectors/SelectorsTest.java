@@ -119,7 +119,7 @@ public class SelectorsTest {
 	}
 
 	// TODO group: online
-	@Test
+	//@Test
 	public void testPriceRunner() throws ConnectionException {
 		// log4j
 		//BasicConfigurator.configure();
