@@ -90,7 +90,6 @@ public abstract class KelkooSelector extends DELabProductSelector {
 	@Override
 	public List<URL> getNextPages(Document document) {
 		List <URL> urls = new ArrayList<>();
-		document.setBaseUri(getSourceURL().toString());
 		for ( Element element : document.select(
 				"div.result > div.result-link > div.total-offers > a[href]") ) {
 			String str = element.attr("abs:href");
@@ -99,7 +98,6 @@ public abstract class KelkooSelector extends DELabProductSelector {
 			} catch (ConnectionException e) {}
 		}
 
-		logger.debug("Collected " + urls.size() + " urls to visit");
 		return urls;
 	}
 

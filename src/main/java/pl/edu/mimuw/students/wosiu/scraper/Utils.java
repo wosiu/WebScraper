@@ -231,7 +231,7 @@ public class Utils {
 					c += 47;
 
 					// If character is now above printable range, make it printable.
-					// Range of printable characters is ! (33) to ~ (126).  A value
+					// Rang	e of printable characters is ! (33) to ~ (126).  A value
 					// of 127 (just above ~) would therefore get rotated down to a
 					// 33 (the !).  The value 94 comes from 127 - 33 = 94, which is
 					// therefore the value that needs to be subtracted from the

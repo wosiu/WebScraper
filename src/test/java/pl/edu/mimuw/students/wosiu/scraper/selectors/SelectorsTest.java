@@ -118,5 +118,32 @@ public class SelectorsTest {
 		}
 	}
 
+	// TODO group: online
+	@Test
+	public void testPriceRunner() throws ConnectionException {
+		// log4j
+		BasicConfigurator.configure();
+
+		Selector selector = new UnitedKingdomPricerunner();
+		Document document;
+		List<ProductResult> res;
+		List pages;
+		String url;
+
+		url = "http://www.pricerunner.co.uk/cl/52/Game-Consoles#q=xbox+one+500gb&search=xbox+one+500gb";
+		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+		res = (List<ProductResult>) selector.getProducts(document);
+		pages = selector.getNextPages(document);
+		assertTrue(res.isEmpty());
+		assertFalse(pages.isEmpty());
+		assertEquals(pages.size(), 3); //can change a bit as search result might change
+
+		url = "http://www.pricerunner.co.uk/pli/52-2990700/Game-Consoles/Microsoft-Xbox-One-500GB-Compare-Prices";
+		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+		res = (List<ProductResult>) selector.getProducts(document);
+		pages = selector.getNextPages(document);
+		assertFalse(res.isEmpty());
+		assertTrue(pages.isEmpty());
+	}
 
 }

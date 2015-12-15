@@ -6,8 +6,11 @@ import java.net.Proxy;
 import java.net.URL;
 
 public class ConnectionWrapper {
+
 	private Integer connectionTimeoutMs = null;
 	private Integer readTimeoutMs = null;
+	private Proxy proxy = null;
+	private String userAgent = null;
 
 	public void setConnectionTimeoutMs(Integer connectionTimeoutMs) {
 		this.connectionTimeoutMs = connectionTimeoutMs;
@@ -25,8 +28,22 @@ public class ConnectionWrapper {
 		this.userAgent = userAgent;
 	}
 
-	private Proxy proxy = null;
-	private String userAgent = null;
+	public Integer getConnectionTimeoutMs() {
+		return connectionTimeoutMs;
+	}
+
+	public Integer getReadTimeoutMs() {
+		return readTimeoutMs;
+	}
+
+	public Proxy getProxy() {
+		return proxy;
+	}
+
+	public String getUserAgent() {
+		return userAgent;
+	}
+
 
 	public HttpURLConnection connect(URL targetURL) throws IOException {
 		HttpURLConnection uc;

@@ -1,12 +1,19 @@
 package pl.edu.mimuw.students.wosiu.scraper;
 
+import com.gargoylesoftware.htmlunit.*;
+import com.gargoylesoftware.htmlunit.html.HTMLParser;
+import com.gargoylesoftware.htmlunit.html.HtmlPage;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.logging.log4j.core.config.DefaultConfiguration;
+import org.apache.xalan.xsltc.compiler.util.Util;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
+import org.openqa.selenium.htmlunit.HtmlUnitDriver;
+import org.openqa.selenium.remote.DesiredCapabilities;
 import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.*;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.proxy.Proxygaz;
@@ -72,18 +79,116 @@ public class Temp {
 
 	}
 
+	public static void main8(String[] args) throws IOException, InterruptedException, ConnectionException {
+
+		String content = "";
+		DefaultConfiguration configuration = new DefaultConfiguration();
+		configuration.initialize();
+		String url = "http://www.pricerunner.co.uk/cl/52/Game-Consoles#q=xbox+one+500gb&search=xbox+one+500gb";
+		url = "http://www.pricerunner.co.uk/cl/52/Game-Consoles#q=sony+playstation+4+console&search=sony+playstation" +
+				"+4+console";
+		//url = "http://www.pricerunner.co.uk/pli/52-2990700/Game-Consoles/Microsoft-Xbox-One-500GB-Compare-Prices";
+//		HtmlUnitDriver driver = new HtmlUnitDriver(BrowserVersion.CHROME);
+//		driver.setJavascriptEnabled(true);
+//		driver.get(url);
+//		System.out.println( driver.getPageSource() );
+
+//		DesiredCapabilities capabilities = DesiredCapabilities.htmlUnit();
+//		capabilities.setBrowserName("Mozilla/5.0 (Windows NT 6.1; WOW64; rv:25.0) Gecko/20160101 Firefox/66.0");
+//		HtmlUnitDriver driver = new HtmlUnitDriver(/*capabilities*/);
+//		driver.setJavascriptEnabled(true);
+//
+//		driver.get(url);
+//		System.out.println(driver.getPageSource());
+
+//		WebClient webClient = new WebClient(BrowserVersion.FIREFOX_38);
+//		webClient.getOptions().setJavaScriptEnabled(true);
+//		webClient.getOptions().setThrowExceptionOnScriptError(false);
+//
+//		Page page = webClient.getPage(url);
+//
+//		int i = webClient.waitForBackgroundJavaScript(2000);
+//
+//		WebResponse response = page.getWebResponse();
+//
+//		i = webClient.waitForBackgroundJavaScript(2000);
+//
+//		String content = response.getContentAsString();
+//
+//		System.out.println("tu:");
+//		System.out.println(content);
+//WORKS!:
+/*
+		WebClient webClient = new WebClient(BrowserVersion.FIREFOX_38);
+		webClient.getOptions().setJavaScriptEnabled(true);
+		webClient.getOptions().setThrowExceptionOnScriptError(false);
+		//webClient.setAjaxController(new NicelyResynchronizingAjaxController());
+
+		System.out.println("web client created");
+		WebRequest request = new WebRequest(new URL(url));
+		System.out.println("request created");
+
+		HtmlPage page = webClient.getPage(request);
+//		Document document = new Document(url);
+//		HtmlPage p = new HtmlPage(document.text());
+		System.out.println("start");
+		//int i = webClient.waitForBackgroundJavaScript(10000);
+		//System.out.println("iiiiiiiiiiiiiiiiiiiiiiiiiiiiii:" + i);
+//		System.out.println(page.asXml());
+/**/
+
+		Selector selector = new UnitedKingdomPricerunner();
+		Document document = selector.download(Utils.USER_AGENT, new URL(url));
+
+		System.out.println("client2");
+		StringWebResponse response = new StringWebResponse
+				(document.toString(), new URL(url));
+		WebClient client = new WebClient(BrowserVersion.FIREFOX_38);
+		client.getOptions().setJavaScriptEnabled(true);
+		client.getOptions().setThrowExceptionOnScriptError(false);
+		client.getPage(url);
+		System.out.println("parsing");
+		HtmlPage page2 = HTMLParser.parseHtml(response, client.getCurrentWindow());
+		System.out.println("waiting for js");
+		client.waitForBackgroundJavaScript(20000);
+		System.out.println(page2.asXml());
+
+
+//		while (i > 0)
+//		{
+//			i = webClient.waitForBackgroundJavaScript(1000);
+//
+//			if (i == 0)
+//			{
+//				break;
+//			}
+//			synchronized (page)
+//			{
+//				System.out.println("wait");
+//				page.wait(500);
+//			}
+//		}
+
+//		webClient.getAjaxController().processSynchron(page, request, false);
+//
+//		System.out.println(page.asXml());
+
+	}
+
 	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException,
 			ParseException {
 		BasicConfigurator.configure();
-		Selector selector = new PortugalKelkoo();
+		Selector selector = new UnitedKingdomPricerunner();
 
-		String url = "http://www.beslist.nl/products/r/salomon+icetown/";
+		String url = "http://www.pricerunner.co.uk/cl/52/Game-Consoles#search=xbox+one+500gb";
+		url = "http://www.pricerunner.co.uk/pli/52-2990700/Game-Consoles/Microsoft-Xbox-One-500GB-Compare-Prices";
 //				"http://www.beslist.nl/accessoires/d0021157460/Fujifilm_MHG-XT10_Handgreep_voor_X-T10.html";
 		//selector.addProxy("52.19.27.164", 80);
 
-		url = selector.prepareTargetUrl("xbox one").toString();
+		//url = selector.prepareTargetUrl("xbox one 500gb").toString();
+		System.out.println(url);
 		Document document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
-//		System.out.println(document);
+		System.out.println(document);
 		List<ProductResult> res = (List<ProductResult>) selector.getProducts(document);
 		List pages = selector.getNextPages(document);
 		System.out.println("pages: " + pages.size());
