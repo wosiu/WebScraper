@@ -3,6 +3,7 @@ package pl.edu.mimuw.students.wosiu.scraper.selectors;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.apache.log4j.BasicConfigurator;
+import org.apache.xpath.SourceTree;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
@@ -155,6 +156,14 @@ public class SelectorsTest {
 		assertFalse(res.isEmpty());
 		assertTrue(pages.isEmpty());
 
+		url = "http://www.pricerunner.co.uk/cl/1430/Xbox-One-Games#q=call+of+duty+black+ops+iii+%28xbox+one%29&search=call+of+duty+black+ops+iii+%28xbox+one%29";
+		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+		res = (List<ProductResult>) selector.getProducts(document);
+		pages = selector.getNextPages(document);
+		assertFalse(res.isEmpty());
+		assertFalse(pages.isEmpty());
+
+
 		// Sweden
 		selector = new SwedenPricerunner();
 
@@ -181,7 +190,7 @@ public class SelectorsTest {
 		assertTrue(pages.isEmpty());
 	}
 
-	@Test
+//	@Test
 	public void testTEMP() throws ConnectionException {
 
 		Selector selector;
@@ -189,6 +198,19 @@ public class SelectorsTest {
 		List<ProductResult> res;
 		List pages;
 		String url;
+
+		selector = new UnitedKingdomPricerunner();
+		selector.addProxy("178.62.55.171", 80);
+		url = "http://www.pricerunner.co.uk/cl/1430/Xbox-One-Games#q=call+of+duty+black+ops+iii+%28xbox+one%29&search=call+of+duty+black+ops+iii+%28xbox+one%29";
+		document = selector.download(Utils.USER_AGENT, Utils.stringToURL(url));
+		System.out.println(document);
+		res = (List<ProductResult>) selector.getProducts(document);
+		pages = selector.getNextPages(document);
+
+		System.out.println("pages: " + pages.size());
+		System.out.println(pages.toString().replaceAll(", ", "\n"));
+		System.out.println("results: " + res.size());
+		System.out.println(res.toString().replaceAll("}, ", "}\n"));
 
 	}
 

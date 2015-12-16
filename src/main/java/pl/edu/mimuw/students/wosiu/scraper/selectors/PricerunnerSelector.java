@@ -55,12 +55,20 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
 
 	@Override
 	public Document download(URL targetURL, ConnectionWrapper cw) throws ConnectionException {
+		Document document;
 		// product view - need to run javascript to filter the results
 		if (targetURL.toString().contains("/cl/")) {
-			return downloadViaHtmlUnit(targetURL, cw);
+			document = downloadViaHtmlUnit(targetURL, cw);
+		} else {
+			// for offert view we don't need to run javascript - use default download method
+			document = super.download(targetURL, cw);
 		}
-		// for offert view we don't need to run javascript - use default download method
-		return super.download(targetURL, cw);
+
+		if (document == null || document.title().isEmpty() || document.title().contains("Site Unavailable") ||
+				document.title().contains("McAfee Web Gateway") ) {
+			return null;
+		}
+		return document;
 	}
 
 	public Document downloadViaHtmlUnit(URL targetURL, ConnectionWrapper cw) throws ConnectionException {
@@ -161,9 +169,9 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
         }
 
 		// product view .../cl/...
-		for (Element element : document.select("div.product-wrapper")) {
+		// http://www.pricerunner.co.uk/cl/1430/Xbox-One-Games#q=call+of+duty+black+ops+iii+%28xbox+one%29&search=call+of+duty+black+ops+iii+%28xbox+one%29
+		for (Element element : document.select("div.product-wrapper:not(:has(div.see-all-merchant)):has(p.price)")) {
 			ProductResult result = new ProductResult();
-
 
 			Element a = element.select("p.price > a[href][retailer-data]").first();
 			String price = a.text();
@@ -207,6 +215,14 @@ public abstract class PricerunnerSelector extends DELabProductSelector {
                 urls.add(Utils.stringToURL(str));
             } catch (ConnectionException e) {}
         }
+
+		// http://www.pricerunner.co.uk/cl/1430/Xbox-One-Games#q=call+of+duty+black+ops+iii+%28xbox+one%29&search=call+of+duty+black+ops+iii+%28xbox+one%29
+		for ( Element element : document.select("div.product-wrapper div.see-all-merchant > a[href]") ) {
+			String str = element.attr("abs:href");
+			try {
+				urls.add(Utils.stringToURL(str));
+			} catch (ConnectionException e) {}
+		}
 
         return urls;
     }
