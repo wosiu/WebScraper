@@ -191,7 +191,7 @@ public class IdealoSelector extends DELabProductSelector {
 					res = element.select("a.offer-title.link-2.webtrekk.wt-prompt").first().text();
 				} else {
 					final String cuttedSuffix = cuttedPrefix.substring(0, indexEnd);
-					res = Utils.Rot47PasswordEncoder.encodePassword(cuttedSuffix, "").replace("&shy;", "");
+					res = Utils.encodeROT47(cuttedSuffix).replace("&shy;", "");
 				}
 			} catch (Exception e) {
 				logger.error("Problem with parsing product name - amazon/ebay");
