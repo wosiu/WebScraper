@@ -5,6 +5,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProductResult;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.selectors.AlexaFrisco;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.AlexaTesco;
 
 import java.net.URL;
@@ -19,7 +20,7 @@ public class ProductScrapExecutor {
 	private static List<Selector> selectors= null;
 
 	public ProductScrapExecutor () throws ConnectionException {
-		selectors = Arrays.asList(new AlexaTesco());
+		selectors = Arrays.asList(new AlexaTesco(), new AlexaFrisco());
 	}
 
 	public void setSelectors(List<Selector> newSelectorsList) {
