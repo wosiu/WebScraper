@@ -1,12 +1,11 @@
 package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
 import com.google.gson.*;
-import com.google.gson.stream.MalformedJsonException;
 import org.jsoup.nodes.Document;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
-import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
+import pl.edu.mimuw.students.wosiu.scraper.ProductResult;
 
 import java.net.MalformedURLException;
 import java.net.URL;

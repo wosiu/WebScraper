@@ -10,8 +10,6 @@ import pl.edu.mimuw.students.wosiu.scraper.Utils;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.LinkedList;
 import java.util.List;
 
 public class DikiSelector extends Selector {

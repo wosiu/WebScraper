@@ -3,7 +3,6 @@ package pl.edu.mimuw.students.wosiu.scraper.selectors;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import org.apache.log4j.BasicConfigurator;
-import org.apache.xpath.SourceTree;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.Test;
@@ -11,7 +10,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
-import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
+import pl.edu.mimuw.students.wosiu.scraper.ProductResult;
 
 import java.io.File;
 import java.io.IOException;

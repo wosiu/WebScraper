@@ -5,7 +5,7 @@ import org.jsoup.nodes.Element;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
-import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
+import pl.edu.mimuw.students.wosiu.scraper.ProductResult;
 
 import java.net.URL;
 import java.util.ArrayList;

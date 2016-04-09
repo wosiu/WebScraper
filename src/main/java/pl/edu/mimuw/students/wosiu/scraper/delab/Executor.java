@@ -3,10 +3,7 @@ package pl.edu.mimuw.students.wosiu.scraper.delab;
 import com.opencsv.CSVWriter;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.*;
-import pl.edu.mimuw.students.wosiu.scraper.ConfigException;
-import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
-import pl.edu.mimuw.students.wosiu.scraper.Selector;
-import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.*;
 
 import java.io.FileWriter;
 import java.io.IOException;

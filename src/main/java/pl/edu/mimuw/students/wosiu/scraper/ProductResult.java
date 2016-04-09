@@ -1,4 +1,4 @@
-package pl.edu.mimuw.students.wosiu.scraper.delab;
+package pl.edu.mimuw.students.wosiu.scraper;
 import java.net.Proxy;
 import java.util.*;
 

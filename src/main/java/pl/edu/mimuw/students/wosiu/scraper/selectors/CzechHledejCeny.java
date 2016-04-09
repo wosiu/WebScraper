@@ -6,9 +6,8 @@ import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
-import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
+import pl.edu.mimuw.students.wosiu.scraper.ProductResult;
 
-import javax.print.Doc;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;

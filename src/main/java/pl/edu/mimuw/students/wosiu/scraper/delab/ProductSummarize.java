@@ -1,5 +1,7 @@
 package pl.edu.mimuw.students.wosiu.scraper.delab;
 
+import pl.edu.mimuw.students.wosiu.scraper.ProductResult;
+
 import java.util.List;
 
 public class ProductSummarize {

@@ -3,28 +3,20 @@ package pl.edu.mimuw.students.wosiu.scraper;
 import com.gargoylesoftware.htmlunit.*;
 import com.gargoylesoftware.htmlunit.html.HTMLParser;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
-import org.apache.log4j.BasicConfigurator;
 import org.apache.logging.log4j.core.config.DefaultConfiguration;
-import org.apache.xalan.xsltc.compiler.util.Util;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.openqa.selenium.Cookie;
 import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.firefox.FirefoxDriver;
-import org.openqa.selenium.remote.DesiredCapabilities;
-import pl.edu.mimuw.students.wosiu.scraper.delab.ProductResult;
 import pl.edu.mimuw.students.wosiu.scraper.selectors.*;
-import pl.edu.mimuw.students.wosiu.scraper.selectors.proxy.Proxygaz;
 
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.net.Proxy;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.*;
 
 
