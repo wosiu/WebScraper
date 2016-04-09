@@ -52,7 +52,7 @@ public class EstoniaHinnavaatlus extends DELabProductSelector {
 	}
 
 	@Override
-	public Object getProducts(Document document) {
+	public List getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
 		final String source = document.toString();
 		if (!source.contains("Ühtegi toodet ei leitud.") && !source.contains("Otsing")) {

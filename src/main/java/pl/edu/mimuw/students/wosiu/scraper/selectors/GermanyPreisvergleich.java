@@ -39,7 +39,7 @@ public class GermanyPreisvergleich extends DELabProductSelector {
 	}
 
 	@Override
-	public Object getProducts(Document document) {
+	public List getProducts(Document document) {
 		List<ProductResult> results = new ArrayList<>();
 
 		// Product view

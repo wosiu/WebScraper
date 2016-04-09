@@ -68,7 +68,7 @@ public class CzechHledejCeny extends DELabProductSelector {
 	}
 
 	@Override
-	public Object getProducts(Document document) {
+	public List getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
 
 		if (!document.toString().contains("Nebyly nalezeny žádné produkty s názvem")) {

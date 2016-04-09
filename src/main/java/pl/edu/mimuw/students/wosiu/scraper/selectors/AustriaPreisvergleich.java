@@ -56,7 +56,7 @@ public class AustriaPreisvergleich extends DELabProductSelector {
 	}
 
 	@Override
-	public Object getProducts(Document document) {
+	public List getProducts(Document document) {
 		document.setBaseUri(getSourceURL().toString());
 		List<ProductResult> products = new LinkedList<>();
 

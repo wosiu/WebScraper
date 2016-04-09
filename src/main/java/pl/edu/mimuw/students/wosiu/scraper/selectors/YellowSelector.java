@@ -51,7 +51,7 @@ public abstract class YellowSelector extends DELabProductSelector {
 	}
 
 	@Override
-	public Object getProducts(Document document) {
+	public List getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
 
 		Date date = new Date();

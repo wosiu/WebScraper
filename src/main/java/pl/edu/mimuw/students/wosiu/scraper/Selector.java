@@ -70,7 +70,7 @@ public abstract class Selector {
 
 	public abstract URL prepareTargetUrl(String product) throws ConnectionException;
 
-	public abstract Object getProducts(Document document);
+	public abstract List getProducts(Document document);
 
 	public abstract List<URL> getNextPages(Document document);
 

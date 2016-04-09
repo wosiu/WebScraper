@@ -53,7 +53,7 @@ public class FinlandiaHinta extends DELabProductSelector {
 	}
 
 	@Override
-	public Object getProducts(Document document) {
+	public List getProducts(Document document) {
 		List<ProductResult> products = new LinkedList<>();
 		document.setBaseUri(getSourceURL().toString());
 
