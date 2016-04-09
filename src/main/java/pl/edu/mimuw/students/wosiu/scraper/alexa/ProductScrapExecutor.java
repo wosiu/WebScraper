@@ -5,6 +5,7 @@ import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProductResult;
 import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
+import pl.edu.mimuw.students.wosiu.scraper.selectors.AlexaTesco;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -15,7 +16,11 @@ import java.util.List;
 public class ProductScrapExecutor {
 
 	private static final Logger logger = Logger.getLogger(ProductScrapExecutor.class);
-	private static List<Selector> selectors= Arrays.asList();
+	private static List<Selector> selectors= null;
+
+	public ProductScrapExecutor () throws ConnectionException {
+		selectors = Arrays.asList(new AlexaTesco());
+	}
 
 	public void setSelectors(List<Selector> newSelectorsList) {
 		this.selectors = newSelectorsList;

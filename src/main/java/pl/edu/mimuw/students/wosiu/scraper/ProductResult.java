@@ -29,6 +29,8 @@ public class ProductResult {
 			fields.put("proxy", proxy.toString());
 		}
 	}
+	public void setImage(Object o) 	{ fields.put("image", o);}
+
 	public void setPercentageShopRating(int percentage) { fields.put("shop-rating", percentage);}
 	public void setShopClientsNum(int num) { fields.put("shop-clients-num", num);}
 	public void setDeliveryCost(int cost) 	{ fields.put("delivery-cost", cost); }
@@ -53,6 +55,7 @@ public class ProductResult {
 	public String getPercentageShopRating() { return safeGet("shop-rating"); }
 	public String getShopClientsNum() { return safeGet("shop-clients-num"); }
 	public String getDeliveryCost() 	{ return safeGet("delivery-cost"); }
+	public String getImage() 	{ return safeGet("image"); }
 
 
 
