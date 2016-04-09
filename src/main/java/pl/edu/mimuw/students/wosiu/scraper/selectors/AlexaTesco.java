@@ -5,6 +5,7 @@ import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 import pl.edu.mimuw.students.wosiu.scraper.ConnectionException;
 import pl.edu.mimuw.students.wosiu.scraper.ProductResult;
+import pl.edu.mimuw.students.wosiu.scraper.Selector;
 import pl.edu.mimuw.students.wosiu.scraper.Utils;
 import pl.edu.mimuw.students.wosiu.scraper.delab.DELabProductSelector;
 
@@ -19,10 +20,11 @@ import java.util.List;
  * 1. Z widoku pierwszego wybieramy liste
  * 2. Pobieramy wszystkie pozycje z widoku 2.
  */
-public class AlexaTesco extends DELabProductSelector {
+public class AlexaTesco extends Selector {
 
 	public AlexaTesco() throws ConnectionException {
-		super("Poland", "http://ezakupy.tesco.pl/");
+		setCountry("Poland");
+		setSource("http://ezakupy.tesco.pl/");
 	}
 
 	@Override
