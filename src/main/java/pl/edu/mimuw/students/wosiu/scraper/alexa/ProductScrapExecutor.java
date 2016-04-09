@@ -14,6 +14,8 @@ public class ProductScrapExecutor {
 		ProductResult productResult = new ProductResult();
 		productResult.setProduct(productName);
 		productResult.setPrice(13.31);
+		productResult.setShop("tesco");
+		productResult.setShopURL("http://ezakupy.tesco.pl/pl-PL/ProductDetail/ProductDetail/2003120112699");
 		offers.add(productResult);
 
 		return offers;
