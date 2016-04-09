@@ -32,4 +32,31 @@ public class ProductScrapExecutorTest {
 		Assert.assertTrue(trans.size() > 7);
 		System.out.println(trans);
 	}
+
+	@Test
+	public void testTescoSelector2() throws Exception {
+		String cheese = "pur balsam";
+		//cheese = Utils.urlEncode(cheese);
+
+		Selector selector = new AlexaTesco();
+		URL url = selector.prepareTargetUrl(cheese);
+		Document document = selector.download(Utils.USER_AGENT, url);
+		List trans = selector.getProducts(document);
+		Assert.assertTrue(trans.size() > 4);
+		System.out.println(trans);
+	}
+
+	@Test
+	public void testTescoSelector3() throws Exception {
+		String cheese = "ser pleśniowy";
+
+		Selector selector = new AlexaTesco();
+		URL url = selector.prepareTargetUrl(cheese);
+		Document document = selector.download(Utils.USER_AGENT, url);
+		List trans = selector.getProducts(document);
+		Assert.assertTrue(trans.size() > 4);
+		System.out.println(trans);
+	}
+
+
 }

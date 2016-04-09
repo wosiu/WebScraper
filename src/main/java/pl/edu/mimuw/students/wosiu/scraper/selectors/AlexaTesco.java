@@ -27,7 +27,8 @@ public class AlexaTesco extends DELabProductSelector {
 
 	@Override
 	public URL prepareTargetUrl(String product) throws ConnectionException {
-		product = Utils.urlEncodeSpecial(product, '"', '<', '>', '_', '~', '+');
+		//product = Utils.urlEncodeSpecial(product, '"', '<', '>', '_', '~', '+');
+		product = Utils.urlEncode(product, '"', '<', '>', '_', '~', '+');
 		String encoded = getSourceURL() + "pl-PL/Search/List?searchQuery="
 				+ product + "&SortBy=Relevance&viewType=List";
 
