@@ -15,6 +15,11 @@ public class ProductResult {
 	// TODO rename setSearchListURL
 	public void setSearchURL(String o) 	{ fields.put("search-url", o);}
 	public void setPrice (Object o) 	{ fields.put("price", o);}
+	public void setPriceAbbr (Object o) { fields.put("price-abbr", o);}
+	public void setAmount (Object o) 	{ fields.put("amount", o);}
+	public void setUnit (Object o) 		{ fields.put("unit", o);}
+	public void setCurrency (Object o) 	{ fields.put("currency", o);}
+
 	// TODO rename setShopName
 	public void setShop(String o) 		{ fields.put("shop", o);}
 	// TODO rename setProductURL
@@ -42,6 +47,10 @@ public class ProductResult {
 	// TODO rename getSearchListURL
 	public String getSearchURL() 	{ return safeGet("search-url"); }
 	public String getPrice () 	{ return safeGet("price"); }
+	public Object getPriceAbbr (Object o) { return safeGet("price-abbr");}
+	public Object getAmount (Object o) 	{ return safeGet("amount");}
+	public Object getUnit (Object o) 		{ return safeGet("unit");}
+
 	// TODO rename getShopName
 	public String getShop() 		{ return safeGet("shop"); }
 	// TODO rename getProductURL

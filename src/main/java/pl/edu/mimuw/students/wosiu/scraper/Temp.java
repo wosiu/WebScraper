@@ -166,7 +166,12 @@ public class Temp {
 
 	}
 
-	public static void main(String[] args) throws IOException, URISyntaxException, ConnectionException,
+	public static void main(String[] args) {
+
+
+	}
+
+	public static void main5(String[] args) throws IOException, URISyntaxException, ConnectionException,
 			ParseException {
 		//BasicConfigurator.configure();
 		Selector selector = new UnitedKingdomPricerunner();
