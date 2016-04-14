@@ -47,9 +47,9 @@ public class ProductResult {
 	// TODO rename getSearchListURL
 	public String getSearchURL() 	{ return safeGet("search-url"); }
 	public String getPrice () 	{ return safeGet("price"); }
-	public Object getPriceAbbr (Object o) { return safeGet("price-abbr");}
-	public Object getAmount (Object o) 	{ return safeGet("amount");}
-	public Object getUnit (Object o) 		{ return safeGet("unit");}
+	public Object getPriceAbbr () { return safeGet("price-abbr");}
+	public Object getAmount () 	{ return safeGet("amount");}
+	public Object getUnit () 		{ return safeGet("unit");}
 
 	// TODO rename getShopName
 	public String getShop() 		{ return safeGet("shop"); }
