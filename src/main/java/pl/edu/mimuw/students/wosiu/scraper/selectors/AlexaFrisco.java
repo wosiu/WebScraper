@@ -1,5 +1,6 @@
 package pl.edu.mimuw.students.wosiu.scraper.selectors;
 
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -40,6 +41,15 @@ public class AlexaFrisco extends Selector {
 			String priceStr = num + "." + dec;
 			float price = Float.parseFloat(priceStr);
 			product.setPrice(price);
+
+			product.setCurrency("zł"); // currUnit[0]
+			String amountUnit = element.select("em").first().text();
+			Utils.NumUnits amountConv = Utils.convertToSI(amountUnit);
+			if (amountConv != null) {
+				product.setUnit(amountConv.unit);
+				product.setAmount(amountConv.number);
+				product.setPriceAbbr(price / amountConv.number);
+			}
 
 			final Element href = element.select("a[href]").first();
 			String name = href.attr("title");

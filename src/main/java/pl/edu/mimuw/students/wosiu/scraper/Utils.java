@@ -1,5 +1,7 @@
 package pl.edu.mimuw.students.wosiu.scraper;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
@@ -179,4 +181,52 @@ public class Utils {
 			return result.toString();
 		}
 
+
+	public static class NumUnits {
+		public NumUnits(float number, String unit) {
+			this.number = number;
+			this.unit = unit;
+		}
+		public float number;
+		public String unit;
+		@Override
+		public String toString() {
+			return number + " " + unit;
+		}
+	}
+
+	public static NumUnits convertToSI(String amountUnit) {
+		amountUnit = amountUnit.toLowerCase().replace(" ", "").replace(",",".");
+		if (StringUtils.isBlank(amountUnit)) {
+			return null;
+		}
+		String amountOrg = amountUnit.replaceAll("[^0-9.]*", "");
+		Float amountOrgFl = null;
+		try {
+			amountOrgFl = Float.parseFloat(amountOrg);
+		} catch (NumberFormatException e) {
+			return null;
+		}
+		String unitOrg = amountUnit.replaceAll("[^a-z]*", "");
+//		if (StringUtils.isBlank(unitOrg)) {
+//			return null;
+//		}
+		NumUnits res = new NumUnits(amountOrgFl, unitOrg);
+		switch (unitOrg) {
+			case "l": return res;
+			case "kg": return res;
+			case "m": return res;
+			case "szt": return res;
+			case "sztuk": return new NumUnits(amountOrgFl, "szt");
+			case "sz": return new NumUnits(amountOrgFl, "szt");
+			case "ml": return new NumUnits(amountOrgFl/1000, "l");
+			case "g": return new NumUnits(amountOrgFl/1000, "kg");
+			case "dag": return new NumUnits(amountOrgFl/100, "kg");
+			case "dkg": return new NumUnits(amountOrgFl/100, "kg");
+			case "cm": return new NumUnits(amountOrgFl/100, "m");
+			case "mm": return new NumUnits(amountOrgFl/1000, "m");
+			case "dm": return new NumUnits(amountOrgFl/10, "m");
+			default: return res;
+		}
+	}
 }

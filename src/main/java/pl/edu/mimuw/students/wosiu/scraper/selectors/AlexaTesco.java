@@ -58,7 +58,6 @@ public class AlexaTesco extends Selector {
 
 			String priceAbbrStr = element.select("span.linePriceAbbr").text();
 			String[] priceAbbrSpl = priceAbbrStr.replaceAll("[()]", "").replace(',', '.').split(" ");
-			System.out.println(priceAbbrSpl[0]);
 			float priceAbbr = Float.parseFloat(priceAbbrSpl[0]);
 			product.setPriceAbbr(priceAbbr);
 			String[] currUnit = priceAbbrSpl[1].split("/");
